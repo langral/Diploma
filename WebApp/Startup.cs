@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DBRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,7 @@ namespace WebApp
             // добавляем контекст в качестве сервиса в приложение
             services.AddDbContext<MagazineContext>(options => options.UseSqlServer(connection));
 
+            services.AddScoped(typeof(IRepositoryFacade), typeof(RepositoryFacade<MagazineContext>));
             services.AddMvc();
         }
 
@@ -41,9 +43,12 @@ namespace WebApp
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) =>
+            app.UseMvc(routes =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                routes.MapRoute(
+                    name: "DefaultApi",
+                    template: "api/{controller}/{action}");
+                routes.MapSpaFallbackRoute("spa-fallback", new { controller = "Home", action = "Index" });
             });
         }
     }

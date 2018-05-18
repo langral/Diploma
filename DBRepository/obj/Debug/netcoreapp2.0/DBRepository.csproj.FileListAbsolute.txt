@@ -1,0 +1,14 @@
+C:\Users\Vika\Desktop\Diploma\DBRepository\bin\Debug\netcoreapp2.0\DBRepository.deps.json
+C:\Users\Vika\Desktop\Diploma\DBRepository\bin\Debug\netcoreapp2.0\DBRepository.dll
+C:\Users\Vika\Desktop\Diploma\DBRepository\bin\Debug\netcoreapp2.0\Models.dll
+C:\Users\Vika\Desktop\Diploma\DBRepository\bin\Debug\netcoreapp2.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\Vika\Desktop\Diploma\DBRepository\bin\Debug\netcoreapp2.0\Models.pdb
+C:\Users\Vika\Desktop\Diploma\DBRepository\bin\Debug\netcoreapp2.0\Microsoft.Extensions.Identity.Stores.xml
+C:\Users\Vika\Desktop\Diploma\DBRepository\obj\Debug\netcoreapp2.0\DBRepository.csprojResolveAssemblyReference.cache
+C:\Users\Vika\Desktop\Diploma\DBRepository\obj\Debug\netcoreapp2.0\DBRepository.csproj.CoreCompileInputs.cache
+C:\Users\Vika\Desktop\Diploma\DBRepository\obj\Debug\netcoreapp2.0\DBRepository.AssemblyInfoInputs.cache
+C:\Users\Vika\Desktop\Diploma\DBRepository\obj\Debug\netcoreapp2.0\DBRepository.AssemblyInfo.cs
+C:\Users\Vika\Desktop\Diploma\DBRepository\obj\Debug\netcoreapp2.0\DBRepository.csproj.CopyComplete
+C:\Users\Vika\Desktop\Diploma\DBRepository\bin\Debug\netcoreapp2.0\DBRepository.pdb
+C:\Users\Vika\Desktop\Diploma\DBRepository\obj\Debug\netcoreapp2.0\DBRepository.dll
+C:\Users\Vika\Desktop\Diploma\DBRepository\obj\Debug\netcoreapp2.0\DBRepository.pdb

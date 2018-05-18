@@ -7,7 +7,8 @@ namespace Models
     public class Record : BaseEntity
     {
         public int MagazineId { get; set; }
-
+        public int StudentId { get; set; }
+        
         public Magazine Magazine;
         public Student Student;
     }
