@@ -131,18 +131,50 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newGroup = await groupRepository.Get(group.Id);
+                try
+                {
+                    var newGroup = await groupRepository.Get(group.Id);
 
-                if (newGroup == null)
-                    throw new Exception("Group is not found");
+                    if (newGroup == null)
+                        throw new Exception("Group is not found");
 
-                newGroup.Number = group.Number.Value;
-                newGroup.CourseId = group.CourseId;
+                    newGroup.Number = group.Number.Value;
+                    newGroup.CourseId = group.CourseId;
 
-                await groupRepository.Update(newGroup);
+                    await groupRepository.Update(newGroup);
 
-                Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                    var records = GroupSubjectMappingModelRepository.Get(r => r.GroupId == newGroup.Id);
+
+                    if(records != null && records.Count() > 0)
+                        foreach(var record in records)
+                        {
+                            await GroupSubjectMappingModelRepository.Delete(record);
+                        }
+
+                    if(group.Subject != null && group.Subject.Count() > 0)
+                        foreach(var subject in group.Subject)
+                        {
+                            var tmpSb = subjectRepository.Get(subject.Id);
+                            if (tmpSb != null)
+                            {
+                                GroupSubjectMappingModel newGroupSubject = new GroupSubjectMappingModel()
+                                {
+                                    GroupId = newGroup.Id,
+                                    SubjectId = subject.Id
+                                };
+
+                                await GroupSubjectMappingModelRepository.Insert(newGroupSubject);
+                            }
+                        }
+
+                    Response.StatusCode = StatusCodes.Status200OK;
+                    await Response.WriteAsync("Ok");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("error", e.Message);
+                    await Response.BadRequestHelper(ModelState.Values);
+                }
             }
             else
             {
