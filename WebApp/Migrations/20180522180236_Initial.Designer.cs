@@ -12,7 +12,7 @@ using WebApp.Models;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    [Migration("20180509165946_Initial")]
+    [Migration("20180522180236_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -214,6 +214,8 @@ namespace WebApp.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("MagazineId");
+
+                    b.Property<int>("StudentId");
 
                     b.HasKey("Id");
 

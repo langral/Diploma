@@ -6,6 +6,7 @@ using DBRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Newtonsoft.Json;
 using WebApp.Infrastructure.Extenstions;
 using WebApp.Models;
 using WebApp.Models.ViewModels;
@@ -18,14 +19,12 @@ namespace WebApp.Controllers
     {
         protected readonly IRepositoryFacade repositoryFacade;
 
-        private IGenericRepository<Group> groupRepository;
         private IGenericRepository<Subject> subjectRepository;
         private int defaultPageSize = 5;
 
         public SubjectController(IRepositoryFacade repositoryFacade)
         {
             this.repositoryFacade = repositoryFacade;
-            groupRepository = this.repositoryFacade.CreateGenericRepository<Group>();
             subjectRepository = this.repositoryFacade.CreateGenericRepository<Subject>();
         }
 
@@ -61,20 +60,11 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    /* int max = groupRepository.GetAll().Count();
-                     List<Group> tmp = new List<Group>();
-                     for (int i=1; i<= max; i++)
-                     {
-                        subject.Group
-                     }*/
-                    
-
-                    Subject newGroup = new Subject()
+                    Subject newSubject = new Subject()
                     {
-                        Name = subject.Name,
-                        Group = subject.Group
+                        Name = subject.Name
                     };
-                    await subjectRepository.Insert(newGroup);
+                    await subjectRepository.Insert(newSubject);
 
                     Response.StatusCode = StatusCodes.Status200OK;
                     await Response.WriteAsync("Ok");
@@ -91,12 +81,12 @@ namespace WebApp.Controllers
             }
         }
 
-     /*   [HttpDelete("{id}")]
-        public async Task DeleteGroupAsync(int id)
+        [HttpDelete("{id}")]
+        public async Task DeleteSubjectAsync(int id)
         {
             try
             {
-                await groupRepository.Delete(id);
+                await subjectRepository.Delete(id);
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync("Ok");
@@ -109,19 +99,18 @@ namespace WebApp.Controllers
         }
 
         [HttpPut]
-        public async Task UpdateGroupAsync([FromBody] GroupIdViewModel group)
+        public async Task UpdateSubjectAsync([FromBody] SubjectIdViewModel subject)
         {
             if (ModelState.IsValid)
             {
-                var newGroup = await groupRepository.Get(group.Id);
+                var newSubject = await subjectRepository.Get(subject.Id);
 
-                if (newGroup == null)
-                    throw new Exception("Group is not found");
+                if (newSubject == null)
+                    throw new Exception("Subject is not found");
 
-                newGroup.Number = group.Number.Value;
-                newGroup.CourseId = group.CourseId;
+                newSubject.Name = subject.Name;
 
-                await groupRepository.Update(newGroup);
+                await subjectRepository.Update(newSubject);
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync("Ok");
@@ -133,17 +122,17 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task UpdateGroupAsync(int id)
+        public async Task UpdateSubjectAsync(int id)
         {
             try
             {
-                var course = await groupRepository.Get(id);
+                var subject = await subjectRepository.Get(id);
 
-                if (course == null)
-                    throw new Exception("Group is not found");
+                if (subject == null)
+                    throw new Exception("Subject is not found");
 
                 Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync(JsonConvert.SerializeObject(course,
+                await Response.WriteAsync(JsonConvert.SerializeObject(subject,
                     new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
             catch (Exception e)
@@ -151,7 +140,7 @@ namespace WebApp.Controllers
                 ModelState.AddModelError("error", e.Message);
                 await Response.BadRequestHelper(ModelState.Values);
             }
-        }*/
+        }
 
     }
 }

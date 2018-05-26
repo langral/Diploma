@@ -96,7 +96,8 @@ namespace WebApp.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    MagazineId = table.Column<int>(nullable: false)
+                    MagazineId = table.Column<int>(nullable: false),
+                    StudentId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

@@ -214,6 +214,8 @@ namespace WebApp.Migrations
 
                     b.Property<int>("MagazineId");
 
+                    b.Property<int>("StudentId");
+
                     b.HasKey("Id");
 
                     b.ToTable("Record");
