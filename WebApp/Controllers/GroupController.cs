@@ -78,7 +78,7 @@ namespace WebApp.Controllers
 
                     await groupRepository.Insert(newGroup);
 
-                    if ((group.Subject == null) && (group.Subject.Count() > 0))
+                    if ((group.Subject != null) && (group.Subject.Count() > 0))
                     {
                         foreach(var sb in group.Subject)
                         {
@@ -90,6 +90,8 @@ namespace WebApp.Controllers
                                     GroupId = newGroup.Id,
                                     SubjectId = sb.Id
                                 };
+
+                                await GroupSubjectMappingModelRepository.Insert(newGroupSubject);
                             }
                         }
                     }            
@@ -140,6 +142,8 @@ namespace WebApp.Controllers
                 newGroup.CourseId = group.CourseId;
 
                 await groupRepository.Update(newGroup);
+
+                
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync("Ok");
