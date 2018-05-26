@@ -78,7 +78,7 @@ namespace WebApp.Controllers
 
                     await groupRepository.Insert(newGroup);
 
-                    if ((group.Subject == null) && (group.Subject.Count() > 0))
+                    if ((group.Subject != null) && (group.Subject.Count() > 0))
                     {
                         foreach(var sb in group.Subject)
                         {
@@ -90,6 +90,8 @@ namespace WebApp.Controllers
                                     GroupId = newGroup.Id,
                                     SubjectId = sb.Id
                                 };
+
+                                await GroupSubjectMappingModelRepository.Insert(newGroupSubject);
                             }
                         }
                     }            
@@ -143,6 +145,7 @@ namespace WebApp.Controllers
 
                     await groupRepository.Update(newGroup);
 
+<<<<<<< HEAD
                     var records = GroupSubjectMappingModelRepository.Get(r => r.GroupId == newGroup.Id);
 
                     if(records != null && records.Count() > 0)
@@ -175,6 +178,12 @@ namespace WebApp.Controllers
                     ModelState.AddModelError("error", e.Message);
                     await Response.BadRequestHelper(ModelState.Values);
                 }
+=======
+                
+
+                Response.StatusCode = StatusCodes.Status200OK;
+                await Response.WriteAsync("Ok");
+>>>>>>> 4ba648e14c1daf6a94000b7233940efc8fc87122
             }
             else
             {
