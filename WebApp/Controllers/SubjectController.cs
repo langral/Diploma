@@ -60,6 +60,10 @@ namespace WebApp.Controllers
             {
                 try
                 {
+                    var exists = subjectRepository.Get(r => r.Name == subject.Name).SingleOrDefault();
+                    if (exists != null)
+                        throw new Exception("Subject already exists");
+
                     Subject newSubject = new Subject()
                     {
                         Name = subject.Name
@@ -103,17 +107,25 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newSubject = await subjectRepository.Get(subject.Id);
+                try
+                {
+                    var newSubject = await subjectRepository.Get(subject.Id);
 
-                if (newSubject == null)
-                    throw new Exception("Subject is not found");
+                    if (newSubject == null)
+                        throw new Exception("Subject is not found");
 
-                newSubject.Name = subject.Name;
+                    newSubject.Name = subject.Name;
 
-                await subjectRepository.Update(newSubject);
+                    await subjectRepository.Update(newSubject);
 
-                Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                    Response.StatusCode = StatusCodes.Status200OK;
+                    await Response.WriteAsync("Ok");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("error", e.Message);
+                    await Response.BadRequestHelper(ModelState.Values);
+                }
             }
             else
             {

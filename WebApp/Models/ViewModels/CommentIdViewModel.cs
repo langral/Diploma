@@ -1,5 +1,4 @@
-﻿using Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace WebApp.Models.ViewModels
 {
-    public class GroupViewModel
+    public class CommentIdViewModel
     {
         [Required]
-        public int? Number { get; set; }
+        public int Id { get; set; }
         [Required]
-        public int CourseId { get; set; }
-        public List<Subject> Subject { get; set; }
+        public string Note { get; set; }
     }
 }

@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace WebApp.Models.ViewModels
 {
-    public class GroupViewModel
+    public class ViewRecordsUpdateModel
     {
         [Required]
-        public int? Number { get; set; }
+        public Record[] Records { get; set; }
         [Required]
-        public int CourseId { get; set; }
-        public List<Subject> Subject { get; set; }
+        public DateTime Date { get; set; }
     }
 }

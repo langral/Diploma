@@ -11,6 +11,7 @@ namespace Models
             this.Subject = new HashSet<Subject>();
             this.Teacher = new HashSet<Teacher>();
             this.Student = new HashSet<Student>();
+            this.Magazine = new HashSet<Magazine>();
         }
 
         public int Number { get; set; }
@@ -21,5 +22,6 @@ namespace Models
         public ICollection<Subject> Subject;
         public ICollection<Teacher> Teacher;
         public ICollection<Student> Student;
+        public ICollection<Magazine> Magazine;
     }
 }

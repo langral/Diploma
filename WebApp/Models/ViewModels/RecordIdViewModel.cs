@@ -14,5 +14,9 @@ namespace WebApp.Models.ViewModels
         public int MagazineId { get; set; }
         [Required]
         public int StudentId { get; set; }
+        [Required]
+        public string Visit { get; set; }
+        [Required]
+        public DateTime Date { get; set; }
     }
 }

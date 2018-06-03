@@ -45,7 +45,7 @@ namespace WebApp.Controllers
                     Records = courses.OrderBy(x => x.Id).Skip((currentPage - 1) * defaultPageSize).Take(defaultPageSize)
                 };
 
-                return p;
+                return p;    
             }
             catch (Exception e)
             {
@@ -56,17 +56,28 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task CreateCourseAsync([FromBody] CourseViewModel course)
         {
-            //cделать проверку на то есть ли такой курс уже
             if (ModelState.IsValid)
             {
-                Course newCourse = new Course()
+                try
                 {
-                    Number = course.Number.Value
-                };
-                await courseRepository.Insert(newCourse);
+                    var exists = courseRepository.Get(r => r.Number == course.Number).SingleOrDefault();
+                    if (exists != null)
+                        throw new Exception("Course already exists");
 
-                Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                    Course newCourse = new Course()
+                    {
+                        Number = course.Number.Value
+                    };
+                    await courseRepository.Insert(newCourse);
+
+                    Response.StatusCode = StatusCodes.Status200OK;
+                    await Response.WriteAsync("Ok");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("error", e.Message);
+                    await Response.BadRequestHelper(ModelState.Values);
+                }
             }
             else
             {
@@ -96,17 +107,25 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newCourse = await courseRepository.Get(course.Id);
+                try
+                {
+                    var newCourse = await courseRepository.Get(course.Id);
 
-                if (newCourse == null)
-                    throw new Exception("Course is not found");
+                    if (newCourse == null)
+                        throw new Exception("Course is not found");
 
-                newCourse.Number = course.Number.Value;
+                    newCourse.Number = course.Number.Value;
 
-                await courseRepository.Update(newCourse);
+                    await courseRepository.Update(newCourse);
 
-                Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                    Response.StatusCode = StatusCodes.Status200OK;
+                    await Response.WriteAsync("Ok");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("error", e.Message);
+                    await Response.BadRequestHelper(ModelState.Values);
+                }
             }
             else
             {

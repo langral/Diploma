@@ -11,10 +11,12 @@ namespace Models
             this.Magazine = new HashSet<Magazine>();
             this.Subject = new HashSet<Subject>();
             this.Group = new HashSet<Group>();
+            this.Course = new HashSet<Course>();
         }
 
         public ICollection<Magazine> Magazine;
         public ICollection<Subject> Subject;
         public ICollection<Group> Group;
+        public ICollection<Course> Course;
     }
 }

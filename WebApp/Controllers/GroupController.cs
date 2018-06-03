@@ -66,9 +66,13 @@ namespace WebApp.Controllers
             {
                 try
                 {
+                    var exists = groupRepository.Get(r => r.Number == group.Number).SingleOrDefault();
+                    if ((exists != null) && (exists.CourseId == group.CourseId))
+                        throw new Exception("Group already exists");
+
                     var course = await courseRepository.Get(group.CourseId);
                     if (course == null)
-                        throw new Exception("Group is not found");
+                        throw new Exception("Course is not found"); 
 
                     Group newGroup = new Group()
                     {
@@ -94,7 +98,7 @@ namespace WebApp.Controllers
                                 await GroupSubjectMappingModelRepository.Insert(newGroupSubject);
                             }
                         }
-                    }            
+                    }
 
                     Response.StatusCode = StatusCodes.Status200OK;
                     await Response.WriteAsync("Ok");
@@ -145,7 +149,6 @@ namespace WebApp.Controllers
 
                     await groupRepository.Update(newGroup);
 
-<<<<<<< HEAD
                     var records = GroupSubjectMappingModelRepository.Get(r => r.GroupId == newGroup.Id);
 
                     if(records != null && records.Count() > 0)
@@ -177,13 +180,10 @@ namespace WebApp.Controllers
                 {
                     ModelState.AddModelError("error", e.Message);
                     await Response.BadRequestHelper(ModelState.Values);
-                }
-=======
-                
+                }               
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync("Ok");
->>>>>>> 4ba648e14c1daf6a94000b7233940efc8fc87122
             }
             else
             {

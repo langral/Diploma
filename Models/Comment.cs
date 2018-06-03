@@ -4,13 +4,12 @@ using System.Text;
 
 namespace Models
 {
-    public class Record : BaseEntity
+    public class Comment : BaseEntity
     {
         public int MagazineId { get; set; }
         public int StudentId { get; set; }
 
-        public string Visit { get; set; }
-        public DateTime Date { get; set; }
+        public string Note { get; set; }
 
         public Magazine Magazine;
         public Student Student;

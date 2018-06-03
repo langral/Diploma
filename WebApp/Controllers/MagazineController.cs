@@ -68,7 +68,14 @@ namespace WebApp.Controllersуу
 
                     Magazine newMagazine = new Magazine()
                     {
-                        SubjectId = magazine.SubjectId
+                        TeacherId = magazine.TeacherId,
+                        SubjectId = magazine.SubjectId,
+                        Semester = magazine.Semester,
+                        Year = magazine.Year,
+                        Filial = magazine.Filial,
+                        Faculty = magazine.Faculty,
+                        Level = magazine.Level,
+                        TypeOfClass = magazine.TypeOfClass
                     };
                     await magazineRepository.Insert(newMagazine);
 
@@ -114,7 +121,14 @@ namespace WebApp.Controllersуу
                 if (newMagazine == null)
                     throw new Exception("Record is not found");
 
+                newMagazine.TeacherId = magazine.TeacherId;
                 newMagazine.SubjectId = magazine.SubjectId;
+                newMagazine.Semester = magazine.Semester;
+                newMagazine.Year = magazine.Year;
+                newMagazine.Filial = magazine.Filial;
+                newMagazine.Faculty = magazine.Faculty;
+                newMagazine.Level = magazine.Level;
+                newMagazine.TypeOfClass = magazine.TypeOfClass;
 
                 await magazineRepository.Update(newMagazine);
 

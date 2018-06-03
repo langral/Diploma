@@ -12,9 +12,10 @@ using WebApp.Models;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    partial class MagazineContextModelSnapshot : ModelSnapshot
+    [Migration("20180526183816_NewModelComment")]
+    partial class NewModelComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,13 +215,9 @@ namespace WebApp.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CourseId");
-
                     b.Property<string>("Faculty");
 
                     b.Property<string>("Filial");
-
-                    b.Property<int>("GroupId");
 
                     b.Property<string>("Level");
 

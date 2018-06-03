@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="Model1.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="Model1TargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Model1" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="Model1Container" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="SubjectSet" EntityType="Model1.Subject" />
+          <EntitySet Name="GroupSet" EntityType="Model1.Group" />
+          <EntitySet Name="CourseSet" EntityType="Model1.Course" />
+          <EntitySet Name="MagazineSet" EntityType="Model1.Magazine" />
+          <EntitySet Name="RecordSet" EntityType="Model1.Record" />
+          <EntitySet Name="StudentSet" EntityType="Model1.Student" />
+          <EntitySet Name="CommentSet" EntityType="Model1.Comment" />
+          <AssociationSet Name="MagazineComment" Association="Model1.MagazineComment">
+            <End Role="Magazine" EntitySet="MagazineSet" />
+            <End Role="Comment" EntitySet="CommentSet" />
+          </AssociationSet>
+          <AssociationSet Name="StudentComment" Association="Model1.StudentComment">
+            <End Role="Student" EntitySet="StudentSet" />
+            <End Role="Comment" EntitySet="CommentSet" />
+          </AssociationSet>
+          <EntitySet Name="TeacherSet" EntityType="Model1.Teacher" />
+          <AssociationSet Name="TeacherMagazine" Association="Model1.TeacherMagazine">
+            <End Role="Teacher" EntitySet="TeacherSet" />
+            <End Role="Magazine" EntitySet="MagazineSet" />
+          </AssociationSet>
+          <AssociationSet Name="SubjectMagazine" Association="Model1.SubjectMagazine">
+            <End Role="Subject" EntitySet="SubjectSet" />
+            <End Role="Magazine" EntitySet="MagazineSet" />
+          </AssociationSet>
+          <AssociationSet Name="CourseGroup" Association="Model1.CourseGroup">
+            <End Role="Course" EntitySet="CourseSet" />
+            <End Role="Group" EntitySet="GroupSet" />
+          </AssociationSet>
+          <AssociationSet Name="TeacherSubject" Association="Model1.TeacherSubject">
+            <End Role="Teacher" EntitySet="TeacherSet" />
+            <End Role="Subject" EntitySet="SubjectSet" />
+          </AssociationSet>
+          <AssociationSet Name="SubjectGroup" Association="Model1.SubjectGroup">
+            <End Role="Subject" EntitySet="SubjectSet" />
+            <End Role="Group" EntitySet="GroupSet" />
+          </AssociationSet>
+          <AssociationSet Name="GroupStudent" Association="Model1.GroupStudent">
+            <End Role="Group" EntitySet="GroupSet" />
+            <End Role="Student" EntitySet="StudentSet" />
+          </AssociationSet>
+          <AssociationSet Name="MagazineRecord" Association="Model1.MagazineRecord">
+            <End Role="Magazine" EntitySet="MagazineSet" />
+            <End Role="Record" EntitySet="RecordSet" />
+          </AssociationSet>
+          <AssociationSet Name="StudentRecord" Association="Model1.StudentRecord">
+            <End Role="Student" EntitySet="StudentSet" />
+            <End Role="Record" EntitySet="RecordSet" />
+          </AssociationSet>
+          <AssociationSet Name="GroupMagazine" Association="Model1.GroupMagazine">
+            <End Role="Group" EntitySet="GroupSet" />
+            <End Role="Magazine" EntitySet="MagazineSet" />
+          </AssociationSet>
+          <AssociationSet Name="CourseMagazine" Association="Model1.CourseMagazine">
+            <End Role="Course" EntitySet="CourseSet" />
+            <End Role="Magazine" EntitySet="MagazineSet" />
+          </AssociationSet>
+          <AssociationSet Name="TeacherGroup" Association="Model1.TeacherGroup">
+            <End Role="Teacher" EntitySet="TeacherSet" />
+            <End Role="Group" EntitySet="GroupSet" />
+          </AssociationSet>
+          <AssociationSet Name="TeacherCourse" Association="Model1.TeacherCourse">
+            <End Role="Teacher" EntitySet="TeacherSet" />
+            <End Role="Course" EntitySet="CourseSet" />
+          </AssociationSet>
+          <EntitySet Name="AttestationSet1" EntityType="Model1.Attestation" />
+          <AssociationSet Name="TeacherAttestation" Association="Model1.TeacherAttestation">
+            <End Role="Teacher" EntitySet="TeacherSet" />
+            <End Role="Attestation" EntitySet="AttestationSet1" />
+          </AssociationSet>
+          <EntitySet Name="AttestationRecordSet" EntityType="Model1.AttestationRecord" />
+          <AssociationSet Name="GroupAttestationRecord" Association="Model1.GroupAttestationRecord">
+            <End Role="Group" EntitySet="GroupSet" />
+            <End Role="AttestationRecord" EntitySet="AttestationRecordSet" />
+          </AssociationSet>
+          <AssociationSet Name="AttestationAttestationRecord" Association="Model1.AttestationAttestationRecord">
+            <End Role="Attestation" EntitySet="AttestationSet1" />
+            <End Role="AttestationRecord" EntitySet="AttestationRecordSet" />
+          </AssociationSet>
+          <AssociationSet Name="SubjectAttestation" Association="Model1.SubjectAttestation">
+            <End Role="Subject" EntitySet="SubjectSet" />
+            <End Role="Attestation" EntitySet="AttestationSet1" />
+          </AssociationSet>
+          <EntitySet Name="StatisticsSet" EntityType="Model1.Statistics" />
+          <AssociationSet Name="StatisticsAttestationRecord" Association="Model1.StatisticsAttestationRecord">
+            <End Role="Statistics" EntitySet="StatisticsSet" />
+            <End Role="AttestationRecord" EntitySet="AttestationRecordSet" />
+          </AssociationSet>
+          <EntitySet Name="TotalSet" EntityType="Model1.Total" />
+          <AssociationSet Name="TotalAttestation" Association="Model1.TotalAttestation">
+            <End Role="Total" EntitySet="TotalSet" />
+            <End Role="Attestation" EntitySet="AttestationSet1" />
+          </AssociationSet>
+          <AssociationSet Name="TotalStatistics" Association="Model1.TotalStatistics">
+            <End Role="Total" EntitySet="TotalSet" />
+            <End Role="Statistics" EntitySet="StatisticsSet" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Subject">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <NavigationProperty Name="Magazine" Relationship="Model1.SubjectMagazine" FromRole="Subject" ToRole="Magazine" />
+          <NavigationProperty Name="Teacher" Relationship="Model1.TeacherSubject" FromRole="Subject" ToRole="Teacher" />
+          <NavigationProperty Name="Group" Relationship="Model1.SubjectGroup" FromRole="Subject" ToRole="Group" />
+          <NavigationProperty Name="Attestation" Relationship="Model1.SubjectAttestation" FromRole="Subject" ToRole="Attestation" />
+        </EntityType>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Number" Type="String" Nullable="false" />
+          <NavigationProperty Name="Course" Relationship="Model1.CourseGroup" FromRole="Group" ToRole="Course" />
+          <NavigationProperty Name="Subject" Relationship="Model1.SubjectGroup" FromRole="Group" ToRole="Subject" />
+          <NavigationProperty Name="Student" Relationship="Model1.GroupStudent" FromRole="Group" ToRole="Student" />
+          <NavigationProperty Name="Magazine" Relationship="Model1.GroupMagazine" FromRole="Group" ToRole="Magazine" />
+          <NavigationProperty Name="Teacher" Relationship="Model1.TeacherGroup" FromRole="Group" ToRole="Teacher" />
+          <NavigationProperty Name="AttestationRecord" Relationship="Model1.GroupAttestationRecord" FromRole="Group" ToRole="AttestationRecord" />
+        </EntityType>
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Number" Type="String" Nullable="false" />
+          <NavigationProperty Name="Group" Relationship="Model1.CourseGroup" FromRole="Course" ToRole="Group" />
+          <NavigationProperty Name="Magazine" Relationship="Model1.CourseMagazine" FromRole="Course" ToRole="Magazine" />
+          <NavigationProperty Name="Teacher" Relationship="Model1.TeacherCourse" FromRole="Course" ToRole="Teacher" />
+        </EntityType>
+        <EntityType Name="Magazine">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Semester" Type="String" Nullable="false" />
+          <Property Name="Year" Type="String" Nullable="false" />
+          <Property Name="Filial" Type="String" Nullable="false" />
+          <Property Name="Faculty" Type="String" Nullable="false" />
+          <Property Name="Level" Type="String" Nullable="false" />
+          <Property Name="TypeOfClass" Type="String" Nullable="false" />
+          <NavigationProperty Name="Comment" Relationship="Model1.MagazineComment" FromRole="Magazine" ToRole="Comment" />
+          <NavigationProperty Name="Teacher" Relationship="Model1.TeacherMagazine" FromRole="Magazine" ToRole="Teacher" />
+          <NavigationProperty Name="Subject" Relationship="Model1.SubjectMagazine" FromRole="Magazine" ToRole="Subject" />
+          <NavigationProperty Name="Record" Relationship="Model1.MagazineRecord" FromRole="Magazine" ToRole="Record" />
+          <NavigationProperty Name="Group" Relationship="Model1.GroupMagazine" FromRole="Magazine" ToRole="Group" />
+          <NavigationProperty Name="Course" Relationship="Model1.CourseMagazine" FromRole="Magazine" ToRole="Course" />
+        </EntityType>
+        <EntityType Name="Record">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Viisit" Type="String" Nullable="false" />
+          <Property Name="Date" Type="String" Nullable="false" />
+          <NavigationProperty Name="Magazine" Relationship="Model1.MagazineRecord" FromRole="Record" ToRole="Magazine" />
+          <NavigationProperty Name="Student" Relationship="Model1.StudentRecord" FromRole="Record" ToRole="Student" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <NavigationProperty Name="Comment" Relationship="Model1.StudentComment" FromRole="Student" ToRole="Comment" />
+          <NavigationProperty Name="Group" Relationship="Model1.GroupStudent" FromRole="Student" ToRole="Group" />
+          <NavigationProperty Name="Record" Relationship="Model1.StudentRecord" FromRole="Student" ToRole="Record" />
+        </EntityType>
+        <EntityType Name="Comment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="note" Type="String" Nullable="false" />
+          <NavigationProperty Name="Magazine" Relationship="Model1.MagazineComment" FromRole="Comment" ToRole="Magazine" />
+          <NavigationProperty Name="Student" Relationship="Model1.StudentComment" FromRole="Comment" ToRole="Student" />
+        </EntityType>
+        <Association Name="MagazineComment">
+          <End Type="Model1.Magazine" Role="Magazine" Multiplicity="1" />
+          <End Type="Model1.Comment" Role="Comment" Multiplicity="*" />
+        </Association>
+        <Association Name="StudentComment">
+          <End Type="Model1.Student" Role="Student" Multiplicity="1" />
+          <End Type="Model1.Comment" Role="Comment" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <NavigationProperty Name="Magazine" Relationship="Model1.TeacherMagazine" FromRole="Teacher" ToRole="Magazine" />
+          <NavigationProperty Name="Subject" Relationship="Model1.TeacherSubject" FromRole="Teacher" ToRole="Subject" />
+          <NavigationProperty Name="Group" Relationship="Model1.TeacherGroup" FromRole="Teacher" ToRole="Group" />
+          <NavigationProperty Name="Course" Relationship="Model1.TeacherCourse" FromRole="Teacher" ToRole="Course" />
+          <NavigationProperty Name="Attestation" Relationship="Model1.TeacherAttestation" FromRole="Teacher" ToRole="Attestation" />
+        </EntityType>
+        <Association Name="TeacherMagazine">
+          <End Type="Model1.Teacher" Role="Teacher" Multiplicity="1" />
+          <End Type="Model1.Magazine" Role="Magazine" Multiplicity="*" />
+        </Association>
+        <Association Name="SubjectMagazine">
+          <End Type="Model1.Subject" Role="Subject" Multiplicity="1" />
+          <End Type="Model1.Magazine" Role="Magazine" Multiplicity="*" />
+        </Association>
+        <Association Name="CourseGroup">
+          <End Type="Model1.Course" Role="Course" Multiplicity="1" />
+          <End Type="Model1.Group" Role="Group" Multiplicity="*" />
+        </Association>
+        <Association Name="TeacherSubject">
+          <End Type="Model1.Teacher" Role="Teacher" Multiplicity="*" />
+          <End Type="Model1.Subject" Role="Subject" Multiplicity="*" />
+        </Association>
+        <Association Name="SubjectGroup">
+          <End Type="Model1.Subject" Role="Subject" Multiplicity="*" />
+          <End Type="Model1.Group" Role="Group" Multiplicity="*" />
+        </Association>
+        <Association Name="GroupStudent">
+          <End Type="Model1.Group" Role="Group" Multiplicity="1" />
+          <End Type="Model1.Student" Role="Student" Multiplicity="*" />
+        </Association>
+        <Association Name="MagazineRecord">
+          <End Type="Model1.Magazine" Role="Magazine" Multiplicity="1" />
+          <End Type="Model1.Record" Role="Record" Multiplicity="*" />
+        </Association>
+        <Association Name="StudentRecord">
+          <End Type="Model1.Student" Role="Student" Multiplicity="1" />
+          <End Type="Model1.Record" Role="Record" Multiplicity="*" />
+        </Association>
+        <Association Name="GroupMagazine">
+          <End Type="Model1.Group" Role="Group" Multiplicity="1" />
+          <End Type="Model1.Magazine" Role="Magazine" Multiplicity="*" />
+        </Association>
+        <Association Name="CourseMagazine">
+          <End Type="Model1.Course" Role="Course" Multiplicity="1" />
+          <End Type="Model1.Magazine" Role="Magazine" Multiplicity="*" />
+        </Association>
+        <Association Name="TeacherGroup">
+          <End Type="Model1.Teacher" Role="Teacher" Multiplicity="*" />
+          <End Type="Model1.Group" Role="Group" Multiplicity="*" />
+        </Association>
+        <Association Name="TeacherCourse">
+          <End Type="Model1.Teacher" Role="Teacher" Multiplicity="*" />
+          <End Type="Model1.Course" Role="Course" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Attestation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Teacher" Relationship="Model1.TeacherAttestation" FromRole="Attestation" ToRole="Teacher" />
+          <NavigationProperty Name="AttestationRecord" Relationship="Model1.AttestationAttestationRecord" FromRole="Attestation" ToRole="AttestationRecord" />
+          <NavigationProperty Name="Subject" Relationship="Model1.SubjectAttestation" FromRole="Attestation" ToRole="Subject" />
+          <Property Name="Semester" Type="String" Nullable="false" />
+          <Property Name="Year" Type="String" Nullable="false" />
+          <Property Name="Department" Type="String" Nullable="false" />
+          <NavigationProperty Name="Total" Relationship="Model1.TotalAttestation" FromRole="Attestation" ToRole="Total" />
+        </EntityType>
+        <Association Name="TeacherAttestation">
+          <End Type="Model1.Teacher" Role="Teacher" Multiplicity="1" />
+          <End Type="Model1.Attestation" Role="Attestation" Multiplicity="*" />
+        </Association>
+        <EntityType Name="AttestationRecord">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Group" Relationship="Model1.GroupAttestationRecord" FromRole="AttestationRecord" ToRole="Group" />
+          <NavigationProperty Name="Attestation" Relationship="Model1.AttestationAttestationRecord" FromRole="AttestationRecord" ToRole="Attestation" />
+          <Property Name="AttestationId" Nullable="false" Type="Int32" />
+          <Property Name="Date" Type="String" Nullable="false" />
+          <Property Name="ContingentOfStudents" Type="String" Nullable="false" />
+          <NavigationProperty Name="Statistics" Relationship="Model1.StatisticsAttestationRecord" FromRole="AttestationRecord" ToRole="Statistics" />
+          <Property Name="AverageScore" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="GroupAttestationRecord">
+          <End Type="Model1.Group" Role="Group" Multiplicity="1" />
+          <End Type="Model1.AttestationRecord" Role="AttestationRecord" Multiplicity="*" />
+        </Association>
+        <Association Name="AttestationAttestationRecord">
+          <End Type="Model1.Attestation" Role="Attestation" Multiplicity="1" />
+          <End Type="Model1.AttestationRecord" Role="AttestationRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attestation">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AttestationRecord">
+              <PropertyRef Name="AttestationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SubjectAttestation">
+          <End Type="Model1.Subject" Role="Subject" Multiplicity="1" />
+          <End Type="Model1.Attestation" Role="Attestation" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Statistics">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="AttestationRecord" Relationship="Model1.StatisticsAttestationRecord" FromRole="Statistics" ToRole="AttestationRecord" />
+          <Property Name="Title" Type="String" Nullable="false" />
+          <Property Name="Absolute" Type="String" Nullable="false" />
+          <Property Name="Percentage" Type="String" Nullable="false" />
+          <NavigationProperty Name="Total" Relationship="Model1.TotalStatistics" FromRole="Statistics" ToRole="Total" />
+        </EntityType>
+        <Association Name="StatisticsAttestationRecord">
+          <End Type="Model1.Statistics" Role="Statistics" Multiplicity="*" />
+          <End Type="Model1.AttestationRecord" Role="AttestationRecord" Multiplicity="1" />
+        </Association>
+        <EntityType Name="Total">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Attestation" Relationship="Model1.TotalAttestation" FromRole="Total" ToRole="Attestation" />
+          <NavigationProperty Name="Statistics" Relationship="Model1.TotalStatistics" FromRole="Total" ToRole="Statistics" />
+        </EntityType>
+        <Association Name="TotalAttestation">
+          <End Type="Model1.Total" Role="Total" Multiplicity="1" />
+          <End Type="Model1.Attestation" Role="Attestation" Multiplicity="1" />
+        </Association>
+        <Association Name="TotalStatistics">
+          <End Type="Model1.Total" Role="Total" Multiplicity="1" />
+          <End Type="Model1.Statistics" Role="Statistics" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="Model1" />
+        <Alias Key="Target" Value="Model1.Store" />
+        <EntityContainerMapping CdmEntityContainer="Model1Container" StorageEntityContainer="Model1TargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

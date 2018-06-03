@@ -20,6 +20,7 @@ namespace WebApp.Models
         public virtual DbSet<Magazine> Magazine { get; set; }
         public virtual DbSet<Group> Group { get; set; }
         public virtual DbSet<Course> Course { get; set; }
+        public virtual DbSet<Comment> Comment { get; set; }
 
         public MagazineContext(DbContextOptions<MagazineContext> options)
             : base(options)

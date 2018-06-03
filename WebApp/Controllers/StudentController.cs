@@ -62,6 +62,10 @@ namespace WebApp.Controllers
             {
                 try
                 {
+                    var exists = studentRepository.Get(r => r.Name == student.Name).SingleOrDefault();
+                    if ((exists != null) && (exists.GroupId == student.GroupId))
+                        throw new Exception("Student already exists");
+
                     var group = await groupRepository.Get(student.GroupId);
                     if (group == null)
                         throw new Exception("Student is not found");
@@ -110,18 +114,26 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newStudent = await studentRepository.Get(student.Id);
+                try
+                {
+                    var newStudent = await studentRepository.Get(student.Id);
 
-                if (newStudent == null)
-                    throw new Exception("Student is not found");
+                    if (newStudent == null)
+                        throw new Exception("Student is not found");
 
-                newStudent.Name = student.Name;
-                newStudent.GroupId = student.GroupId;
+                    newStudent.Name = student.Name;
+                    newStudent.GroupId = student.GroupId;
 
-                await studentRepository.Update(newStudent);
+                    await studentRepository.Update(newStudent);
 
-                Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                    Response.StatusCode = StatusCodes.Status200OK;
+                    await Response.WriteAsync("Ok");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("error", e.Message);
+                    await Response.BadRequestHelper(ModelState.Values);
+                }
             }
             else
             {
