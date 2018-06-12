@@ -112,9 +112,9 @@
         </EntityContainer>
         <EntityType Name="Subject">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Subject" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Subject" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" />
           <NavigationProperty Name="Magazine" Relationship="Model1.SubjectMagazine" FromRole="Subject" ToRole="Magazine" />
           <NavigationProperty Name="Teacher" Relationship="Model1.TeacherSubject" FromRole="Subject" ToRole="Teacher" />
@@ -123,9 +123,10 @@
         </EntityType>
         <EntityType Name="Group">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Group" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Group" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" />
+          <Property Name="Id_Course" Type="String" Nullable="false" />
           <Property Name="Number" Type="String" Nullable="false" />
           <NavigationProperty Name="Course" Relationship="Model1.CourseGroup" FromRole="Group" ToRole="Course" />
           <NavigationProperty Name="Subject" Relationship="Model1.SubjectGroup" FromRole="Group" ToRole="Subject" />
@@ -136,9 +137,9 @@
         </EntityType>
         <EntityType Name="Course">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Course" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Course" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Number" Type="String" Nullable="false" />
           <NavigationProperty Name="Group" Relationship="Model1.CourseGroup" FromRole="Course" ToRole="Group" />
           <NavigationProperty Name="Magazine" Relationship="Model1.CourseMagazine" FromRole="Course" ToRole="Magazine" />
@@ -146,9 +147,13 @@
         </EntityType>
         <EntityType Name="Magazine">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Magazine" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Magazine" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Course" Type="String" Nullable="false" />
+          <Property Name="Id_Group" Type="String" Nullable="false" />
+          <Property Name="Id_Subject" Type="String" Nullable="false" />
+          <Property Name="Id_Teacher" Type="String" Nullable="false" />
           <Property Name="Semester" Type="String" Nullable="false" />
           <Property Name="Year" Type="String" Nullable="false" />
           <Property Name="Filial" Type="String" Nullable="false" />
@@ -164,19 +169,22 @@
         </EntityType>
         <EntityType Name="Record">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Record" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Viisit" Type="String" Nullable="false" />
+          <Property Name="Id_Record" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Magazine" Type="String" Nullable="false" />
+          <Property Name="Id_Student" Type="String" Nullable="false" />
+          <Property Name="Visit" Type="String" Nullable="false" />
           <Property Name="Date" Type="String" Nullable="false" />
           <NavigationProperty Name="Magazine" Relationship="Model1.MagazineRecord" FromRole="Record" ToRole="Magazine" />
           <NavigationProperty Name="Student" Relationship="Model1.StudentRecord" FromRole="Record" ToRole="Student" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Student" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Student" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Group" Type="String" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" />
           <NavigationProperty Name="Comment" Relationship="Model1.StudentComment" FromRole="Student" ToRole="Comment" />
           <NavigationProperty Name="Group" Relationship="Model1.GroupStudent" FromRole="Student" ToRole="Group" />
@@ -184,10 +192,12 @@
         </EntityType>
         <EntityType Name="Comment">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Comment" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="note" Type="String" Nullable="false" />
+          <Property Name="Id_Comment" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Student" Type="String" Nullable="false" />
+          <Property Name="Id_Magazine" Type="String" Nullable="false" />
+          <Property Name="Note" Type="String" Nullable="false" />
           <NavigationProperty Name="Magazine" Relationship="Model1.MagazineComment" FromRole="Comment" ToRole="Magazine" />
           <NavigationProperty Name="Student" Relationship="Model1.StudentComment" FromRole="Comment" ToRole="Student" />
         </EntityType>
@@ -201,9 +211,9 @@
         </Association>
         <EntityType Name="Teacher">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Teacher" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Teacher" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" />
           <NavigationProperty Name="Magazine" Relationship="Model1.TeacherMagazine" FromRole="Teacher" ToRole="Magazine" />
           <NavigationProperty Name="Subject" Relationship="Model1.TeacherSubject" FromRole="Teacher" ToRole="Subject" />
@@ -261,9 +271,11 @@
         </Association>
         <EntityType Name="Attestation">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Attestation" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Attestation" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Teacher" Type="String" Nullable="false" />
+          <Property Name="Id_Subject" Type="String" Nullable="false" />
           <NavigationProperty Name="Teacher" Relationship="Model1.TeacherAttestation" FromRole="Attestation" ToRole="Teacher" />
           <NavigationProperty Name="AttestationRecord" Relationship="Model1.AttestationAttestationRecord" FromRole="Attestation" ToRole="AttestationRecord" />
           <NavigationProperty Name="Subject" Relationship="Model1.SubjectAttestation" FromRole="Attestation" ToRole="Subject" />
@@ -278,12 +290,13 @@
         </Association>
         <EntityType Name="AttestationRecord">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_AttestationRecord" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_AttestationRecord" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Group" Relationship="Model1.GroupAttestationRecord" FromRole="AttestationRecord" ToRole="Group" />
           <NavigationProperty Name="Attestation" Relationship="Model1.AttestationAttestationRecord" FromRole="AttestationRecord" ToRole="Attestation" />
-          <Property Name="AttestationId" Nullable="false" Type="Int32" />
+          <Property Name="Id_Attestation" Nullable="false" Type="Int32" />
+          <Property Name="Id_Group" Type="String" Nullable="false" />
           <Property Name="Date" Type="String" Nullable="false" />
           <Property Name="ContingentOfStudents" Type="String" Nullable="false" />
           <NavigationProperty Name="Statistics" Relationship="Model1.StatisticsAttestationRecord" FromRole="AttestationRecord" ToRole="Statistics" />
@@ -298,10 +311,10 @@
           <End Type="Model1.AttestationRecord" Role="AttestationRecord" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Attestation">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="Id_Attestation" />
             </Principal>
             <Dependent Role="AttestationRecord">
-              <PropertyRef Name="AttestationId" />
+              <PropertyRef Name="Id_Attestation" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -311,10 +324,12 @@
         </Association>
         <EntityType Name="Statistics">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Statistics" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Statistics" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="AttestationRecord" Relationship="Model1.StatisticsAttestationRecord" FromRole="Statistics" ToRole="AttestationRecord" />
+          <Property Name="Id_AttestationRecord" Type="String" Nullable="false" />
+          <Property Name="Id_Total" Type="String" Nullable="false" />
           <Property Name="Title" Type="String" Nullable="false" />
           <Property Name="Absolute" Type="String" Nullable="false" />
           <Property Name="Percentage" Type="String" Nullable="false" />
@@ -326,11 +341,12 @@
         </Association>
         <EntityType Name="Total">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Id_Total" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id_Total" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Attestation" Relationship="Model1.TotalAttestation" FromRole="Total" ToRole="Attestation" />
           <NavigationProperty Name="Statistics" Relationship="Model1.TotalStatistics" FromRole="Total" ToRole="Statistics" />
+          <Property Name="Note" Type="String" Nullable="false" />
         </EntityType>
         <Association Name="TotalAttestation">
           <End Type="Model1.Total" Role="Total" Multiplicity="1" />

@@ -11,6 +11,7 @@ namespace Models
             this.Magazine = new HashSet<Magazine>();
             this.Teacher = new HashSet<Teacher>();
             this.Group = new HashSet<Group>();
+            this.Attestation = new HashSet<Attestation>();
         }
 
         public string Name { get; set; }
@@ -18,5 +19,6 @@ namespace Models
         public ICollection<Magazine> Magazine;
         public ICollection<Teacher> Teacher;
         public ICollection<Group> Group;
+        public ICollection<Attestation> Attestation;
     }
 }

@@ -8,8 +8,8 @@
         <EntityTypeShape EntityType="Model1.Subject" Width="1.5" PointX="5.75" PointY="2" />
         <EntityTypeShape EntityType="Model1.Group" Width="1.5" PointX="11.375" PointY="0.875" />
         <EntityTypeShape EntityType="Model1.Course" Width="1.5" PointX="13.875" PointY="0.5" />
-        <EntityTypeShape EntityType="Model1.Magazine" Width="1.5" PointX="4.625" PointY="4.625" />
-        <EntityTypeShape EntityType="Model1.Record" Width="1.5" PointX="8.375" PointY="3.5" />
+        <EntityTypeShape EntityType="Model1.Magazine" Width="1.5" PointX="4.625" PointY="4.75" />
+        <EntityTypeShape EntityType="Model1.Record" Width="1.5" PointX="8.25" PointY="3.25" />
         <EntityTypeShape EntityType="Model1.Student" Width="1.5" PointX="11.25" PointY="5.625" />
         <EntityTypeShape EntityType="Model1.Comment" Width="1.5" PointX="8.25" PointY="5.875" />
         <AssociationConnector Association="Model1.MagazineComment" />
@@ -28,13 +28,8 @@
         <AssociationConnector Association="Model1.CourseMagazine" />
         <AssociationConnector Association="Model1.TeacherGroup" />
         <AssociationConnector Association="Model1.TeacherCourse" />
-        <EntityTypeShape EntityType="Model1.Attestation" Width="1.5" PointX="0.875" PointY="6.5" />
-        <AssociationConnector Association="Model1.TeacherAttestation" ManuallyRouted="true" >
-          <ConnectorPoint PointX="3.4035054140600844" PointY="3.3648893229166661" />
-          <ConnectorPoint PointX="3.4035054140600844" PointY="7.5748595244442267" />
-          <ConnectorPoint PointX="3.0920378596694773" PointY="7.5748595244442258" />
-          <ConnectorPoint PointX="2.9253711930028103" PointY="7.5748595244442267" />
-          <ConnectorPoint PointX="2.375" PointY="7.5748595244442267" />
+        <EntityTypeShape EntityType="Model1.Attestation" Width="1.5" PointX="0.625" PointY="7.25" />
+        <AssociationConnector Association="Model1.TeacherAttestation" ManuallyRouted="false" >
         </AssociationConnector>
         <EntityTypeShape EntityType="Model1.AttestationRecord" Width="1.5" PointX="0.625" PointY="0.5" />
         <AssociationConnector Association="Model1.GroupAttestationRecord" />
@@ -45,10 +40,9 @@
         <EntityTypeShape EntityType="Model1.Total" Width="1.5" PointX="2.875" PointY="8.875" />
         <AssociationConnector Association="Model1.TotalAttestation" />
         <AssociationConnector Association="Model1.TotalStatistics" ManuallyRouted="true" >
-          <ConnectorPoint PointX="3.0087045263361438" PointY="8.875" />
-          <ConnectorPoint PointX="3.0087045263361438" PointY="6.547587890625" />
-          <ConnectorPoint PointX="3.0080856562839804" PointY="6.547587890625" />
-          <ConnectorPoint PointX="3.0080856562839804" PointY="6.172587890625" />
+          <ConnectorPoint PointX="3.7500005" PointY="8.875" />
+          <ConnectorPoint PointX="3.7500005" PointY="5.2785953776041659" />
+          <ConnectorPoint PointX="3.125" PointY="5.2785953776041659" />
         </AssociationConnector>
       </Diagram>
     </edmx:Diagrams>

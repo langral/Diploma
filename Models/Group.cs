@@ -12,6 +12,7 @@ namespace Models
             this.Teacher = new HashSet<Teacher>();
             this.Student = new HashSet<Student>();
             this.Magazine = new HashSet<Magazine>();
+            this.AttestationRecord = new HashSet<AttestationRecord>();
         }
 
         public int Number { get; set; }
@@ -23,5 +24,6 @@ namespace Models
         public ICollection<Teacher> Teacher;
         public ICollection<Student> Student;
         public ICollection<Magazine> Magazine;
+        public ICollection<AttestationRecord> AttestationRecord;
     }
 }
