@@ -44,6 +44,7 @@ namespace WebApp.Controllers
 
                 if (userToVerify == null)
                 {
+                    ModelState.AddModelError("Unauthorized", "Пользователь с таким логином не существует!");
                     await Response.BadRequestHelper(ModelState.Values, StatusCodes.Status401Unauthorized);
                 }
                 else if (await userManager.CheckPasswordAsync(userToVerify, model.Password))
