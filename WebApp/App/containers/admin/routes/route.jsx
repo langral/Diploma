@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import SubjectsList from '../subjects/subjectsList.jsx';
 import Teachers from '../teachers/teachersList.jsx';
 
+
 const AdminPage = () => {
     return (
         <div>

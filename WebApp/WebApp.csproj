@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="App\containers\attedence\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
