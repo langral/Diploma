@@ -42,15 +42,33 @@
             height: 100%;
         }
 
+        /*lists*/
+        .top-bar{
+            display: flex;
+        }
+        .top-bar .actions{
+           margin-left: auto; 
+        }
+
+        .table tr td:last-child{
+            text-align: right;
+        }
+
+        .table .form {
+            justify-content: flex-end;
+        }
+        /*lists*/
+
      </style>
 
-    <title>Вход</title>
+    <title>Учет студентов</title>
 
 </head>
 <body>
+
     <div id="content">
     </div>
 
-    <script type="text/javascript" src="@Url.Content("~/assets/bundle.js")"></script>
+            <script type="text/javascript" src="@Url.Content("~/assets/bundle.js")"></script>
 </body>
 </html>
