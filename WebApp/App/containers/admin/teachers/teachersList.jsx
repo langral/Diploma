@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import TeacherForm from '../teachers/techerForm.jsx';
+import TeacherForm from './techerForm.jsx';
 
 const TEACHERS = [
     {

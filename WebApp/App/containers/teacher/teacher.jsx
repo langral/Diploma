@@ -23,16 +23,16 @@ export default class Teacher extends React.Component {
                         <div className="list-group">
 
                             <NavLink activeClassName="active"
-                                to="/admin/subjects"
+                                to="/teacher/attedence"
                                 className="list-group-item list-group-item-action">
                                 Учет посещаемости
                             </NavLink>
 
-                            <NavLink activeClassName="active" to="/admin/coursec" className="list-group-item list-group-item-action">
+                            <NavLink activeClassName="active" to="/teacher/coursec" className="list-group-item list-group-item-action">
                                 Итоговая аттестация
                             </NavLink>
 
-                            <NavLink activeClassName="active" to="/admin/coursec" className="list-group-item list-group-item-action">
+                            <NavLink activeClassName="active" to="/teacher/subjects" className="list-group-item list-group-item-action">
                                 Мои предметы
                             </NavLink>
 

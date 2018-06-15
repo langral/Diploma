@@ -1,7 +1,10 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import GroupList from '../groups/groups.jsx';
+import GroupsList from '../groups/groups.jsx';
+import SubjectsList from '../subjects/subjects.jsx';
+import Attedence from '../attedence/attedence.jsx';
+
 
 const TeacherPage = () => {
     return (
@@ -28,9 +31,11 @@ export default class TeacherRouting extends React.Component {
         return (
             <div className="admin-right-sidebar">
                 <Switch>
-                    <Route path="/teacher/attedence" component={TeacherPage} />
+                    <Route path="/teacher/attedence" component={Attedence} />
                     <Route path="/teacher/attestation" component={TeacherPage} />
-                    <Route path="/teacher/groups" component={Teachers} />
+                    <Route path="/teacher/subjects" component={SubjectsList} />
+                    <Route path="/teacher/groups" component={GroupsList} />
+                    <Route path="/teacher" component={TeacherPage} />
                 </Switch>
             </div>
         );

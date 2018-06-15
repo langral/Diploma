@@ -5,6 +5,7 @@ import App from './containers/app.jsx'
 import configureStore from './store/configureStore.jsx'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.js';
 
 const store = configureStore()
 

@@ -5,46 +5,42 @@ import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 
-const GROUPS = [
+const SUBJECTS = [
     {
         id: 1,
-        number: 11,
-        subjects: [
+        title: "Алгебра и теория чисел",
+        groups: [
             {
                 id: 1,
-                title: "Математический анализ"
-            },
-            {
-                id: 2,
-                title: "Алгебра и теория чисел"
+                number: 11
             }
         ]
     },
     {
         id: 2,
-        number: 22,
-        subjects: [
+        title: "Шаблоны проектирования",
+        groups: [
             {
-                id: 1,
-                title: "Шаблоны проектирование"
+                id: 2,
+                number: 22
             },
             {
-                id: 1,
-                title: "Математическая статистика"
+                id: 2,
+                number: 91
             }
         ]
     },
     {
-        id: 4,
-        number: 91,
-        subjects: [
+        id: 3,
+        title: "Математическая статистика",
+        groups: [
             {
-                id: 1,
-                title: "Шаблоны проектирование"
+                id: 2,
+                number: 22
             },
             {
-                id: 1,
-                title: "Математическая статистика"
+                id: 2,
+                number: 91
             }
         ]
     },
@@ -52,21 +48,21 @@ const GROUPS = [
 ];
 
 
-export default class GroupsList extends React.Component {
+export default class SubjectsList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            groups: GROUPS
+            subjects: SUBJECTS
         }
     }
 
-    getSubjectsFromGroup(subjects) {
-        if (subjects && subjects.length > 0) {
+    getGroupsFromGroup(groups) {
+        if (groups && groups.length > 0) {
             return (
-                subjects.map((subject) => {
+                groups.map((group) => {
                     return (
-                        <li key={subject.id}>{subject.title}</li>
+                        <li>{group.number}</li>
                     );
                 })
             );
@@ -77,25 +73,25 @@ export default class GroupsList extends React.Component {
         return "#" + id;
     }
 
-    createGroupsControl() {
-        let groups = this.state.groups;
+    createSubjectsControl() {
+        let subjects = this.state.subjects;
 
         return (
-            groups.map((group) => {
+            subjects.map((subject) => {
                 return (
-                    <div key={group.id} className="accordion" id="accordionExample">
+                    <div key={subject.id} className="accordion" id="accordionExample">
                         <div className="card">
                             <div className="card-header" id="headingOne">
                                 <h5 className="mb-0">
-                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target={this.createId(group.id)} aria-expanded="true" aria-controls="collapseOne">
-                                        {group.number}
+                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target={this.createId(subject.id)} aria-expanded="true" aria-controls="collapseOne">
+                                        {subject.title}
                                     </button>
                                 </h5>
                             </div>
-                            <div id={group.id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div id={subject.id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul>
-                                        {this.getSubjectsFromGroup(group.subjects)}
+                                        {this.getGroupsFromGroup(subject.groups)}
                                     </ul>
                                 </div>
                              </div>
@@ -115,7 +111,7 @@ export default class GroupsList extends React.Component {
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Группы</h3>
+                        <h3>Предметы</h3>
                     </div>
                     <div className="actions">
                         <div className="action">
@@ -125,7 +121,7 @@ export default class GroupsList extends React.Component {
                 </div>
                 <hr />
 
-                {this.createGroupsControl()}
+                {this.createSubjectsControl()}
 
                 <br />
 
