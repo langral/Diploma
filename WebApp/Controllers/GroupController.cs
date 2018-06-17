@@ -68,11 +68,11 @@ namespace WebApp.Controllers
                 {
                     var exists = groupRepository.Get(r => r.Number == group.Number).SingleOrDefault();
                     if ((exists != null) && (exists.CourseId == group.CourseId))
-                        throw new Exception("Group already exists");
+                        throw new Exception("Курс уже существует!");
 
                     var course = await courseRepository.Get(group.CourseId);
                     if (course == null)
-                        throw new Exception("Course is not found"); 
+                        throw new Exception("Группа не найдена!"); 
 
                     Group newGroup = new Group()
                     {
@@ -100,8 +100,10 @@ namespace WebApp.Controllers
                         }
                     }
 
+                    string msg = String.Format("Группа '{0}' успешно создан!", newGroup.Number);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -122,8 +124,10 @@ namespace WebApp.Controllers
             {
                 await groupRepository.Delete(id);
 
+                string msg = String.Format("Курс был удален!");
                 Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                            new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
             catch (Exception e)
             {
@@ -142,7 +146,7 @@ namespace WebApp.Controllers
                     var newGroup = await groupRepository.Get(group.Id);
 
                     if (newGroup == null)
-                        throw new Exception("Group is not found");
+                        throw new Exception("Группа не найдена!");
 
                     newGroup.Number = group.Number.Value;
                     newGroup.CourseId = group.CourseId;
@@ -173,8 +177,10 @@ namespace WebApp.Controllers
                             }
                         }
 
+                    string msg = String.Format("Курс '{0}' успешно изменен!", newGroup.Number);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -199,7 +205,7 @@ namespace WebApp.Controllers
                 var group = await groupRepository.Get(id);
 
                 if (group == null)
-                    throw new Exception("Group is not found");
+                    throw new Exception("Группа не найдена!");
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync(JsonConvert.SerializeObject(group,

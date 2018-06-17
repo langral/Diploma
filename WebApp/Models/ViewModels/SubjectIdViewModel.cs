@@ -15,7 +15,7 @@ namespace WebApp.Models.ViewModels
         public string Name { get; set; }
        // [Required]
        // public List<Teacher> Teacher { get; set; }
-        [Required]
-        public List<Group> Group { get; set; }
+       // [Required]
+       // public List<Group> Group { get; set; }
     }
 }

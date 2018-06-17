@@ -1,8 +1,10 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import SubjectsList from '../subjects/subjectsList.jsx';
-import Teachers from '../teachers/teachersList.jsx';
+import TeachersRouting from '../teachers/teachersRouting.jsx';
+import SubjectsRouting from '../subjects/subjectsRouting.jsx';
+import CoursesRouting from '../courses/coursesRouting.jsx';
+import GroupsRouting from '../groups/groupsRouting.jsx';
 
 
 const AdminPage = () => {
@@ -27,8 +29,10 @@ export default class AdminRouting extends React.Component {
         return (
             <div className="admin-right-sidebar">
                 <Switch>
-                    <Route path="/admin/subjects" component={SubjectsList} />
-                    <Route path="/admin/teachers" component={Teachers} />
+                    <Route path="/admin/subjects" component={SubjectsRouting} />
+                    <Route path="/admin/courses" component={CoursesRouting} />
+                    <Route path="/admin/teachers" component={TeachersRouting} />
+                    <Route path="/admin/groups" component={GroupsRouting} />
                     <Route path="/admin" component={AdminPage} />
                 </Switch>
             </div>

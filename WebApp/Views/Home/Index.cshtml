@@ -4,7 +4,10 @@
     <meta name="viewport" content="width=device-width" />
     <script type="text/javascript">
         constants = {
-          login: '@Url.RouteUrl("DefaultApi", new {controller = "Auth", action = "login" })',
+            login: '@Url.RouteUrl("DefaultApi", new {controller = "Auth", action = "login" })',
+            subjects: '/api/Subject',
+            courses: '/api/Course',
+            groups: '/api/Group',
         }
     </script>
 
@@ -70,6 +73,10 @@
         .top-bar .actions .action{
             margin-left: 10px;
             
+        }
+
+        form .alert ul {
+            margin:0;
         }
         /*lists*/
 

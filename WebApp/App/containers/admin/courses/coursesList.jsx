@@ -2,11 +2,11 @@
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getSubjects } from './subjectAPI.jsx'
+import { getCourses } from './courseAPI.jsx'
 import Pagination from '../../utils/pagination.jsx'
-import { deleteSubject } from './subjectAPI.jsx'
+import { deleteCourse } from './courseAPI.jsx'
 
-export default class SubjectsList extends React.Component {
+export default class CoursesList extends React.Component {
     constructor(props) {
         super(props);
 
@@ -17,16 +17,17 @@ export default class SubjectsList extends React.Component {
             pageSize: 5
         }
 
-        this.getAllSubjects = this.getAllSubjects.bind(this);
+        this.getAllCourses = this.getAllCourses.bind(this);
         this.deleteHandler = this.deleteHandler.bind(this);
        // this.searchHandler = this.searchHandler.bind(this);
     }
 
-    getAllSubjects(page) {
+    getAllCourses(page) {
         let p = this.state.currentPage;
+
         if (page)
             p = page;
-        getSubjects(p,
+        getCourses(p,
             (pageInfo) => {
                 this.setState(pageInfo);
             },
@@ -37,46 +38,46 @@ export default class SubjectsList extends React.Component {
     }
 
     componentWillMount() {
-        this.getAllSubjects();
+        this.getAllCourses();
     }
 
     deleteHandler(e) {
         let id = e.target.dataset.id;
 
-        deleteSubject(id,
+        deleteCourse(id,
             (data) => {
-                this.getAllSubjects();
+                this.getAllCourses();
                 console.log("ok");
             },
             (error) => {
                 console.log("not");
             }
         );
-
+        
     }
 
     createId(str) {
         return "#" + str;
     }
 
-    createSubjectsTable() {
-        let subjects = this.state.records;
+    createCoursesTable() {
+        let courses = this.state.records;
 
         return (
-            subjects.map((subject) => {
+            courses.map((course) => {
                     return (
-                        <tr key="{subject.id}">
-                                <td>{subject.name}</td>
+                        <tr key="{course.id}">
+                            <td>{course.number}</td>
                                 <td>
-                                    <Link to={`/admin/subjects/edit/${subject.id}`}
+                                <Link to={`/admin/courses/edit/${course.id}`}
                                         className="btn btn-primary btn-sm" >Ред.
                                     </Link>
                                     &nbsp;
                                     <button
-                                    className="btn btn-danger btn-sm" data-toggle="modal" data-target={this.createId(subject.id)} >Удалить
+                                    className="btn btn-danger btn-sm" data-toggle="modal" data-target={this.createId(course.id)} >Удалить
                                     </button>
          
-                                    <div class="modal fade" id={subject.id} tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id={course.id} tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -86,10 +87,10 @@ export default class SubjectsList extends React.Component {
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    Вы уверены что хотите удалить данный предмет?
+                                                    Вы уверены что хотите удалить данный курс?
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary" onClick={this.deleteHandler} data-id={subject.id} data-dismiss="modal">Да</button>
+                                                <button type="button" class="btn btn-primary" onClick={this.deleteHandler} data-id={course.id} data-dismiss="modal">Да</button>
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет</button>
                                                 </div>
                                             </div>
@@ -119,11 +120,11 @@ export default class SubjectsList extends React.Component {
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Предметы</h3>
+                        <h3>Курсы</h3>
                     </div>
                     <div className="actions">
                         <div className="action">
-                            <Link to="/admin/subjects/create"
+                            <Link to="/admin/courses/create"
                                 className="btn btn-success">Добавить новый
                             </Link>
                         </div>
@@ -134,7 +135,7 @@ export default class SubjectsList extends React.Component {
                     <thead>
                         <tr>
                             <th>
-                                Предмет
+                                Курс
                             </th>
                             <th>
                                 <form className="form-inline form">
@@ -144,7 +145,7 @@ export default class SubjectsList extends React.Component {
                                         </div>
                                         <input type="text"
                                             className="form-control"
-                                            placeholder="введите предмет..."
+                                            placeholder="введите курс..."
                                             aria-label="Username"
                                             aria-describedby="basic-addon1"
                                             onChange={this.searchHandler}
@@ -155,12 +156,12 @@ export default class SubjectsList extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.createSubjectsTable()}
+                        {this.createCoursesTable()}
                     </tbody>
                 </table>
                 <Pagination currentPage={this.state.currentPage}
                             totalElements={this.state.totalElements}
-                            update={this.getAllSubjects} />
+                            update={this.getAllCourses} />
             </div>
         );
     }

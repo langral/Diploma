@@ -40,9 +40,10 @@ namespace WebApp.Controllers
 
                 PageInfo<Course> p = new PageInfo<Course>()
                 {
-                    CurrentPage = currentPage,
+                    CurrentPage = page,
                     TotalElements = (int)Math.Ceiling(courses.Count() / (double)defaultPageSize),
-                    Records = courses.OrderBy(x => x.Id).Skip((currentPage - 1) * defaultPageSize).Take(defaultPageSize)
+                    Records = (page != null) ? courses.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : courses,
+                    PageSize = defaultPageSize
                 };
 
                 return p;    
@@ -62,7 +63,7 @@ namespace WebApp.Controllers
                 {
                     var exists = courseRepository.Get(r => r.Number == course.Number).SingleOrDefault();
                     if (exists != null)
-                        throw new Exception("Course already exists");
+                        throw new Exception("Курс уже существует");
 
                     Course newCourse = new Course()
                     {
@@ -70,8 +71,10 @@ namespace WebApp.Controllers
                     };
                     await courseRepository.Insert(newCourse);
 
+                    string msg = String.Format("Курс '{0}' успешно создан!", course.Number);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -85,15 +88,16 @@ namespace WebApp.Controllers
             }          
         }
 
-        [HttpDelete("{id}")]
         public async Task DeleteCourseAsync(int id)
         {
             try
             {
                 await courseRepository.Delete(id);
 
+                string msg = String.Format("Курс успешно удален!");
                 Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
             catch(Exception e)
             {
@@ -112,14 +116,16 @@ namespace WebApp.Controllers
                     var newCourse = await courseRepository.Get(course.Id);
 
                     if (newCourse == null)
-                        throw new Exception("Course is not found");
+                        throw new Exception("Курс не найден!");
 
                     newCourse.Number = course.Number.Value;
 
                     await courseRepository.Update(newCourse);
 
+                    string msg = String.Format("Курс '{0}' успешно изменен!", course.Number);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -141,7 +147,7 @@ namespace WebApp.Controllers
                 var course = await courseRepository.Get(id);
 
                 if (course == null)
-                    throw new Exception("Course is not found");
+                    throw new Exception("Курс не найден!");
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync(JsonConvert.SerializeObject(course, 

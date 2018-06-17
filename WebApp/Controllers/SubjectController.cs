@@ -32,7 +32,7 @@ namespace WebApp.Controllers
         [HttpGet]
         public PageInfo<Subject> GetSubjects(int? page)
         {
-            int currentPage = page ?? 1;
+            //int currentPage = page ?? 1;
 
             try
             {
@@ -40,9 +40,10 @@ namespace WebApp.Controllers
 
                 PageInfo<Subject> p = new PageInfo<Subject>()
                 {
-                    CurrentPage = currentPage,
+                    CurrentPage = page,
                     TotalElements = (int)Math.Ceiling(subjects.Count() / (double)defaultPageSize),
-                    Records = subjects.OrderBy(x => x.Id).Skip((currentPage - 1) * defaultPageSize).Take(defaultPageSize)
+                    Records = (page != null) ? subjects.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : subjects,
+                    PageSize = defaultPageSize
                 };
 
                 return p;
@@ -62,7 +63,7 @@ namespace WebApp.Controllers
                 {
                     var exists = subjectRepository.Get(r => r.Name == subject.Name).SingleOrDefault();
                     if (exists != null)
-                        throw new Exception("Subject already exists");
+                        throw new Exception("Предмет уже существует!");
 
                     Subject newSubject = new Subject()
                     {
@@ -70,8 +71,10 @@ namespace WebApp.Controllers
                     };
                     await subjectRepository.Insert(newSubject);
 
+                    string msg = String.Format("Предмет '{0}' успешно создан!", subject.Name);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -85,15 +88,16 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
         public async Task DeleteSubjectAsync(int id)
         {
             try
             {
                 await subjectRepository.Delete(id);
 
+                string msg = String.Format("Предмет успешно удален!");
                 Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
             catch (Exception e)
             {
@@ -112,14 +116,16 @@ namespace WebApp.Controllers
                     var newSubject = await subjectRepository.Get(subject.Id);
 
                     if (newSubject == null)
-                        throw new Exception("Subject is not found");
+                        throw new Exception("Предмет не найден!");
 
                     newSubject.Name = subject.Name;
 
                     await subjectRepository.Update(newSubject);
 
+                    string msg = String.Format("Предмет '{0}' успешно изменен!", subject.Name);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -141,7 +147,7 @@ namespace WebApp.Controllers
                 var subject = await subjectRepository.Get(id);
 
                 if (subject == null)
-                    throw new Exception("Subject is not found");
+                    throw new Exception("Предмет не найден!");
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync(JsonConvert.SerializeObject(subject,

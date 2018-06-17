@@ -22,12 +22,8 @@ export function register(user, onSuccess, onError) {
         .then((response) => {
             return checkStatus(response);
         }).then((data) => {
-            console.log("data");
-            console.log(data);
             onSuccess && onSuccess(data);
         }).catch((error) => {
-            console.log("error");
-            console.log(error);
             onError && onError(error);
         });
 }

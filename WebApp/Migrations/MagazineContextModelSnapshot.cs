@@ -418,11 +418,12 @@ namespace WebApp.Migrations
                 {
                     b.HasOne("Models.Group", "Group")
                         .WithMany()
-                        .HasForeignKey("GroupId");
-
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
                     b.HasOne("Models.Subject", "Subject")
                         .WithMany()
-                        .HasForeignKey("SubjectId");
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Models.GroupTeacherMappingModel", b =>

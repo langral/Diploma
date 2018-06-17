@@ -28,7 +28,7 @@ export default class Admin extends React.Component {
                                 Предметы
                             </NavLink>
 
-                            <NavLink activeClassName="active" to="/admin/coursec" className="list-group-item list-group-item-action">
+                            <NavLink activeClassName="active" to="/admin/courses" className="list-group-item list-group-item-action">
                                 Курсы
                             </NavLink>
 

@@ -49,7 +49,7 @@ const TEACHERS = [
 ];
 
 
-class TeachersList extends React.Component {
+export default class TeachersList extends React.Component {
     constructor(props) {
         super(props);
 
@@ -143,51 +143,3 @@ class TeachersList extends React.Component {
     }
 };
 
-export default class Teachers extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            teachers: TEACHERS
-        }
-    }
-
-    createTeachersTable() {
-        let teachers = this.state.teachers;
-
-        return (
-            teachers.map((teacher) => {
-                return (
-                    <tr key="{teacher.id}">
-                        <td>{teacher.userName}</td>
-                        <td>{teacher.name}</td>
-                        <td>
-                            <Link to="/admin/teachers/edit"
-                                className="btn btn-primary btn-sm">Ред.
-                                    </Link>
-                                    &nbsp;
-                            <Link to="/admin/teachers/delete"
-                                className="btn btn-danger btn-sm">Удалить
-                             </Link>
-                        </td>
-                    </tr>
-                );
-            })
-        );
-    }
-
-
-    render() {
-
-
-        return (
-            <div>
-                <Switch>
-                    <Route path="/admin/teachers/create" component={TeacherForm} />
-                    <Route path="/admin/teachers/edit" component={TeacherForm} />
-                    <Route exact path='/admin/teachers/' component={TeachersList} />
-                </Switch>
-            </div>
-        );
-    }
-};
