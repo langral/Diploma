@@ -38,17 +38,18 @@ namespace WebApp.Controllers
         [HttpGet]
         public PageInfo<Group> GetGroups(int? page)
         {
-            int currentPage = page ?? 1;
+            // int currentPage = page ?? 1;
 
             try
             {
-                var courses = groupRepository.GetAll();
+                var groups = groupRepository.GetAll();
 
                 PageInfo<Group> p = new PageInfo<Group>()
                 {
-                    CurrentPage = currentPage,
-                    TotalElements = (int)Math.Ceiling(courses.Count() / (double)defaultPageSize),
-                    Records = courses.OrderBy(x => x.Id).Skip((currentPage - 1) * defaultPageSize).Take(defaultPageSize)
+                    CurrentPage = page,
+                    TotalElements = (int)Math.Ceiling(groups.Count() / (double)defaultPageSize),
+                    Records = (page != null) ? groups.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : groups,
+                    PageSize = defaultPageSize
                 };
 
                 return p;
@@ -100,7 +101,7 @@ namespace WebApp.Controllers
                         }
                     }
 
-                    string msg = String.Format("Группа '{0}' успешно создан!", newGroup.Number);
+                    string msg = String.Format("Группа '{0}' успешно создана!", newGroup.Number);
                     Response.StatusCode = StatusCodes.Status200OK;
                     await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
                                 new JsonSerializerSettings { Formatting = Formatting.Indented }));
@@ -117,14 +118,14 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+ 
         public async Task DeleteGroupAsync(int id)
         {
             try
             {
                 await groupRepository.Delete(id);
 
-                string msg = String.Format("Курс был удален!");
+                string msg = String.Format("Группа была удалена!");
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
                             new JsonSerializerSettings { Formatting = Formatting.Indented }));
@@ -177,7 +178,7 @@ namespace WebApp.Controllers
                             }
                         }
 
-                    string msg = String.Format("Курс '{0}' успешно изменен!", newGroup.Number);
+                    string msg = String.Format("Группа '{0}' успешно изменена!", newGroup.Number);
                     Response.StatusCode = StatusCodes.Status200OK;
                     await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
                                 new JsonSerializerSettings { Formatting = Formatting.Indented }));

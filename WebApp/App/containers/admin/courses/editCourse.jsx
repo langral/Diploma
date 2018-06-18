@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { getCourse } from './courseAPI.jsx'
 import { editCourse } from './courseAPI.jsx'
 
-export default class CreateCourse extends React.Component {
+export default class EditCourse extends React.Component {
     constructor(props) {
         super(props);
 
@@ -17,6 +17,11 @@ export default class CreateCourse extends React.Component {
 
         this.submitHandler = this.submitHandler.bind(this);
         this.nameHandler = this.nameHandler.bind(this);
+        this.goBack = this.goBack.bind(this);
+    }
+
+    goBack() {
+        this.props.history.goBack();
     }
 
     submitHandler(e) {
@@ -89,9 +94,22 @@ export default class CreateCourse extends React.Component {
     render() {
         let errors = this.state.errors;
         let success = this.state.success;
-        console.log(this.props.match.params.id);
+
         return (
             <div>
+                <div className="top-bar">
+                    <div className="header">
+                        <h3>Изменить курс</h3>
+                    </div>
+                    <div className="actions">
+                        <div className="action">
+                            <button onClick={this.goBack}
+                                className="btn btn-success">Назад
+                        </button>
+                        </div>
+                    </div>
+                </div>
+                <hr />
                 <form onSubmit={this.submitHandler}>
                     {this.showErrors(errors)}
                     {this.showSuccess(success)}
@@ -99,7 +117,7 @@ export default class CreateCourse extends React.Component {
                         <label htmlFor="subName">Название курса</label>
                         <input type="text" name="name" className="form-control" id="subName" placeholder="название курса..." value={this.state.number} onChange={this.nameHandler} />
                     </div>
-                    <button type="submit" className="btn btn-primary">Создать</button>
+                    <button type="submit" className="btn btn-primary">Сохранить</button>
                 </form>
             </div>
         );

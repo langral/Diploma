@@ -16,6 +16,7 @@ export default class CreateSubject extends React.Component {
 
         this.submitHandler = this.submitHandler.bind(this);
         this.nameHandler = this.nameHandler.bind(this);
+        this.goBack = this.goBack.bind(this);
     }
 
     submitHandler(e) {
@@ -73,12 +74,29 @@ export default class CreateSubject extends React.Component {
         this.setState({ name: e.target.value });
     }
 
+    goBack() {
+        this.props.history.goBack();
+    }
+
     render() {
         let errors = this.state.errors;
         let success = this.state.success;
 
         return (
             <div>
+                <div className="top-bar">
+                    <div className="header">
+                        <h3>Создать предмет</h3>
+                    </div>
+                    <div className="actions">
+                        <div className="action">
+                            <button onClick={this.goBack}
+                                className="btn btn-success">Назад
+                        </button>
+                        </div>
+                    </div>
+                </div>
+                <hr />
                 <form onSubmit={this.submitHandler}>
                     {this.showErrors(errors)}
                     {this.showSuccess(success)}

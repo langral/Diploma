@@ -5,6 +5,7 @@ import TeachersRouting from '../teachers/teachersRouting.jsx';
 import SubjectsRouting from '../subjects/subjectsRouting.jsx';
 import CoursesRouting from '../courses/coursesRouting.jsx';
 import GroupsRouting from '../groups/groupsRouting.jsx';
+import StudentsRouting from '../students/studentsRouting.jsx';
 
 
 const AdminPage = () => {
@@ -33,6 +34,7 @@ export default class AdminRouting extends React.Component {
                     <Route path="/admin/courses" component={CoursesRouting} />
                     <Route path="/admin/teachers" component={TeachersRouting} />
                     <Route path="/admin/groups" component={GroupsRouting} />
+                    <Route path="/admin/students" component={StudentsRouting} />
                     <Route path="/admin" component={AdminPage} />
                 </Switch>
             </div>

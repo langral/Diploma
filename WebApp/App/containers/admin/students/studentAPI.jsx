@@ -15,14 +15,14 @@
     })
 }
 
-export function createGroup(group, onSuccess, onError) {
-    return fetch(constants.groups,
+export function createStudent(student, onSuccess, onError) {
+    return fetch(constants.students,
         {
             method: "POST",
             headers: {
                 'content-type': 'application/json'
             },
-            body: JSON.stringify(group)
+            body: JSON.stringify(student)
         })
         .then((response) => {
             return checkStatus(response);
@@ -33,8 +33,8 @@ export function createGroup(group, onSuccess, onError) {
         });
 }
 
-export function getGroups(page, onSuccess, onError) {
-    return fetch(constants.groups + `/?page=${page}`,
+export function getStudents(page, onSuccess, onError) {
+    return fetch(constants.students + `/?page=${page}`,
         {
             method: "GET",
             headers: {
@@ -50,8 +50,8 @@ export function getGroups(page, onSuccess, onError) {
         });
 }
 
-export function deleteGroup(id, onSuccess, onError) {
-    return fetch(constants.groups + `/?id=${id}`,
+export function deleteStudent(id, onSuccess, onError) {
+    return fetch(constants.students + `/?id=${id}`,
         {
             method: "DELETE",
             headers: {
@@ -68,14 +68,14 @@ export function deleteGroup(id, onSuccess, onError) {
         });
 }
 
-export function editGroup(group, onSuccess, onError) {
-    return fetch(constants.groups,
+export function editStudent(student, onSuccess, onError) {
+    return fetch(constants.students,
         {
             method: "PUT",
             headers: {
                 'content-type': 'application/json'
             },
-            body: JSON.stringify(group)
+            body: JSON.stringify(student)
         })
         .then((response) => {
             return checkStatus(response);
@@ -87,8 +87,8 @@ export function editGroup(group, onSuccess, onError) {
         });
 }
 
-export function getGroup(id, onSuccess, onError) {
-    return fetch(constants.groups + `/${id}`,
+export function getStudent(id, onSuccess, onError) {
+    return fetch(constants.students + `/${id}`,
         {
             method: "GET",
             headers: {

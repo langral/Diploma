@@ -34,17 +34,16 @@ namespace WebApp.Controllers
         [HttpGet]
         public PageInfo<Student> GetStudents(int? page)
         {
-            int currentPage = page ?? 1;
-
             try
             {
                 var students = studentRepository.GetAll();
 
                 PageInfo<Student> p = new PageInfo<Student>()
                 {
-                    CurrentPage = currentPage,
+                    CurrentPage = page,
                     TotalElements = (int)Math.Ceiling(students.Count() / (double)defaultPageSize),
-                    Records = students.OrderBy(x => x.Id).Skip((currentPage - 1) * defaultPageSize).Take(defaultPageSize)
+                    Records = (page != null) ? students.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : students,
+                    PageSize = defaultPageSize
                 };
 
                 return p;
@@ -64,11 +63,11 @@ namespace WebApp.Controllers
                 {
                     var exists = studentRepository.Get(r => r.Name == student.Name).SingleOrDefault();
                     if ((exists != null) && (exists.GroupId == student.GroupId))
-                        throw new Exception("Student already exists");
+                        throw new Exception("Студент уже существует!");
 
                     var group = await groupRepository.Get(student.GroupId);
                     if (group == null)
-                        throw new Exception("Student is not found");
+                        throw new Exception("Группа не найдена!");
 
                     Student newStudent = new Student()
                     {
@@ -77,8 +76,10 @@ namespace WebApp.Controllers
                     };
                     await studentRepository.Insert(newStudent);
 
+                    string msg = String.Format("Студент '{0}' успешно создан!", newStudent.Name);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -92,15 +93,16 @@ namespace WebApp.Controllers
             }
         }
         
-        [HttpDelete("{id}")]
         public async Task DeleteStudentAsync(int id)
         {
             try
             {
                 await studentRepository.Delete(id);
 
+                string msg = String.Format("Студент успешно удален!");
                 Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync("Ok");
+                await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                            new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
             catch (Exception e)
             {
@@ -119,15 +121,17 @@ namespace WebApp.Controllers
                     var newStudent = await studentRepository.Get(student.Id);
 
                     if (newStudent == null)
-                        throw new Exception("Student is not found");
+                        throw new Exception("Студент не найден!");
 
                     newStudent.Name = student.Name;
                     newStudent.GroupId = student.GroupId;
 
                     await studentRepository.Update(newStudent);
 
+                    string msg = String.Format("Студент '{0}' успешно создан!", newStudent.Name);
                     Response.StatusCode = StatusCodes.Status200OK;
-                    await Response.WriteAsync("Ok");
+                    await Response.WriteAsync(JsonConvert.SerializeObject(new { success = msg },
+                                new JsonSerializerSettings { Formatting = Formatting.Indented }));
                 }
                 catch (Exception e)
                 {
@@ -149,7 +153,7 @@ namespace WebApp.Controllers
                 var student = await studentRepository.Get(id);
 
                 if (student == null)
-                    throw new Exception("Student is not found");
+                    throw new Exception("Студент не найден!");
 
                 Response.StatusCode = StatusCodes.Status200OK;
                 await Response.WriteAsync(JsonConvert.SerializeObject(student,

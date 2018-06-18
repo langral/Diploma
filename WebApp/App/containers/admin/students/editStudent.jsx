@@ -2,44 +2,24 @@
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getGroup } from './groupAPI.jsx'
-import { editGroup } from './groupAPI.jsx'
-import { getSubjects } from '../subjects/subjectAPI.jsx'
-import { getCourses } from '../courses/courseAPI.jsx'
+import { getStudent } from './studentAPI.jsx'
+import { editStudent } from './studentAPI.jsx'
+import { getGroups } from '../groups/groupAPI.jsx'
 
-export default class EditSubject extends React.Component {
+export default class EditStudent extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            number: "",
+            name: "",
             errors: [],
             success: "",
-            recordsSubject: [],
-            recordsCourse: []
+            recordsGroup: []
         };
 
         this.submitHandler = this.submitHandler.bind(this);
         this.nameHandler = this.nameHandler.bind(this);
         this.goBack = this.goBack.bind(this);
-    }
-
-    getSelectValues(select) {
-        var result = [];
-        var options = select && select.options;
-        var opt;
-
-        for (var i = 0, iLen = options.length; i < iLen; i++) {
-            opt = options[i];
-
-            if (opt.selected) {
-                result.push({
-                    id: opt.value,
-                    name: opt.text
-                });
-            }
-        }
-        return result;
     }
 
     submitHandler(e) {
@@ -48,11 +28,10 @@ export default class EditSubject extends React.Component {
         let data = {};
 
         data.id = this.props.match.params.id;
-        data.number = this.state.number;
-        data.courseId = this.refs.courseList.value;
-        data.subject = this.getSelectValues(this.refs.subjectList);
+        data.name = this.state.name;
+        data.groupId = this.refs.groupList.value;
 
-        editGroup(data,
+        editStudent(data,
             (data) => {
                 this.setState({ name: "", success: data.success });
             },
@@ -100,32 +79,20 @@ export default class EditSubject extends React.Component {
     }
 
     nameHandler(e) {
-        this.setState({ number: e.target.value });
+        this.setState({ name: e.target.value });
     }
 
     goBack() {
         this.props.history.goBack();
     }
 
-    getSubjects() {
-        let subjects = this.state.recordsSubject;
+    getGroups() {
+        let groups = this.state.recordsGroup;
 
         return (
-            subjects.map((subject) => {
+            groups.map((group) => {
                 return (
-                    <option value={subject.id}>{subject.name}</option>
-                );
-            })
-        );
-    }
-
-    getCourses() {
-        let courses = this.state.recordsCourse;
-
-        return (
-            courses.map((course) => {
-                return (
-                    <option value={course.id}>{course.number}</option>
+                    <option value={group.id}>{group.number}</option>
                 );
             })
         );
@@ -133,24 +100,17 @@ export default class EditSubject extends React.Component {
 
     componentWillMount() {
         let id = this.props.match.params.id;
-        getGroup(id,
+        getStudent(id,
             (data) => {
-                this.setState({ number: data.Number });
+                this.setState({ name: data.Name });
             },
             (error) => {
                 this.setState({ errors: error.errors });
             }
         );
-        getSubjects(null,
+        getGroups(null,
             (data) => {
-                this.setState({ recordsSubject: data.records })
-            },
-            (error) => {
-                console.log(error);
-            });
-        getCourses(null,
-            (data) => {
-                this.setState({ recordsCourse: data.records })
+                this.setState({ recordsGroup: data.records })
             },
             (error) => {
                 console.log(error);
@@ -165,7 +125,7 @@ export default class EditSubject extends React.Component {
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Изменение группу</h3>
+                        <h3>Изменение студента</h3>
                     </div>
                     <div className="actions">
                         <div className="action">
@@ -180,19 +140,13 @@ export default class EditSubject extends React.Component {
                     {this.showErrors(errors)}
                     {this.showSuccess(success)}
                     <div className="form-group">
-                        <label htmlFor="subName">Название группы</label>
-                        <input type="text" name="name" className="form-control" id="subName" placeholder="название предмета..." value={this.state.number} onChange={this.nameHandler} />
+                        <label htmlFor="subName">ФИО студента</label>
+                        <input type="text" name="name" className="form-control" id="subName" placeholder="фио..." value={this.state.name} onChange={this.nameHandler} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="exampleFormControlSelect2">Курсы</label>
-                        <select ref="courseList" className="form-control" id="exampleFormControlSelect2">
-                            {this.getCourses()}
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="exampleFormControlSelect2">Предметы</label>
-                        <select ref="subjectList" multiple className="form-control" id="exampleFormControlSelect2">
-                            {this.getSubjects()}
+                        <label htmlFor="exampleFormControlSelect2">Группы</label>
+                        <select ref="groupList" className="form-control" id="exampleFormControlSelect2">
+                            {this.getGroups()}
                         </select>
                     </div>
                     <button type="submit" className="btn btn-primary">Сохранить</button>

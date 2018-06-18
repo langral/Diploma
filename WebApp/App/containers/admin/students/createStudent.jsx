@@ -1,17 +1,18 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { createCourse } from './courseAPI.jsx'
+import { createStudent } from './studentAPI.jsx'
+import { getGroups } from '../groups/groupAPI.jsx'
 
-
-export default class CreateCourse extends React.Component {
+export default class CreateStudent extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            number: "",
+            name: "",
             errors: [],
-            success: ""
+            success: "",
+            recordsGroup: []
         };
 
         this.submitHandler = this.submitHandler.bind(this);
@@ -19,17 +20,17 @@ export default class CreateCourse extends React.Component {
         this.goBack = this.goBack.bind(this);
     }
 
-    goBack() {
-        this.props.history.goBack();
-    }
-
     submitHandler(e) {
         e.preventDefault();
         let self = this;
+        let data = {};
 
-        createCourse({ Number: this.state.number },
+        data.name = this.state.name;
+        data.groupId = this.refs.groupList.value;
+
+        createStudent(data,
             (data) => {
-                this.setState({ number: "", success: data.success });
+                this.setState({ name: "", success: data.success });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });
@@ -75,7 +76,33 @@ export default class CreateCourse extends React.Component {
     }
 
     nameHandler(e) {
-        this.setState({ number: e.target.value });
+        this.setState({ name: e.target.value });
+    }
+
+    componentWillMount() {
+        getGroups(null,
+            (data) => {
+                this.setState({ recordsGroup: data.records})
+            },
+            (error) => {
+                console.log(error);
+            });
+    }
+
+    getGroups() {
+        let groups = this.state.recordsGroup;
+
+        return (
+            groups.map((group) => {
+                return (
+                    <option value={group.id}>{group.number}</option>
+                );
+            })
+        );    
+    }
+
+    goBack() {
+        this.props.history.goBack();
     }
 
     render() {
@@ -86,7 +113,7 @@ export default class CreateCourse extends React.Component {
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Создать курс</h3>
+                        <h3>Создать студента</h3>
                     </div>
                     <div className="actions">
                         <div className="action">
@@ -101,8 +128,14 @@ export default class CreateCourse extends React.Component {
                     {this.showErrors(errors)}
                     {this.showSuccess(success)}
                     <div className="form-group">
-                        <label htmlFor="subName">Создание курса</label>
-                        <input type="text" name="name" className="form-control" id="subName" placeholder="название курса..." value={this.state.number} onChange={this.nameHandler} />
+                        <label htmlFor="subName">ФИО студента</label>
+                        <input type="text" name="name" className="form-control" id="subName" placeholder="фио..." value={this.state.name} onChange={this.nameHandler} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="exampleFormControlSelect2">Группы</label>
+                        <select ref="groupList" className="form-control" id="exampleFormControlSelect2">
+                            {this.getGroups()}
+                        </select>
                     </div>
                     <button type="submit" className="btn btn-primary">Создать</button>
                 </form>
