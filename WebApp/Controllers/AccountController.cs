@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Newtonsoft.Json;
 using WebApp.Infrastructure.Extenstions;
 using WebApp.Models.ViewModels;
 
@@ -29,25 +30,33 @@ namespace WebApp.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task Register([FromBody] RegisterViewModel model)
+        public async Task RegisterTeacher([FromBody] RegisterTeacherViewModel model)
         {
             try
             {
                 var userName = User.Identity.Name;
                 if (ModelState.IsValid)
                 {
-                    User user = new User { UserName = model.UserName };
-                    var result = await userManager.CreateAsync(user, model.Password);
+                    Teacher user = new Teacher {
+                        UserName = model.UserName,
+                        FIO = model.FIO,
+                        Email = model.Email
+                    };
 
+                    var result = await userManager.CreateAsync(user, model.Password);
+           
                     if (result.Succeeded)
                     {
 
-                        var managerResult = await userManager.AddToRoleAsync(user, "user");
+                        var managerResult = await userManager.AddToRoleAsync(user, "teacher");
 
                         if (managerResult.Succeeded)
                         {
                             Response.StatusCode = StatusCodes.Status200OK;
-                            await Response.WriteAsync("ok");
+                            var body = JsonConvert.SerializeObject(new { user.Id }, 
+                                                                    new JsonSerializerSettings { Formatting = Formatting.Indented });
+                
+                            await Response.WriteAsync(body);
                         }
 
                     }

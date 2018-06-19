@@ -2,6 +2,9 @@
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Input from '../../account/components/input.jsx'
+import { register } from './accountAPI.jsx';
+
 
 const SUBJECTS = [
     {
@@ -73,17 +76,39 @@ export default class TeacherForm extends React.Component {
 
         this.state = {
             userName: "",
+            password: "",
+            passwordConfirm: "",
             FIO: "",
             email: "",
+            errors: [],
             subjects: SUBJECTS,
             groups: GROUPS
         }
 
         this.goBack = this.goBack.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.getErrors = this.getErrors.bind(this);
+        this.updateForm = this.updateForm.bind(this);
     }
 
     goBack() {
         this.props.history.goBack();
+    }
+
+    getErrors() {
+        if (this.state.errors.length > 0) {
+            let errors = this.state.errors.map((error, index) => {
+                return (
+                    <p key={index}>{error}</p>
+                );
+            });
+
+            return (
+                <div className="alert alert-danger">
+                    {errors}
+                </div>
+            );
+        }
     }
 
     getSubjects() {
@@ -110,6 +135,35 @@ export default class TeacherForm extends React.Component {
         );
     }
 
+    updateForm(newState) {
+        this.setState(newState);
+    }
+
+    onSubmit(e) {
+        let self = this;
+
+        register({
+            userName: this.state.userName,
+            password: this.state.password,
+            passwordConfirm: this.state.passwordConfirm,
+            fio: this.state.FIO,
+            email: this.state.email
+        },
+            function (data) {
+                self.setState({ success: true });
+            },
+            function (error) {
+                if (error.errors) {
+                    self.setState({
+                        errors: error.errors,
+                        success: false
+                    });
+                }
+            }
+        );
+        e.preventDefault();
+    }
+
     render() {
 
 
@@ -129,26 +183,57 @@ export default class TeacherForm extends React.Component {
                 </div>
                 <hr />
                 
-                <form>
+                <form onSubmit={this.onSubmit} >
+                    {this.getErrors() && (this.getErrors())}
+
+                    <Input
+                        name="userName"
+                        label="Логин:"
+                        type="text"
+                        required={true}
+                        id="user-name"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="FIO"
+                        label="ФИО:"
+                        type="text"
+                        required={true}
+                        id="user-fio"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="password"
+                        label="Пароль:"
+                        type="password"
+                        required={true}
+                        id="user-password"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="passwordConfirm"
+                        label="Повторите пароль:"
+                        type="password"
+                        required={true}
+                        id="user-confirm-password"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="email"
+                        label="Email:"
+                        type="email"
+                        required={false}
+                        id="user-email"
+                        updateForm={this.updateForm}
+                    />
+
                     <div className="form-group">
-                        <label for="exampleFormControlInput1">Логин</label>
-                        <input type="name" className="form-control" id="exampleFormControlInput1" placeholder="Ivanov" />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlInput1">Пароль</label>
-                        <input type="password" className="form-control" id="exampleFormControlInput1" placeholder="пароль" />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlInput1">Повторите пароль</label>
-                        <input type="password" className="form-control" id="exampleFormControlInput1" placeholder="пароль" />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlInput1">Email</label>
-                        <input type="email" className="form-control" id="exampleFormControlInput1" placeholder="name@example.com" />
-                    </div>
-                        <div className="form-group">
-                            <label for="exampleFormControlSelect2">Предметы</label>
-                            <select multiple className="form-control" id="exampleFormControlSelect2">
+                        <label for="exampleFormControlSelect2">Предметы</label>
+                        <select multiple className="form-control" id="exampleFormControlSelect2">
                             {this.getSubjects()}
                             </select>
                     </div>
@@ -158,7 +243,11 @@ export default class TeacherForm extends React.Component {
                             {this.getGroups()}
                         </select>
                     </div>
-                    <button type="button" class="btn btn-primary">Зарегистрировать</button>
+
+                    <div className="form-group">
+                        <button type="submit" className="btn btn-primary">Зарегистрировать</button>
+                    </div>
+           
                 </form>
             </div>
         );

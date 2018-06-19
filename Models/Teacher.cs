@@ -4,8 +4,10 @@ using System.Text;
 
 namespace Models
 {
-    public class Teacher : User
-    {
+    public class Teacher : User { 
+    
+        public string FIO { get; set; }
+
         public Teacher()
         {
             this.Magazine = new HashSet<Magazine>();
