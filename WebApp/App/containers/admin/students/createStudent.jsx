@@ -30,7 +30,7 @@ export default class CreateStudent extends React.Component {
 
         createStudent(data,
             (data) => {
-                this.setState({ name: "", success: data.success });
+                this.setState({ name: "", success: data.success, errors: [] });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });

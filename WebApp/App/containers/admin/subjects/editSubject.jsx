@@ -30,7 +30,7 @@ export default class EditSubject extends React.Component {
 
         editSubject({ Id: this.props.match.params.id, Name: this.state.name },
             (data) => {
-                this.setState({ name: "", success: data.success });
+                this.setState({ name: "", success: data.success, errors: [] });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });

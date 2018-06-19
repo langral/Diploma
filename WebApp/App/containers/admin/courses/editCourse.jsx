@@ -30,7 +30,7 @@ export default class EditCourse extends React.Component {
 
         editCourse({ Id: this.props.match.params.id, Number: this.state.number },
             (data) => {
-                this.setState({ number: "", success: data.success });
+                this.setState({ number: "", success: data.success, errors: [] });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });

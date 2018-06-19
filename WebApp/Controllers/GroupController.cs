@@ -22,6 +22,7 @@ namespace WebApp.Controllers
         private IGenericRepository<Group> groupRepository;
         private IGenericRepository<Course> courseRepository;
         private IGenericRepository<Subject> subjectRepository;
+        private IEagerGenericRepository<GroupTeacherMappingModel> GroupTeacherMappingModelRepository;
         private IGenericRepository<GroupSubjectMappingModel> GroupSubjectMappingModelRepository;
         private int defaultPageSize = 5;
 
@@ -32,6 +33,7 @@ namespace WebApp.Controllers
             courseRepository = this.repositoryFacade.CreateGenericRepository<Course>();
             subjectRepository = this.repositoryFacade.CreateGenericRepository<Subject>();
             GroupSubjectMappingModelRepository = this.repositoryFacade.CreateGenericRepository<GroupSubjectMappingModel>();
+            GroupTeacherMappingModelRepository = this.repositoryFacade.CreateEagerGenericRepository<GroupTeacherMappingModel>() as IEagerGenericRepository<GroupTeacherMappingModel>;
         }
 
 
@@ -49,6 +51,56 @@ namespace WebApp.Controllers
                     CurrentPage = page,
                     TotalElements = (int)Math.Ceiling(groups.Count() / (double)defaultPageSize),
                     Records = (page != null) ? groups.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : groups,
+                    PageSize = defaultPageSize
+                };
+
+                return p;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet("{page}/{idTeacher}")]
+        public PageInfo<Group> GetGroupsForTeacherId(int? page, int idTeacher)
+        {
+            try
+            {
+                var subjects = subjectRepository.GetAll();
+                var mappingRecordsGT = GroupTeacherMappingModelRepository.GetEager(r => r.TeacherId == idTeacher, "Group").Select( r => new { id = r.GroupId, number = r.Group.Number });
+                var mappingRecordsGS = GroupSubjectMappingModelRepository.Get(r => mappingRecordsGT.SingleOrDefault(s => s.id == r.GroupId) != null)
+                                                                         .Select(r => new { r.GroupId, subject = subjects.FirstOrDefault(s => s.Id == r.SubjectId)})
+                                                                         .GroupBy(r => r.GroupId).ToList();
+
+              /*  var nRecords = GroupSubjectMappingModelRepository.Get(r => mappingRecordsGT.SingleOrDefault(s => s.id == r.GroupId) != null)
+                                                                 .Select(r => new { r.GroupId, r.Group.Number, subject = subjects.FirstOrDefault(s => s.Id == r.SubjectId) }).GroupBy(r => r.GroupId);
+*/
+                List<Group> records = new List<Group>();
+
+                foreach (var record in mappingRecordsGS)
+                {
+                    var number = groupRepository.Get(record.Key.Value);
+                    var awaiter = number.GetAwaiter();
+                    var group = new Group()
+                    {
+                        Number = awaiter.GetResult().Number,
+
+                    };
+
+                    foreach (var tmp in record)
+                    {
+                        group.Subject.Add(new Subject() { Name = tmp.subject.Name });
+                    }
+                    records.Add(group);
+                }
+                var nRecords = records.AsQueryable();
+
+                PageInfo<Group> p = new PageInfo<Group>()
+                {
+                    CurrentPage = page,
+                    TotalElements = (int)Math.Ceiling(nRecords.Count() / (double)defaultPageSize),
+                    Records = (page != null) ? nRecords.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : nRecords,
                     PageSize = defaultPageSize
                 };
 
@@ -208,8 +260,10 @@ namespace WebApp.Controllers
                 if (group == null)
                     throw new Exception("Группа не найдена!");
 
+                var subjectList = GroupSubjectMappingModelRepository.Get(r => r.GroupId == group.Id);
+
                 Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync(JsonConvert.SerializeObject(group,
+                await Response.WriteAsync(JsonConvert.SerializeObject(new { group, subjectList },
                     new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
             catch (Exception e)

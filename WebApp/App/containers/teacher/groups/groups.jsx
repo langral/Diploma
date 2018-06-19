@@ -3,62 +3,22 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
-
-const GROUPS = [
-    {
-        id: 1,
-        number: 11,
-        subjects: [
-            {
-                id: 1,
-                title: "Математический анализ"
-            },
-            {
-                id: 2,
-                title: "Алгебра и теория чисел"
-            }
-        ]
-    },
-    {
-        id: 2,
-        number: 22,
-        subjects: [
-            {
-                id: 1,
-                title: "Шаблоны проектирование"
-            },
-            {
-                id: 1,
-                title: "Математическая статистика"
-            }
-        ]
-    },
-    {
-        id: 4,
-        number: 91,
-        subjects: [
-            {
-                id: 1,
-                title: "Шаблоны проектирование"
-            },
-            {
-                id: 1,
-                title: "Математическая статистика"
-            }
-        ]
-    },
-
-];
-
+import Pagination from '../../utils/pagination.jsx'
+import { getGroupsForTeacherId } from './groupAPI.jsx'
 
 export default class GroupsList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            groups: GROUPS
+            records: [],
+            currentPage: 1,
+            totalElements: "",
+            pageSize: 5,
+            numberGroups: []
         }
+
+        this.getAllGroups = this.getAllGroups.bind(this);
     }
 
     getSubjectsFromGroup(subjects) {
@@ -66,7 +26,7 @@ export default class GroupsList extends React.Component {
             return (
                 subjects.map((subject) => {
                     return (
-                        <li key={subject.id}>{subject.title}</li>
+                        <li>{subject.name}</li>
                     );
                 })
             );
@@ -77,25 +37,44 @@ export default class GroupsList extends React.Component {
         return "#" + id;
     }
 
+    //IDTeacher
+    getAllGroups(page) {
+        let p = this.state.currentPage;
+        if (page)
+            p = page;
+        getGroupsForTeacherId({ page: p, idTeacher: 1 },
+            (pageInfo) => {
+                this.setState(pageInfo);
+            },
+            () => {
+                console.log('Error');
+            }
+        );        
+    }
+
+    componentWillMount() {
+        this.getAllGroups();
+    }
+
     createGroupsControl() {
-        let groups = this.state.groups;
+        let groups = this.state.records;
 
         return (
             groups.map((group) => {
-                return (
-                    <div key={group.id} className="accordion" id="accordionExample">
+                return (                   
+                    <div key={group.number} className="accordion" id="accordionExample">
                         <div className="card">
                             <div className="card-header" id="headingOne">
                                 <h5 className="mb-0">
-                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target={this.createId(group.id)} aria-expanded="true" aria-controls="collapseOne">
+                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target={this.createId(group.number)} aria-expanded="true" aria-controls="collapseOne">
                                         {group.number}
                                     </button>
                                 </h5>
                             </div>
-                            <div id={group.id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div id={group.number} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul>
-                                        {this.getSubjectsFromGroup(group.subjects)}
+                                        {this.getSubjectsFromGroup(group.subject)}
                                     </ul>
                                 </div>
                              </div>
@@ -128,6 +107,9 @@ export default class GroupsList extends React.Component {
                 {this.createGroupsControl()}
 
                 <br />
+                <Pagination currentPage={this.state.currentPage}
+                    totalElements={this.state.totalElements}
+                    update={this.getAllGroups} />
 
             </div>
         );

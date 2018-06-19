@@ -25,7 +25,7 @@ export default class CreateSubject extends React.Component {
 
         createSubject({ name: this.state.name },
             (data) => {
-                this.setState({ name: "", success: data.success });
+                this.setState({ name: "", success: data.success, errors: [] });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });

@@ -16,7 +16,9 @@ export default class EditSubject extends React.Component {
             errors: [],
             success: "",
             recordsSubject: [],
-            recordsCourse: []
+            recordsCourse: [],
+            selectedSubject: [],
+            selectedCourse: ""
         };
 
         this.submitHandler = this.submitHandler.bind(this);
@@ -54,7 +56,7 @@ export default class EditSubject extends React.Component {
 
         editGroup(data,
             (data) => {
-                this.setState({ name: "", success: data.success });
+                this.setState({ name: "", success: data.success, errors: [] });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });
@@ -109,12 +111,18 @@ export default class EditSubject extends React.Component {
 
     getSubjects() {
         let subjects = this.state.recordsSubject;
+        let selectSubject = this.state.selectedSubject;
 
         return (
             subjects.map((subject) => {
-                return (
-                    <option value={subject.id}>{subject.name}</option>
-                );
+                if (selectSubject.some((elem) => elem.SubjectId === subject.id ))
+                    return (
+                        <option selected value={subject.id}>{subject.name}</option>
+                    );
+                else
+                    return (
+                        <option value={subject.id}>{subject.name}</option>
+                    );
             })
         );
     }
@@ -124,9 +132,14 @@ export default class EditSubject extends React.Component {
 
         return (
             courses.map((course) => {
-                return (
-                    <option value={course.id}>{course.number}</option>
-                );
+                if (course.id === this.state.selectedCourse)
+                    return (
+                        <option selected value={course.id}>{course.number}</option>
+                    );
+                else
+                    return (
+                        <option value={course.id}>{course.number}</option>
+                    );
             })
         );
     }
@@ -135,7 +148,8 @@ export default class EditSubject extends React.Component {
         let id = this.props.match.params.id;
         getGroup(id,
             (data) => {
-                this.setState({ number: data.Number });
+                this.setState({
+                    number: data.group.Number, selectedSubject: data.subjectList, selectedCourse: data.group.CourseId });
             },
             (error) => {
                 this.setState({ errors: error.errors });

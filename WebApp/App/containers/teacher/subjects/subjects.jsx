@@ -3,61 +3,25 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
-
-const SUBJECTS = [
-    {
-        id: 1,
-        title: "Алгебра и теория чисел",
-        groups: [
-            {
-                id: 1,
-                number: 11
-            }
-        ]
-    },
-    {
-        id: 2,
-        title: "Шаблоны проектирования",
-        groups: [
-            {
-                id: 2,
-                number: 22
-            },
-            {
-                id: 2,
-                number: 91
-            }
-        ]
-    },
-    {
-        id: 3,
-        title: "Математическая статистика",
-        groups: [
-            {
-                id: 2,
-                number: 22
-            },
-            {
-                id: 2,
-                number: 91
-            }
-        ]
-    },
-
-];
-
+import Pagination from '../../utils/pagination.jsx'
+import { getSubjectsForTeacherId } from './subjectAPI.jsx'
 
 export default class SubjectsList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            subjects: SUBJECTS
+            records: [],
+            currentPage: 1,
+            totalElements: "",
+            pageSize: 5,
+            numberGroups: []
         }
+
+        this.getAllSubjects = this.getAllSubjects.bind(this);
     }
 
-    getGroupsFromGroup(groups) {
+    getGroupsFromSubject(groups) {
         if (groups && groups.length > 0) {
             return (
                 groups.map((group) => {
@@ -69,29 +33,48 @@ export default class SubjectsList extends React.Component {
         }
     }
 
+    getAllSubjects(page) {
+        let p = this.state.currentPage;
+        if (page)
+            p = page;
+        getSubjectsForTeacherId({ page: p, idTeacher: 1 },
+            (pageInfo) => {
+                this.setState(pageInfo);
+            },
+            () => {
+                console.log('Error');
+            }
+        );
+    }
+
+    componentWillMount() {
+        this.getAllSubjects();
+    }
+
     createId(id) {
         return "#" + id;
     }
 
     createSubjectsControl() {
-        let subjects = this.state.subjects;
+        let subjects = this.state.records;
 
         return (
             subjects.map((subject) => {
+                console.log(subject);
                 return (
-                    <div key={subject.id} className="accordion" id="accordionExample">
+                    <div key={subject.name} className="accordion" id="accordionExample">
                         <div className="card">
                             <div className="card-header" id="headingOne">
                                 <h5 className="mb-0">
-                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target={this.createId(subject.id)} aria-expanded="true" aria-controls="collapseOne">
-                                        {subject.title}
+                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target={this.createId(subject.name)} aria-expanded="true" aria-controls="collapseOne">
+                                        {subject.name}
                                     </button>
                                 </h5>
                             </div>
-                            <div id={subject.id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div id={subject.name} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul>
-                                        {this.getGroupsFromGroup(subject.groups)}
+                                        {this.getGroupsFromSubject(subject.group)}
                                     </ul>
                                 </div>
                              </div>

@@ -29,7 +29,7 @@ export default class CreateCourse extends React.Component {
 
         createCourse({ Number: this.state.number },
             (data) => {
-                this.setState({ number: "", success: data.success });
+                this.setState({ number: "", success: data.success, errors: [] });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });

@@ -20,12 +20,19 @@ namespace WebApp.Controllers
         protected readonly IRepositoryFacade repositoryFacade;
 
         private IGenericRepository<Subject> subjectRepository;
+        private IGenericRepository<Group> groupRepository;
+        private IEagerGenericRepository<TeacherSubjectMappingModel> TeacherSubjectMappingModelRepository;
+        private IGenericRepository<GroupSubjectMappingModel> GroupSubjectMappingModelRepository;
+
         private int defaultPageSize = 5;
 
         public SubjectController(IRepositoryFacade repositoryFacade)
         {
             this.repositoryFacade = repositoryFacade;
+            groupRepository = this.repositoryFacade.CreateGenericRepository<Group>();
             subjectRepository = this.repositoryFacade.CreateGenericRepository<Subject>();
+            GroupSubjectMappingModelRepository = this.repositoryFacade.CreateGenericRepository<GroupSubjectMappingModel>();
+            TeacherSubjectMappingModelRepository = this.repositoryFacade.CreateEagerGenericRepository<TeacherSubjectMappingModel>() as IEagerGenericRepository<TeacherSubjectMappingModel>;
         }
 
 
@@ -43,6 +50,56 @@ namespace WebApp.Controllers
                     CurrentPage = page,
                     TotalElements = (int)Math.Ceiling(subjects.Count() / (double)defaultPageSize),
                     Records = (page != null) ? subjects.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : subjects,
+                    PageSize = defaultPageSize
+                };
+
+                return p;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet("{page}/{idTeacher}")]
+        public PageInfo<Subject> GetSubjectsForTeacherId(int? page, int idTeacher)
+        {
+            try
+            {
+                var groups = groupRepository.GetAll();
+                var mappingRecordsTS = TeacherSubjectMappingModelRepository.GetEager(r => r.TeacherId == idTeacher, "Subject").Select(r => new { id = r.SubjectId, number = r.Subject.Name });
+                var mappingRecordsGS = GroupSubjectMappingModelRepository.Get(r => mappingRecordsTS.SingleOrDefault(s => s.id == r.SubjectId) != null)
+                                                                         .Select(r => new { r.SubjectId, group = groups.FirstOrDefault(s => s.Id == r.GroupId) })
+                                                                         .GroupBy(r => r.SubjectId).ToList();
+
+                /*  var nRecords = GroupSubjectMappingModelRepository.Get(r => mappingRecordsGT.SingleOrDefault(s => s.id == r.GroupId) != null)
+                                                                   .Select(r => new { r.GroupId, r.Group.Number, subject = subjects.FirstOrDefault(s => s.Id == r.SubjectId) }).GroupBy(r => r.GroupId);
+  */
+                List<Subject> records = new List<Subject>();
+
+                foreach (var record in mappingRecordsGS)
+                {
+                    var name = subjectRepository.Get(record.Key.Value);
+                    var awaiter = name.GetAwaiter();
+                    var subject = new Subject()
+                    {
+                        Name = awaiter.GetResult().Name,
+
+                    };
+
+                    foreach (var tmp in record)
+                    {
+                        subject.Group.Add(new Group() { Number = tmp.group.Number });
+                    }
+                    records.Add(subject);
+                }
+                var nRecords = records.AsQueryable();
+
+                PageInfo<Subject> p = new PageInfo<Subject>()
+                {
+                    CurrentPage = page,
+                    TotalElements = (int)Math.Ceiling(nRecords.Count() / (double)defaultPageSize),
+                    Records = (page != null) ? nRecords.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : nRecords,
                     PageSize = defaultPageSize
                 };
 

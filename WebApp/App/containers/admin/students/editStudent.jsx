@@ -14,7 +14,8 @@ export default class EditStudent extends React.Component {
             name: "",
             errors: [],
             success: "",
-            recordsGroup: []
+            recordsAllGroup: [],
+            selectedGroup: ""
         };
 
         this.submitHandler = this.submitHandler.bind(this);
@@ -32,8 +33,8 @@ export default class EditStudent extends React.Component {
         data.groupId = this.refs.groupList.value;
 
         editStudent(data,
-            (data) => {
-                this.setState({ name: "", success: data.success });
+            (data) => { 
+                this.setState({ name: "", success: data.success, errors: [] });
             },
             (error) => {
                 this.setState({ errors: error.errors, success: "" });
@@ -87,13 +88,18 @@ export default class EditStudent extends React.Component {
     }
 
     getGroups() {
-        let groups = this.state.recordsGroup;
+        let groups = this.state.recordsAllGroup;
 
         return (
             groups.map((group) => {
-                return (
-                    <option value={group.id}>{group.number}</option>
-                );
+                if (group.id === this.state.selectedGroup)
+                    return (
+                        <option selected value={group.id}>{group.number}</option>
+                    );
+                else 
+                    return (
+                        <option value={group.id}>{group.number}</option>
+                    );
             })
         );
     }
@@ -102,7 +108,9 @@ export default class EditStudent extends React.Component {
         let id = this.props.match.params.id;
         getStudent(id,
             (data) => {
-                this.setState({ name: data.Name });
+                this.setState({
+                    name: data.Name, selectedGroup: data.GroupId
+                });
             },
             (error) => {
                 this.setState({ errors: error.errors });
@@ -110,7 +118,7 @@ export default class EditStudent extends React.Component {
         );
         getGroups(null,
             (data) => {
-                this.setState({ recordsGroup: data.records })
+                this.setState({ recordsAllGroup: data.records })
             },
             (error) => {
                 console.log(error);
