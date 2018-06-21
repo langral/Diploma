@@ -29,6 +29,11 @@ namespace DBRepository
             return entities.FindAsync(id);
         }
 
+        public Task<T> Get(Guid id)
+        {
+            return entities.FindAsync(id);
+        }
+
         public IQueryable<T> Get(Func<T, bool> predicate)
         {
             return entities.Where(predicate).AsQueryable();

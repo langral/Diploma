@@ -62,7 +62,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("{page}/{idTeacher}")]
-        public PageInfo<Subject> GetSubjectsForTeacherId(int? page, int idTeacher)
+        public PageInfo<Subject> GetSubjectsForTeacherId(int? page, string idTeacher)
         {
             try
             {
@@ -145,6 +145,7 @@ namespace WebApp.Controllers
             }
         }
 
+        [HttpDelete]
         public async Task DeleteSubjectAsync(int id)
         {
             try

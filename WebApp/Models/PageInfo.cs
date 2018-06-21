@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApp.Models
 {
-    public class PageInfo<T> where T : BaseEntity
+    public class PageInfo<T> where T : class
     {
         public int? CurrentPage { get; set; }
         public int? PageSize { get; set; }

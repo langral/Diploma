@@ -179,7 +179,7 @@ export default class EditSubject extends React.Component {
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Изменение группу</h3>
+                        <h3>Изменить группу</h3>
                     </div>
                     <div className="actions">
                         <div className="action">

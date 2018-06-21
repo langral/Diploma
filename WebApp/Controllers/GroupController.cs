@@ -63,7 +63,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("{page}/{idTeacher}")]
-        public PageInfo<Group> GetGroupsForTeacherId(int? page, int idTeacher)
+        public PageInfo<Group> GetGroupsForTeacherId(int? page, string idTeacher)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace WebApp.Controllers
             }
         }
 
- 
+        [HttpDelete]
         public async Task DeleteGroupAsync(int id)
         {
             try

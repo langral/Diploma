@@ -88,6 +88,7 @@ namespace WebApp.Controllers
             }          
         }
 
+        [HttpDelete]
         public async Task DeleteCourseAsync(int id)
         {
             try

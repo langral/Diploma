@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Input from '../../account/components/input.jsx'
-import { register } from './accountAPI.jsx';
+import { register, createGroupTeacher, createSubjectTeacher } from './accountAPI.jsx';
 
 
 const SUBJECTS = [
@@ -82,7 +82,8 @@ export default class TeacherForm extends React.Component {
             email: "",
             errors: [],
             subjects: SUBJECTS,
-            groups: GROUPS
+            groups: GROUPS,
+            success: ""
         }
 
         this.goBack = this.goBack.bind(this);
@@ -159,8 +160,26 @@ export default class TeacherForm extends React.Component {
                         success: false
                     });
                 }
-            }
+            } 
         );
+       /* if (this.state.success) {
+            createGroupTeacher({ TeacherId: , Group: },
+                (pageInfo) => {
+                    this.setState(pageInfo);
+                },
+                () => {
+                    console.log('Error');
+                }
+            );
+            createSubjectTeacher(p,
+                (pageInfo) => {
+                    this.setState(pageInfo);
+                },
+                () => {
+                    console.log('Error');
+                }
+            );
+        }*/
         e.preventDefault();
     }
 

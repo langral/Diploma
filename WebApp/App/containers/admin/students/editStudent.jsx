@@ -133,7 +133,7 @@ export default class EditStudent extends React.Component {
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Изменение студента</h3>
+                        <h3>Изменить студента</h3>
                     </div>
                     <div className="actions">
                         <div className="action">

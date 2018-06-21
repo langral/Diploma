@@ -6,7 +6,7 @@ namespace Models
 {
     public class GroupTeacherMappingModel : BaseEntity
     {
-        public int? TeacherId { get; set; }
+        public string TeacherId { get; set; }
         public Teacher Teacher { get; set; }
 
         public int? GroupId { get; set; }

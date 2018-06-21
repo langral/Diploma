@@ -3,78 +3,100 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import TeacherForm from './techerForm.jsx';
-
-const TEACHERS = [
-    {
-        id: 1,
-        name: "Золотарёв С.В.",
-        userName: "ZolotarevSV"
-    },
-    {
-        id: 2,
-        name: "Вощинска Г.Э.",
-        userName: "VoshinskayGE"
-    },
-    {
-        id: 3,
-        name: "Артёмов М.А.",
-        userName: "ArtemovMA"
-    },
-    {
-        id: 4,
-        name: "Лазарев К.П.",
-        userName: "LazarevKP"
-    },
-    {
-        id: 5,
-        name: "Шишкина Э.Л.",
-        userName: "ShishkinaEL"
-    },
-    {
-        id: 6,
-        name: "Украинский П.С.",
-        userName: "UkrainskiPS"
-    },
-    {
-        id: 7,
-        name: "Зиновьев С.В.",
-        userName: "ZinovevSV"
-    },
-    {
-        id: 8,
-        name: "Барановский Е.С.",
-        userName: "BaranovskiES"
-    }
-];
-
+import TeacherForm from './teacherForm.jsx';
+import { getTeachers, deleteTeacher } from './accountAPI.jsx'
+import Pagination from '../../utils/pagination.jsx'
 
 export default class TeachersList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            teachers: TEACHERS
+            records: [],
+            currentPage: 1,
+            totalElements: "",
+            pageSize: 5
         }
+
+        this.deleteHandler = this.deleteHandler.bind(this);
+        this.getAllTeachers = this.getAllTeachers.bind(this);
+    }
+
+    getAllTeachers(page) {
+        let p = this.state.currentPage;
+        if (page)
+            p = page;
+        getTeachers(p,
+            (pageInfo) => {
+                this.setState(pageInfo);
+            },
+            () => {
+                console.log('Error');
+            }
+        );
+    }
+
+    componentWillMount() {
+        this.getAllTeachers();
+    }
+
+    createId(str) {
+        return "#" + str;
+    }
+
+    deleteHandler(e) {
+        let id = e.target.dataset.id;
+        deleteTeacher(id,
+            (data) => {
+                this.getAllTeachers();
+                console.log("ok");
+            },
+            (error) => {
+                console.log("not");
+            }
+        );
+
     }
 
     createTeachersTable() {
-        let teachers = this.state.teachers;
+        let teachers = this.state.records;
 
-        return (
+        return (            
             teachers.map((teacher) => {
+                console.log(teacher);
                 return (
                     <tr key="{teacher.id}">
                         <td>{teacher.userName}</td>
-                        <td>{teacher.name}</td>
+                        <td>{teacher.fio}</td>
                         <td>
                             <Link to="/admin/teachers/edit"
                                 className="btn btn-primary btn-sm">Ред.
                                     </Link>
                             &nbsp;
-                            <Link to="/admin/teachers/delete"
-                                className="btn btn-danger btn-sm">Удалить
-                             </Link>
+                            <button
+                                className="btn btn-danger btn-sm" data-toggle="modal" data-target={this.createId(teacher.id)} >Удалить
+                            </button>
+
+                            <div class="modal fade" id={teacher.id} tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Удаление</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Вы уверены что хотите удалить данного преподавателя?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" onClick={this.deleteHandler} data-id={teacher.id} data-dismiss="modal">Да</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
                         </td>
                     </tr>
                 );
@@ -130,14 +152,9 @@ export default class TeachersList extends React.Component {
                         {this.createTeachersTable()}
                     </tbody>
                 </table>
-                <nav aria-label="Page navigation example">
-                    <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#">&#60;&#60;</a></li>
-                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">2</a></li>
-                        <li className="page-item"><a className="page-link" href="#">&#62;&#62;</a></li>
-                    </ul>
-                </nav>
+                <Pagination currentPage={this.state.currentPage}
+                    totalElements={this.state.totalElements}
+                    update={this.getAllGroups} />
             </div>
         );
     }

@@ -101,7 +101,7 @@ export default class CreateSubject extends React.Component {
                     {this.showErrors(errors)}
                     {this.showSuccess(success)}
                     <div className="form-group">
-                        <label htmlFor="subName">Создание предмета</label>
+                        <label htmlFor="subName">Название предмета</label>
                         <input type="text" name="name" className="form-control" id="subName" placeholder="название предмета..." value={this.state.name} onChange={this.nameHandler} />
                     </div>
                     <button type="submit" className="btn btn-primary">Создать</button>

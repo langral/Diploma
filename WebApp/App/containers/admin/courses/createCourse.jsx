@@ -101,7 +101,7 @@ export default class CreateCourse extends React.Component {
                     {this.showErrors(errors)}
                     {this.showSuccess(success)}
                     <div className="form-group">
-                        <label htmlFor="subName">Создание курса</label>
+                        <label htmlFor="subName">Название курса</label>
                         <input type="text" name="name" className="form-control" id="subName" placeholder="название курса..." value={this.state.number} onChange={this.nameHandler} />
                     </div>
                     <button type="submit" className="btn btn-primary">Создать</button>
