@@ -131,7 +131,7 @@ export default class TeacherForm extends React.Component {
     getGroupsBySubjects(e) {
 
         let listOf = this.getArrayOfSelectedSubjectsFromSelectList();
-
+        console.log(listOf);
         getGroupsBySubject(
             listOf,
             (data) => {

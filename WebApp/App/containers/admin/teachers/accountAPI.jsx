@@ -1,4 +1,7 @@
-﻿function checkStatus(response) {
+﻿import { getItem } from '../../../utils/localStorageTools.jsx'
+import { AUTH_KEY } from '../../../settings/settings.jsx'
+
+function checkStatus(response) {
     if (response.ok) {
         return Promise.resolve(response.json())
     }
@@ -12,12 +15,17 @@
 
 
 export function register(user, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.register,
         {
             method: "POST",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(user)
         })
         .then((response) => {
@@ -30,12 +38,17 @@ export function register(user, onSuccess, onError) {
 }
 
 export function getTeachers(page, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.teachers + `/?page=${page}`,
         {
             method: "GET",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);
@@ -47,12 +60,17 @@ export function getTeachers(page, onSuccess, onError) {
 }
 
 export function deleteTeacher(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+
+    headers['Authorization'] = auth.Authorization;
     return fetch(constants.teachers + `/?id=${id}`,
         {
             method: "DELETE",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);
@@ -65,12 +83,16 @@ export function deleteTeacher(id, onSuccess, onError) {
 }
 
 export function createGroupTeacher(gt, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+
     return fetch(constants.teachersAssingToGroups,
         {
             method: "POST",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(gt)
         })
         .then((response) => {
@@ -83,12 +105,16 @@ export function createGroupTeacher(gt, onSuccess, onError) {
 }
 
 export function createSubjectTeacher(st, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+
     return fetch(constants.teachersAssingToSubject,
         {
             method: "POST",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(st)
         })
         .then((response) => {
@@ -102,12 +128,17 @@ export function createSubjectTeacher(st, onSuccess, onError) {
 
 
 export function getGroupsBySubject(data, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.groupsBySubjects,
         {
             method: "POST",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(data)
         })
         .then((response) => {

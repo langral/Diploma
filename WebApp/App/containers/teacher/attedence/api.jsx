@@ -18,7 +18,9 @@ function checkStatus(response) {
     })
 }
 
-export function createGroup(group, onSuccess, onError) {
+
+export function getCourses(onSuccess, onError) {
+
     let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
 
     let headers = {
@@ -27,11 +29,101 @@ export function createGroup(group, onSuccess, onError) {
     if (!auth) return;
     headers['Authorization'] = auth.Authorization;
 
-    return fetch(constants.groups,
+    return fetch(constants.courses + `/?page=${null}`,
+        {
+            method: "GET",
+            headers
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+
+export function getGroupss(onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.groups + `/?page=${null}`,
+        {
+            method: "GET",
+            headers
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+export function getAttendence(page, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+    return fetch(constants.magazine + `/?page=${page}`,
+        {
+            method: "GET",
+            headers
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+
+export function getSubjects( onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.subjects + `/?page=${null}`,
+        {
+            method: "GET",
+            headers
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+
+export function createMagazine(magazine, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.magazineCreate,
         {
             method: "POST",
             headers,
-            body: JSON.stringify(group)
+            body: JSON.stringify(magazine)
         })
         .then((response) => {
             return checkStatus(response);
@@ -42,7 +134,8 @@ export function createGroup(group, onSuccess, onError) {
         });
 }
 
-export function getGroups(page, onSuccess, onError) {
+
+export function getMagazine(id, onSuccess, onError) {
     let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
     let headers = {
         'content-type': 'application/json',
@@ -50,69 +143,21 @@ export function getGroups(page, onSuccess, onError) {
     if (!auth) return;
     headers['Authorization'] = auth.Authorization;
 
-    return fetch(constants.groups + `/?page=${page}`,
+    return fetch(constants.getMagazineById + `/${id}`,
         {
             method: "GET",
-            headers
-        })
-        .then((response) => {
-            return checkStatus(response);
-        }).then((data) => {
-            onSuccess && onSuccess(data);
-        }).catch((error) => {
-            onError && onError(error);
-        });
-}
-
-export function deleteGroup(id, onSuccess, onError) {
-    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
-    let headers = {
-        'content-type': 'application/json',
-    }
-    if (!auth) return;
-    headers['Authorization'] = auth.Authorization;
-
-    return fetch(constants.groups + `/?id=${id}`,
-        {
-            method: "DELETE",
-            headers
-        })
-        .then((response) => {
-            return checkStatus(response);
-        }).then((data) => {
-            onSuccess && onSuccess(data);
-        }).catch((error) => {
-            console.log(error);
-            onError && onError(error);
-        });
-}
-
-export function editGroup(group, onSuccess, onError) {
-    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
-    let headers = {
-        'content-type': 'application/json',
-    }
-    if (!auth) return;
-    headers['Authorization'] = auth.Authorization;
-
-    return fetch(constants.groups,
-        {
-            method: "PUT",
             headers,
-            body: JSON.stringify(group)
         })
         .then((response) => {
             return checkStatus(response);
         }).then((data) => {
             onSuccess && onSuccess(data);
         }).catch((error) => {
-            console.log(error);
             onError && onError(error);
         });
 }
 
-export function getGroup(id, onSuccess, onError) {
-
+export function magazineCreateRecords(data, onSuccess, onError) {
     let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
     let headers = {
         'content-type': 'application/json',
@@ -120,17 +165,17 @@ export function getGroup(id, onSuccess, onError) {
     if (!auth) return;
     headers['Authorization'] = auth.Authorization;
 
-    return fetch(constants.groups + `/${id}`,
+    return fetch(constants.magazineCreateRecord,
         {
-            method: "GET",
-            headers
+            method: "POST",
+            headers,
+            body: JSON.stringify(data)
         })
         .then((response) => {
             return checkStatus(response);
         }).then((data) => {
             onSuccess && onSuccess(data);
         }).catch((error) => {
-            console.log(error);
             onError && onError(error);
         });
 }

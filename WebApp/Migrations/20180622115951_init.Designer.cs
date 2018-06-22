@@ -12,8 +12,8 @@ using WebApp.Models;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    [Migration("20180619224643_Add_Field_FIO_To_The_Teacher_Model")]
-    partial class Add_Field_FIO_To_The_Teacher_Model
+    [Migration("20180622115951_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -197,15 +197,13 @@ namespace WebApp.Migrations
 
                     b.Property<int?>("GroupId");
 
-                    b.Property<int?>("TeacherId");
-
-                    b.Property<string>("TeacherId1");
+                    b.Property<string>("TeacherId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("TeacherId1");
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("GroupTeacherMappingModel");
                 });
@@ -227,15 +225,25 @@ namespace WebApp.Migrations
 
                     b.Property<int>("Semester");
 
+                    b.Property<string>("Specialty");
+
                     b.Property<int>("SubjectId");
 
-                    b.Property<int>("TeacherId");
+                    b.Property<string>("TeacherId");
 
                     b.Property<string>("TypeOfClass");
 
-                    b.Property<int>("Year");
+                    b.Property<string>("Year");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("Magazine");
                 });
@@ -291,15 +299,13 @@ namespace WebApp.Migrations
 
                     b.Property<int?>("SubjectId");
 
-                    b.Property<int?>("TeacherId");
-
-                    b.Property<string>("TeacherId1");
+                    b.Property<string>("TeacherId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectId");
 
-                    b.HasIndex("TeacherId1");
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("TeacherSubjectMappingModel");
                 });
@@ -435,7 +441,29 @@ namespace WebApp.Migrations
 
                     b.HasOne("Models.Teacher", "Teacher")
                         .WithMany()
-                        .HasForeignKey("TeacherId1");
+                        .HasForeignKey("TeacherId");
+                });
+
+            modelBuilder.Entity("Models.Magazine", b =>
+                {
+                    b.HasOne("Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Models.Teacher", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
                 });
 
             modelBuilder.Entity("Models.TeacherSubjectMappingModel", b =>
@@ -446,7 +474,7 @@ namespace WebApp.Migrations
 
                     b.HasOne("Models.Teacher", "Teacher")
                         .WithMany()
-                        .HasForeignKey("TeacherId1");
+                        .HasForeignKey("TeacherId");
                 });
 #pragma warning restore 612, 618
         }

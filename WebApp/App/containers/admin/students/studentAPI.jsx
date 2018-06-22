@@ -1,4 +1,7 @@
-﻿function checkStatus(response) {
+﻿import { getItem } from '../../../utils/localStorageTools.jsx'
+import { AUTH_KEY } from '../../../settings/settings.jsx'
+
+function checkStatus(response) {
     if (response.ok) {
         try {
             return Promise.resolve(response.json())
@@ -16,12 +19,17 @@
 }
 
 export function createStudent(student, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.students,
         {
             method: "POST",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(student)
         })
         .then((response) => {
@@ -34,12 +42,17 @@ export function createStudent(student, onSuccess, onError) {
 }
 
 export function getStudents(page, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.students + `/?page=${page}`,
         {
             method: "GET",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);
@@ -51,12 +64,17 @@ export function getStudents(page, onSuccess, onError) {
 }
 
 export function deleteStudent(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.students + `/?id=${id}`,
         {
             method: "DELETE",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);
@@ -69,12 +87,17 @@ export function deleteStudent(id, onSuccess, onError) {
 }
 
 export function editStudent(student, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.students,
         {
             method: "PUT",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(student)
         })
         .then((response) => {
@@ -88,12 +111,17 @@ export function editStudent(student, onSuccess, onError) {
 }
 
 export function getStudent(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.students + `/${id}`,
         {
             method: "GET",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);

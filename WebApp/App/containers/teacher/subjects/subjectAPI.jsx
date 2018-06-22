@@ -1,4 +1,7 @@
-﻿function checkStatus(response) {
+﻿import { getItem } from '../../../utils/localStorageTools.jsx'
+import { AUTH_KEY } from '../../../settings/settings.jsx'
+
+function checkStatus(response) {
     if (response.ok) {
         try {
             return Promise.resolve(response.json())

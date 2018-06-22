@@ -11,13 +11,13 @@ namespace WebApp.Models.ViewModels
         [Required]
         public int Id { get; set; }
         [Required]
-        public int TeacherId { get; set; }
+        public string TeacherId { get; set; }
         [Required]
         public int SubjectId { get; set; }
         [Required]
         public int Semester { get; set; }
         [Required]
-        public int Year { get; set; }
+        public string Year { get; set; }
         [Required]
         public string Filial { get; set; }
         [Required]

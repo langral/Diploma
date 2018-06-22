@@ -12,22 +12,24 @@ namespace Models
             this.Comment = new HashSet<Comment>();
         }
 
-        public int TeacherId { get; set; }
+        public string TeacherId { get; set; }
         public int SubjectId { get; set; }
         public int GroupId { get; set; }
         public int CourseId { get; set; }
 
         public int Semester { get; set; }
-        public int Year { get; set; }
+        public string Year { get; set; }
         public string Filial { get; set; }
         public string Faculty { get; set; }
         public string Level { get; set; }
+        public string Specialty { get; set; }
         public string TypeOfClass { get; set; }
 
-        public Teacher Teacher;
-        public Subject Subject;
-        public Subject Group;
-        public Subject Course;
+        public Teacher Teacher { get; set; }
+        public Subject Subject { get; set; }
+        public Group Group { get; set; }
+        public Course Course { get; set; }
+
         public ICollection<Record> Record;
         public ICollection<Comment> Comment;
     }

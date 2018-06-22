@@ -1,4 +1,7 @@
-﻿function checkStatus(response) {
+﻿import { getItem } from '../../../utils/localStorageTools.jsx'
+import { AUTH_KEY } from '../../../settings/settings.jsx'
+
+function checkStatus(response) {
     if (response.ok) {
         try {
             return Promise.resolve(response.json())
@@ -16,12 +19,17 @@
 }
 
 export function createSubject(subject, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.subjects,
         {
             method: "POST",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(subject)
         })
         .then((response) => {
@@ -34,12 +42,17 @@ export function createSubject(subject, onSuccess, onError) {
 }
 
 export function getSubjects(page, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.subjects + `/?page=${page}`,
         {
             method: "GET",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);
@@ -51,12 +64,17 @@ export function getSubjects(page, onSuccess, onError) {
 }
 
 export function deleteSubject(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.subjects + `/?id=${id}`,
         {
             method: "DELETE",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);
@@ -69,12 +87,17 @@ export function deleteSubject(id, onSuccess, onError) {
 }
 
 export function editSubject(subject, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.subjects,
         {
             method: "PUT",
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(subject)
         })
         .then((response) => {
@@ -88,12 +111,17 @@ export function editSubject(subject, onSuccess, onError) {
 }
 
 export function getSubject(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
     return fetch(constants.subjects + `/${id}`,
         {
             method: "GET",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers
         })
         .then((response) => {
             return checkStatus(response);

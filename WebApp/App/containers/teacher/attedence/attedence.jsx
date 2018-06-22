@@ -5,48 +5,56 @@ import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AttedenceForm from './attedenceForm.jsx';
 import AttedenceTable from './attedenceTable.jsx';
-
-const ATTEDENCE = [
-    {
-        id: 1,
-        group: "11",
-        subject: "Алгебра и теория чисел",
-
-    },
-    {
-        id: 2,
-        group: "22",
-        subject: "Шаблоны проектирования",
-    },
-    {
-        id: 3,
-        group: "91",
-        subject: "Шаблоны проектирования",
-
-    }
-];
-
+import { getAttendence } from './api.jsx'
+import Pagination from '../../utils/pagination.jsx'
 
 class AttedenceList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            attedence: ATTEDENCE
+            records: [],
+            currentPage: 1,
+            totalElements: "",
+            pageSize: 5
         }
+
+        this.getAllAttendences = this.getAllAttendences.bind(this);
     }
 
-    createAttedenceTable() {
-        let attedence = this.state.attedence;
+    componentWillMount() {
+        this.getAllAttendences();
+    }
 
+    getAllAttendences(page) {
+
+        let p = this.state.currentPage;
+
+        if (page)
+            p = page;
+        getAttendence(p,
+            (pageInfo) => {
+                this.setState(pageInfo);
+            },
+            () => {
+                console.log('Error');
+            }
+        );
+     }
+
+    createAttedenceTable() {
+        let attedence = this.state.records;
+        console.log(attedence);
         return (
             attedence.map((atd) => {
                 return (
                     <tr key="{atd.id}">
-                        <td>{atd.subject}</td>
-                        <td>{atd.group}</td>
+                        <td>{atd.subject.name}</td>
+                        <td>{atd.group.number}</td>
+                        <td>{atd.faculty}</td>
+                        <td>{atd.specialty}</td>
                         <td>
-                            <Link to="/teacher/attedence/open"
+                            <Link to={`/teacher/attedence/open/${atd.id}`}
                                 className="btn btn-primary btn-sm">Открыть
                             </Link>
                             &nbsp;
@@ -89,6 +97,12 @@ class AttedenceList extends React.Component {
                                 Группа
                             </th>
                             <th>
+                                Факультет
+                            </th>
+                            <th>
+                                Направление
+                            </th>
+                            <th>
                                 <form className="form-inline form">
                                     <div className="input-group">
                                         <div className="input-group-prepend">
@@ -108,6 +122,10 @@ class AttedenceList extends React.Component {
                         {this.createAttedenceTable()}
                     </tbody>
                 </table>
+
+                <Pagination currentPage={this.state.currentPage}
+                    totalElements={this.state.totalElements}
+                    update={this.getAllAttendences} />
 
             </div>
         );
@@ -131,7 +149,7 @@ export default class Attedence extends React.Component {
             <div>
                 <Switch>
                     <Route path="/teacher/attedence/create" component={AttedenceForm} />
-                    <Route path="/teacher/attedence/open" component={AttedenceTable} />
+                    <Route path="/teacher/attedence/open/:id" component={AttedenceTable} />
                     <Route exact path='/teacher/attedence/' component={AttedenceList} />
                 </Switch>
             </div>

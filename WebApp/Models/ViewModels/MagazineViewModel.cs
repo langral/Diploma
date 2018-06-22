@@ -9,13 +9,17 @@ namespace WebApp.Models.ViewModels
     public class MagazineViewModel
     {
         [Required]
-        public int TeacherId { get; set; }
+        public string TeacherId { get; set; }
         [Required]
         public int SubjectId { get; set; }
         [Required]
+        public int GroupId { get; set; }
+        [Required]
+        public int CourseId { get; set; }
+        [Required]
         public int Semester { get; set; }
         [Required]
-        public int Year { get; set; }
+        public string Year { get; set; }
         [Required]
         public string Filial { get; set; }
         [Required]
@@ -24,5 +28,7 @@ namespace WebApp.Models.ViewModels
         public string Level { get; set; }
         [Required]
         public string TypeOfClass { get; set; }
+        [Required]
+        public string Specialty { get; set; }
     }
 }

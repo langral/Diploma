@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace WebApp.Migrations
 {
-    public partial class Initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,6 +27,7 @@ namespace WebApp.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
+                    FIO = table.Column<string>(nullable: true),
                     Id = table.Column<string>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
@@ -47,6 +48,21 @@ namespace WebApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comment",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    MagazineId = table.Column<int>(nullable: false),
+                    Note = table.Column<string>(nullable: true),
+                    StudentId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comment", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,27 +93,15 @@ namespace WebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Magazine",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    SubjectId = table.Column<int>(nullable: false),
-                    TeacherId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Magazine", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Record",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(nullable: false),
                     MagazineId = table.Column<int>(nullable: false),
-                    StudentId = table.Column<int>(nullable: false)
+                    StudentId = table.Column<int>(nullable: false),
+                    Visit = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -244,8 +248,7 @@ namespace WebApp.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     GroupId = table.Column<int>(nullable: true),
-                    TeacherId = table.Column<int>(nullable: true),
-                    TeacherId1 = table.Column<string>(nullable: true)
+                    TeacherId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -255,13 +258,13 @@ namespace WebApp.Migrations
                         column: x => x.GroupId,
                         principalTable: "Group",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GroupTeacherMappingModel_AspNetUsers_TeacherId1",
-                        column: x => x.TeacherId1,
+                        name: "FK_GroupTeacherMappingModel_AspNetUsers_TeacherId",
+                        column: x => x.TeacherId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -281,13 +284,60 @@ namespace WebApp.Migrations
                         column: x => x.GroupId,
                         principalTable: "Group",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GroupSubjectMappingModel_Subject_SubjectId",
                         column: x => x.SubjectId,
                         principalTable: "Subject",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Magazine",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CourseId = table.Column<int>(nullable: false),
+                    Faculty = table.Column<string>(nullable: true),
+                    Filial = table.Column<string>(nullable: true),
+                    GroupId = table.Column<int>(nullable: false),
+                    Level = table.Column<string>(nullable: true),
+                    Semester = table.Column<int>(nullable: false),
+                    Specialty = table.Column<string>(nullable: true),
+                    SubjectId = table.Column<int>(nullable: false),
+                    TeacherId = table.Column<string>(nullable: true),
+                    TypeOfClass = table.Column<string>(nullable: true),
+                    Year = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Magazine", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Magazine_Course_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Course",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Magazine_Group_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Group",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Magazine_Subject_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subject",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Magazine_AspNetUsers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -297,8 +347,7 @@ namespace WebApp.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SubjectId = table.Column<int>(nullable: true),
-                    TeacherId = table.Column<int>(nullable: true),
-                    TeacherId1 = table.Column<string>(nullable: true)
+                    TeacherId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -308,13 +357,13 @@ namespace WebApp.Migrations
                         column: x => x.SubjectId,
                         principalTable: "Subject",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TeacherSubjectMappingModel_AspNetUsers_TeacherId1",
-                        column: x => x.TeacherId1,
+                        name: "FK_TeacherSubjectMappingModel_AspNetUsers_TeacherId",
+                        column: x => x.TeacherId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -372,9 +421,29 @@ namespace WebApp.Migrations
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupTeacherMappingModel_TeacherId1",
+                name: "IX_GroupTeacherMappingModel_TeacherId",
                 table: "GroupTeacherMappingModel",
-                column: "TeacherId1");
+                column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Magazine_CourseId",
+                table: "Magazine",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Magazine_GroupId",
+                table: "Magazine",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Magazine_SubjectId",
+                table: "Magazine",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Magazine_TeacherId",
+                table: "Magazine",
+                column: "TeacherId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TeacherSubjectMappingModel_SubjectId",
@@ -382,9 +451,9 @@ namespace WebApp.Migrations
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeacherSubjectMappingModel_TeacherId1",
+                name: "IX_TeacherSubjectMappingModel_TeacherId",
                 table: "TeacherSubjectMappingModel",
-                column: "TeacherId1");
+                column: "TeacherId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -405,7 +474,7 @@ namespace WebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Course");
+                name: "Comment");
 
             migrationBuilder.DropTable(
                 name: "GroupSubjectMappingModel");
@@ -427,6 +496,9 @@ namespace WebApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Course");
 
             migrationBuilder.DropTable(
                 name: "Group");

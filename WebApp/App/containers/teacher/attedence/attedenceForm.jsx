@@ -2,89 +2,94 @@
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-
-const SUBJECTS = [
-    {
-        id: 1,
-        title: "Шаблоны проектирования"
-    },
-    {
-        id: 2,
-        title: "Математический анализ"
-    },
-    {
-        id: 3,
-        title: "Алгебра и теория чисел"
-    },
-    {
-        id: 4,
-        title: "Методы оптимизаций"
-    },
-    {
-        id: 5,
-        title: "Язык программирования C#"
-    },
-    {
-        id: 6,
-        title: "Базы данных"
-    },
-    {
-        id: 7,
-        title: "Теория чисел"
-    },
-    {
-        id: 8,
-        title: "Математическая статистика"
-    }
-];
-
-
-
-const GROUPS = [
-    {
-        id: 1,
-        number: 11
-    },
-    {
-        id: 2,
-        number: 44
-    },
-    {
-        id: 3,
-        number: 21
-    },
-    {
-        id: 4,
-        number: 89
-    },
-    {
-        id: 5,
-        number: 91
-    },
-    {
-        id: 6,
-        number: 34
-    }
-];
+import { getUserProfileFromJwt } from '../../../utils/jwtTools.jsx'
+import { getItem } from '../../../utils/localStorageTools.jsx'
+import { AUTH_KEY } from '../../../settings/settings.jsx'
+import Input from '../input.jsx'
+import { getCourses, getGroupss, getSubjects, createMagazine } from './api.jsx'
 
 export default class AttedenceForm extends React.Component {
     constructor(props) {
         super(props);
 
+        let auth = getItem(AUTH_KEY).authToken;
+        auth = getUserProfileFromJwt(auth);
+      
         this.state = {
-            userName: "",
-            FIO: "",
-            email: "",
-            subjects: SUBJECTS,
-            groups: GROUPS
+            FIO: auth.teacherName,
+            subjects: [],
+            groups: [],
+            courses: [],
+            teacherId: auth.name
         }
-
+        
 
         this.goBack = this.goBack.bind(this);
+        this.updateForm = this.updateForm.bind(this);
+    }
+
+    getAllCourses() {
+
+        getCourses(
+            (pageInfo) => {
+                this.setState({ courses: pageInfo.records });     
+            },
+            () => {
+                console.log('Error');
+            }
+        );
+    }
+
+    getAllGroups() {
+     
+        getGroupss(
+            (pageInfo) => {
+                this.setState({ groups: pageInfo.records });
+            },
+            () => {
+                console.log('Error');
+            }
+        );
+    }
+
+    getAllSubjects() {
+
+        getSubjects(
+            (pageInfo) => {
+                this.setState({ subjects: pageInfo.records });
+            },
+            () => {
+                console.log('Error');
+            }
+        );
+    }
+
+    getArrayOfSelectedCoursesFromSelectList() {
+        let listOf = Array.from(this.refs.courseList.querySelectorAll("option"));
+        return listOf.filter((el) => el.selected).map((el) => { return { id: el.value, number: el.innerText } });
+    }
+
+
+    componentWillMount() {
+        this.getAllCourses();
+        this.getAllGroups();
+        this.getAllSubjects();
     }
 
     goBack() {
         this.props.history.goBack();
+    }
+
+    getCourses() {
+        let courses = this.state.courses;
+
+        return (
+            courses.map((course) => {
+                return (
+                    <option value={course.id}>{course.number}</option>
+                );
+            })
+        );
     }
 
 
@@ -94,7 +99,7 @@ export default class AttedenceForm extends React.Component {
         return (
             subjects.map((subject) => {
                 return (
-                    <option>{subject.title}</option>
+                    <option value={subject.id}>{subject.name}</option>
                 );
             })
         );
@@ -106,14 +111,43 @@ export default class AttedenceForm extends React.Component {
         return (
             groups.map((group) => {
                 return (
-                    <option>{group.number}</option>
+                    <option value={group.id}>{group.number}</option>
                 );
             })
         );
     }
 
+    updateForm(newState) {
+        this.setState(newState);
+    }
+
+    selectOnChange(e) {
+        let value = e.target.value;
+        let name = e.target.name;
+        let obj = {};
+        obj[name] = value;
+
+        this.setState(obj);
+    }
+
+    submit(e) {
+        e.preventDefault();
+        let obj = this.state;
+        delete obj.subjects;
+        delete obj.groups;
+        delete obj.courses;
+        delete obj.FIO;
+
+        createMagazine(obj,
+            (data) => { console.log("success"); },
+            (er) => { console.log(er); }
+        );
+
+        return false;
+    }
+
     render() {
-        
+     
         return (
             <div>
                 <div className="top-bar">
@@ -130,44 +164,108 @@ export default class AttedenceForm extends React.Component {
                 </div>
                 <hr />
 
-                <form>
+                <form onSubmit={this.submit.bind(this)} >
+
+                    <Input
+                        name="year"
+                        label="Учебный год:"
+                        type="text"
+                        required={true}
+                        id="year"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="semester"
+                        label="Семестр:"
+                        type="text"
+                        required={true}
+                        id="semester"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="teacherId"
+                        label="Преподаватель:"
+                        type="text"
+                        required={true}
+                        id="teacher"
+                        updateForm={this.updateForm}
+                        disabled={true}
+                        value={this.state.FIO}
+                    />
+
+                    <Input
+                        name="filial"
+                        label="Филиал:"
+                        type="text"
+                        required={true}
+                        id="filial"
+                        updateForm={this.updateForm}
+                    />
+
+
+                    <Input
+                        name="level"
+                        label="Образование:"
+                        type="text"
+                        required={true}
+                        id="level"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="faculty"
+                        label="Факультет:"
+                        type="text"
+                        required={true}
+                        id="faculty"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="specialty"
+                        label="Направление / специальность:"
+                        type="text"
+                        required={true}
+                        id="specialty"
+                        updateForm={this.updateForm}
+                    />
+
+                    <Input
+                        name="typeOfClass"
+                        label="Вид занятий:"
+                        type="text"
+                        required={true}
+                        id="typeOfClass"
+                        updateForm={this.updateForm}
+                    />
+
                     <div className="form-group">
-                        <label for="exampleFormControlInput1">Учебный год</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="2017/2018 Семестр: 7" />
+                        <label for="course">Курс:</label>
+                        <select name="courseId" onChange={this.selectOnChange.bind(this)} ref="courseList" className="form-control" id="course">
+                            <option defaultValue>Выберите курс...</option>
+                            {this.getCourses()}
+                        </select>
                     </div>
+                   
                     <div className="form-group">
-                        <label for="exampleFormControlInput1">Преподаватель</label>
-                        <input type="text" className="form-control" value="Золотарев С.В." id="exampleFormControlInput1" disabled />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlInput1">Факультет</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="факультет прикладной математики, информатики и механики" />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlInput1">Уровень образования</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="бакалавриат" />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlInput1">Специальность / направление</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Б2.В.ДВ.1.1 Языки и системы программирования" />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlInput1">Вид занятия</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="лабораторные" />
-                    </div>
-                    <div className="form-group">
-                        <label for="exampleFormControlSelect2">Предмет</label>
-                        <select  className="form-control" id="exampleFormControlSelect2">
+                        <label for="subject">Предмет</label>
+                        <select name="subjectId" onChange={this.selectOnChange.bind(this)} ref="subjectList" className="form-control" id="subject">
+                            <option defaultValue>Выберите предмет...</option>
                             {this.getSubjects()}
                         </select>
                     </div>
+
                     <div className="form-group">
-                        <label for="exampleFormControlSelect2">Группа</label>
-                        <select  className="form-control" id="exampleFormControlSelect2">
+                        <label for="group">Группа: </label>
+                        <select name="groupId" onChange={this.selectOnChange.bind(this)} ref="groupList" className="form-control" id="group">
+                            <option defaultValue>Выберите группу...</option>
                             {this.getGroups()}
                         </select>
                     </div>
-                    <button type="button" class="btn btn-primary">Создать</button>
+
+                    <button type="submit" className="btn btn-primary">Создать</button>
                 </form>
             </div>
         );

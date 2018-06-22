@@ -22,7 +22,7 @@ namespace Models
 
         public ICollection<Subject> Subject;
         public ICollection<Teacher> Teacher;
-        public ICollection<Student> Student;
+        public ICollection<Student> Student { get; set; }
         public ICollection<Magazine> Magazine;
         public ICollection<AttestationRecord> AttestationRecord;
     }
