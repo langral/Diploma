@@ -62,6 +62,8 @@ namespace WebApp.Controllers
                         claims.Add(new Claim(ClaimTypes.Role, role));
                     }
 
+                    claims.Add(new Claim(ClaimTypes.NameIdentifier, userToVerify.Id));
+
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["SecurityKey"]));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -74,9 +76,7 @@ namespace WebApp.Controllers
 
                     var response = new
                     {
-                        auth_token = new JwtSecurityTokenHandler().WriteToken(token),
-                        username = userToVerify.UserName,
-                        roles
+                        authToken = new JwtSecurityTokenHandler().WriteToken(token),
                     };
 
                     Response.StatusCode = StatusCodes.Status200OK;

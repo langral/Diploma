@@ -7,11 +7,16 @@
             login: '@Url.RouteUrl("DefaultApi", new {controller = "Auth", action = "login" })',
             register: '@Url.RouteUrl("DefaultApi", new {controller = "Account", action = "register" })',
             subjects: '/api/Subject',
+            subjectsForTeacher: '/api/Subject/get-subjects-for-teacher',
             courses: '/api/Course',
             groups: '/api/Group',
+            groupsForTeacher: '/api/Group/get-groups-for-teacher',
+            groupsBySubjects: '/api/Group/get-by-subjects',
             students: '/api/Student',
-            teachers: '/api/Teacher'
-        }
+            teachers: '/api/Teacher',
+            teachersAssingToSubject: '/api/Teacher/assing-to-subject',
+            teachersAssingToGroups: '/api/Teacher/assing-to-groups'
+        };
     </script>
 
     <style>

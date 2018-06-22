@@ -12,6 +12,6 @@ namespace WebApp.Models.ViewModels
         [Required]
         public string TeacherId { get; set; }
         [Required]
-        public List<Group> Group { get; set; }
+        public List<Group> groups { get; set; }
     }
 }

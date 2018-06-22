@@ -12,6 +12,6 @@ namespace WebApp.Models.ViewModels
         [Required]
         public string TeacherId { get; set; }
         [Required]
-        public List<Subject> Subject { get; set; }
+        public List<Subject> subjects { get; set; }
     }
 }

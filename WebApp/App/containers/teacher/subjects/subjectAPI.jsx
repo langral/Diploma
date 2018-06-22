@@ -15,13 +15,16 @@
     })
 }
 
-export function getSubjectsForTeacherId(params, onSuccess, onError) {
-    return fetch(constants.subjects + `/${params.page}/${params.idTeacher}`,
+export function getSubjectsForTeacherId(auth, onSuccess, onError) {
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+    return fetch(constants.subjectsForTeacher,
         {
             method: "GET",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers: headers
         })
         .then((response) => {
             return checkStatus(response);

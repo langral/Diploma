@@ -49,6 +49,7 @@ namespace WebApp.Controllers
                     {
 
                         var managerResult = await userManager.AddToRoleAsync(user, "teacher");
+                        managerResult = await userManager.AddToRoleAsync(user, "user");
 
                         if (managerResult.Succeeded)
                         {

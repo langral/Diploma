@@ -11,8 +11,13 @@ namespace WebApp.Infrastructure
     {
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            string userName = "i.krepyshev";
+            string userName = "test";
             string password = "_Aa123456";
+
+            if (await roleManager.FindByNameAsync("user") == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole("user"));
+            }
 
             if (await roleManager.FindByNameAsync("admin") == null)
             {
@@ -30,6 +35,7 @@ namespace WebApp.Infrastructure
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(admin, "admin");
+                    await userManager.AddToRoleAsync(admin, "user");
                 }
             }
         }

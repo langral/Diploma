@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Pagination from '../../utils/pagination.jsx'
 import { getGroupsForTeacherId } from './groupAPI.jsx'
+import { getItem } from '../../../utils/localStorageTools.jsx'
+import { AUTH_KEY } from '../../../settings/settings.jsx'
 
 export default class GroupsList extends React.Component {
     constructor(props) {
@@ -39,10 +41,9 @@ export default class GroupsList extends React.Component {
 
     //IDTeacher
     getAllGroups(page) {
-        let p = this.state.currentPage;
-        if (page)
-            p = page;
-        getGroupsForTeacherId({ page: p, idTeacher: 1 },
+        let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+
+        getGroupsForTeacherId(auth,
             (pageInfo) => {
                 this.setState(pageInfo);
             },

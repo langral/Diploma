@@ -15,13 +15,16 @@
     })
 }
 
-export function getGroupsForTeacherId(params, onSuccess, onError) {
-    return fetch(constants.groups + `/${params.page}/${params.idTeacher}`,
+export function getGroupsForTeacherId(auth, onSuccess, onError) {
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+    return fetch(constants.groupsForTeacher,
         {
             method: "GET",
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers: headers
         })
         .then((response) => {
             return checkStatus(response);

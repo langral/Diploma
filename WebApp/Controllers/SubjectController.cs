@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using DBRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -13,6 +15,7 @@ using WebApp.Models.ViewModels;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/Subject")]
     public class SubjectController : Controller
@@ -25,14 +28,16 @@ namespace WebApp.Controllers
         private IGenericRepository<GroupSubjectMappingModel> GroupSubjectMappingModelRepository;
 
         private int defaultPageSize = 5;
+        private readonly string userId;
 
-        public SubjectController(IRepositoryFacade repositoryFacade)
+        public SubjectController(IHttpContextAccessor httpContextAccessor, IRepositoryFacade repositoryFacade)
         {
             this.repositoryFacade = repositoryFacade;
             groupRepository = this.repositoryFacade.CreateGenericRepository<Group>();
             subjectRepository = this.repositoryFacade.CreateGenericRepository<Subject>();
             GroupSubjectMappingModelRepository = this.repositoryFacade.CreateGenericRepository<GroupSubjectMappingModel>();
             TeacherSubjectMappingModelRepository = this.repositoryFacade.CreateEagerGenericRepository<TeacherSubjectMappingModel>() as IEagerGenericRepository<TeacherSubjectMappingModel>;
+            this.userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         }
 
 
@@ -61,13 +66,16 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpGet("{page}/{idTeacher}")]
-        public PageInfo<Subject> GetSubjectsForTeacherId(int? page, string idTeacher)
+        [HttpGet]
+        [Route("get-subjects-for-teacher")]
+        public PageInfo<Subject> GetSubjectsForTeacherId()
         {
             try
             {
+                int? page = null;
+
                 var groups = groupRepository.GetAll();
-                var mappingRecordsTS = TeacherSubjectMappingModelRepository.GetEager(r => r.TeacherId == idTeacher, "Subject").Select(r => new { id = r.SubjectId, number = r.Subject.Name });
+                var mappingRecordsTS = TeacherSubjectMappingModelRepository.GetEager(r => r.TeacherId == this.userId, "Subject").Select(r => new { id = r.SubjectId, number = r.Subject.Name });
                 var mappingRecordsGS = GroupSubjectMappingModelRepository.Get(r => mappingRecordsTS.SingleOrDefault(s => s.id == r.SubjectId) != null)
                                                                          .Select(r => new { r.SubjectId, group = groups.FirstOrDefault(s => s.Id == r.GroupId) })
                                                                          .GroupBy(r => r.SubjectId).ToList();

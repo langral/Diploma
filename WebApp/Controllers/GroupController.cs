@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using DBRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -13,6 +15,7 @@ using WebApp.Models.ViewModels;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/Group")]
     public class GroupController : Controller
@@ -25,8 +28,9 @@ namespace WebApp.Controllers
         private IEagerGenericRepository<GroupTeacherMappingModel> GroupTeacherMappingModelRepository;
         private IGenericRepository<GroupSubjectMappingModel> GroupSubjectMappingModelRepository;
         private int defaultPageSize = 5;
+        private readonly string userId;
 
-        public GroupController(IRepositoryFacade repositoryFacade)
+        public GroupController(IRepositoryFacade repositoryFacade, IHttpContextAccessor httpContextAccessor)
         {
             this.repositoryFacade = repositoryFacade;
             groupRepository = this.repositoryFacade.CreateGenericRepository<Group>();
@@ -34,8 +38,38 @@ namespace WebApp.Controllers
             subjectRepository = this.repositoryFacade.CreateGenericRepository<Subject>();
             GroupSubjectMappingModelRepository = this.repositoryFacade.CreateGenericRepository<GroupSubjectMappingModel>();
             GroupTeacherMappingModelRepository = this.repositoryFacade.CreateEagerGenericRepository<GroupTeacherMappingModel>() as IEagerGenericRepository<GroupTeacherMappingModel>;
+            this.userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         }
 
+        [HttpPost]
+        [Route("get-by-subjects")]
+        public PageInfo<Group> GetGroupsBySubjects([FromBody] List<Subject> subjects)
+        {
+
+            try
+            {
+                int? page = null;
+                var groupSubjectRecords = GroupSubjectMappingModelRepository.Get(gsr => subjects.SingleOrDefault(s => s.Id == gsr.SubjectId) != null)
+                                          .Distinct().Select(x => x.GroupId).Distinct().ToList();
+
+                var groups = groupRepository.Get(g => groupSubjectRecords.SingleOrDefault(gsr => g.Id == gsr.Value) != null);
+
+
+                PageInfo<Group> p = new PageInfo<Group>()
+                {
+                    CurrentPage = page,
+                    TotalElements = (int)Math.Ceiling(groups.Count() / (double)defaultPageSize),
+                    Records = (page != null) ? groups.OrderBy(x => x.Id).Skip((page.Value - 1) * defaultPageSize).Take(defaultPageSize) : groups,
+                    PageSize = defaultPageSize
+                };
+
+                return p;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
 
         [HttpGet]
         public PageInfo<Group> GetGroups(int? page)
@@ -62,13 +96,16 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpGet("{page}/{idTeacher}")]
-        public PageInfo<Group> GetGroupsForTeacherId(int? page, string idTeacher)
+        [HttpGet]
+        [Route("get-groups-for-teacher")]
+        public PageInfo<Group> GetGroupsForTeacherId()
         {
             try
             {
+                int? page = null;
+
                 var subjects = subjectRepository.GetAll();
-                var mappingRecordsGT = GroupTeacherMappingModelRepository.GetEager(r => r.TeacherId == idTeacher, "Group").Select( r => new { id = r.GroupId, number = r.Group.Number });
+                var mappingRecordsGT = GroupTeacherMappingModelRepository.GetEager(r => r.TeacherId == this.userId, "Group").Select( r => new { id = r.GroupId, number = r.Group.Number });
                 var mappingRecordsGS = GroupSubjectMappingModelRepository.Get(r => mappingRecordsGT.SingleOrDefault(s => s.id == r.GroupId) != null)
                                                                          .Select(r => new { r.GroupId, subject = subjects.FirstOrDefault(s => s.Id == r.SubjectId)})
                                                                          .GroupBy(r => r.GroupId).ToList();
@@ -139,7 +176,7 @@ namespace WebApp.Controllers
                     {
                         foreach(var sb in group.Subject)
                         {
-                            var tmpSb = subjectRepository.Get(sb.Id);
+                            var tmpSb = await subjectRepository.Get(sb.Id);
                             if (tmpSb != null)
                             {
                                 GroupSubjectMappingModel newGroupSubject = new GroupSubjectMappingModel()

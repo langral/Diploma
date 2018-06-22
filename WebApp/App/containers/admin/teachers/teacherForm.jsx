@@ -3,72 +3,9 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Input from '../../account/components/input.jsx'
-import { register, createGroupTeacher, createSubjectTeacher } from './accountAPI.jsx';
+import { getSubjects } from '../subjects/subjectAPI.jsx'
+import { register, createGroupTeacher, createSubjectTeacher, getGroupsBySubject } from './accountAPI.jsx';
 
-
-const SUBJECTS = [
-    {
-        id: 1,
-        title: "Шаблоны проектирования"
-    },
-    {
-        id: 2,
-        title: "Математический анализ"
-    },
-    {
-        id: 3,
-        title: "Алгебра и теория чисел"
-    },
-    {
-        id: 4,
-        title: "Методы оптимизаций"
-    },
-    {
-        id: 5,
-        title: "Язык программирования C#"
-    },
-    {
-        id: 6,
-        title: "Базы данных"
-    },
-    {
-        id: 7,
-        title: "Теория чисел"
-    },
-    {
-        id: 8,
-        title: "Математическая статистика"
-    }
-];
-
-
-
-const GROUPS = [
-    {
-        id: 1,
-        number: 11
-    },
-    {
-        id: 2,
-        number: 44
-    },
-    {
-        id: 3,
-        number: 21
-    },
-    {
-        id: 4,
-        number: 89
-    },
-    {
-        id: 5,
-        number: 91
-    },
-    {
-        id: 6,
-        number: 34
-    }
-];
 
 export default class TeacherForm extends React.Component {
     constructor(props) {
@@ -81,9 +18,9 @@ export default class TeacherForm extends React.Component {
             FIO: "",
             email: "",
             errors: [],
-            subjects: SUBJECTS,
-            groups: GROUPS,
-            success: ""
+            recordsSubject: [],
+            recordsGroup: [],
+            success: false
         }
 
         this.goBack = this.goBack.bind(this);
@@ -94,6 +31,35 @@ export default class TeacherForm extends React.Component {
 
     goBack() {
         this.props.history.goBack();
+    }
+
+
+    showSuccess(success) {
+        if (success) {
+            return (
+                <div class="alert alert-success" role="alert">
+                    Преподователь {this.userName} успешно зарегистрирован!
+                </div>
+            );
+        } else {
+            return (
+                <div className="hidden" ></div>
+            )
+        }
+    }
+
+    getAllGroups(page) {
+        let p = this.state.currentPage;
+        if (page)
+            p = page;
+        getGroups(p,
+            (pageInfo) => {
+                this.setState(pageInfo);
+            },
+            () => {
+                console.log('Error');
+            }
+        );
     }
 
     getErrors() {
@@ -112,32 +78,97 @@ export default class TeacherForm extends React.Component {
         }
     }
 
+
+    componentWillMount() {
+        getSubjects(null,
+            (data) => {
+                this.setState({ recordsSubject: data.records })
+            },
+            (error) => {
+                console.log(error);
+            });
+    }
+
     getSubjects() {
-        let subjects = this.state.subjects;
+        let subjects = this.state.recordsSubject;
 
         return (
             subjects.map((subject) => {
                 return (
-                    <option>{subject.title}</option>
+                    <option value={subject.id}>{subject.name}</option>
                 );
             })
         );
     }
 
     getGroups() {
-        let groups = this.state.groups;
-
+        let groups = this.state.recordsGroup;
+   
         return (
             groups.map((group) => {
                 return (
-                    <option>{group.number}</option>
+                    <option value={group.id}>{group.number}</option>
                 );
             })
         );
     }
 
+
     updateForm(newState) {
         this.setState(newState);
+    }
+
+    getArrayOfSelectedGroupsFromSelectList() {
+        let listOf = Array.from(this.refs.groupList.querySelectorAll("option"));
+        return listOf.filter((el) => el.selected).map((el) => { return { id: el.value, name: el.innerText } });
+    }
+
+    getArrayOfSelectedSubjectsFromSelectList() {
+        let listOf = Array.from(this.refs.subjectList.querySelectorAll("option"));
+        return listOf.filter((el) => el.selected).map((el) => { return { id: el.value, name: el.innerText } });
+    }
+
+    getGroupsBySubjects(e) {
+
+        let listOf = this.getArrayOfSelectedSubjectsFromSelectList();
+
+        getGroupsBySubject(
+            listOf,
+            (data) => {
+                this.setState({ recordsGroup: data.records })
+            },
+            (error) => {
+                console.log(error);
+            });
+    }
+
+    assingTeacherToSubjects(teacherId, subjects) {
+
+        createSubjectTeacher(
+            {
+                teacherId: teacherId,
+                subjects: subjects
+            },
+            (data) => {
+                this.assingTeacherToGroups(teacherId, this.getArrayOfSelectedGroupsFromSelectList());
+            },
+            (error) => {
+                console.log(error);
+            });
+    }
+
+    assingTeacherToGroups(teacherId, groups) {
+        createGroupTeacher(
+            {
+                teacherId: teacherId,
+                groups: groups
+            },
+            (data) => {
+                this.setState({ success: true})
+            },
+            (error) => {
+                console.log(error);
+            });
     }
 
     onSubmit(e) {
@@ -151,7 +182,7 @@ export default class TeacherForm extends React.Component {
             email: this.state.email
         },
             function (data) {
-                self.setState({ success: true });
+                self.assingTeacherToSubjects(data.Id, self.getArrayOfSelectedSubjectsFromSelectList());
             },
             function (error) {
                 if (error.errors) {
@@ -162,29 +193,13 @@ export default class TeacherForm extends React.Component {
                 }
             } 
         );
-       /* if (this.state.success) {
-            createGroupTeacher({ TeacherId: , Group: },
-                (pageInfo) => {
-                    this.setState(pageInfo);
-                },
-                () => {
-                    console.log('Error');
-                }
-            );
-            createSubjectTeacher(p,
-                (pageInfo) => {
-                    this.setState(pageInfo);
-                },
-                () => {
-                    console.log('Error');
-                }
-            );
-        }*/
+
+
+
         e.preventDefault();
     }
 
     render() {
-
 
         return (
             <div>
@@ -204,6 +219,7 @@ export default class TeacherForm extends React.Component {
                 
                 <form onSubmit={this.onSubmit} >
                     {this.getErrors() && (this.getErrors())}
+                    {this.showSuccess(this.state.success)}
 
                     <Input
                         name="userName"
@@ -251,14 +267,16 @@ export default class TeacherForm extends React.Component {
                     />
 
                     <div className="form-group">
-                        <label for="exampleFormControlSelect2">Предметы</label>
-                        <select multiple className="form-control" id="exampleFormControlSelect2">
+                        <label htmlFor="exampleFormControlSelect2">Предметы</label>
+                        <select ref="subjectList" onChange={this.getGroupsBySubjects.bind(this)} multiple className="form-control" id="exampleFormControlSelect2">
                             {this.getSubjects()}
-                            </select>
+                        </select>
                     </div>
+
+          
                     <div className="form-group">
                         <label for="exampleFormControlSelect2">Группы</label>
-                        <select multiple className="form-control" id="exampleFormControlSelect2">
+                        <select ref="groupList" multiple  className="form-control" id="exampleFormControlSelect2">
                             {this.getGroups()}
                         </select>
                     </div>

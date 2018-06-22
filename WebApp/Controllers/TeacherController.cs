@@ -80,6 +80,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [Route("assing-to-subject")]
         public async Task AssingTeacherToSubjects([FromBody] AssignTeacherToSubjectsViewModel aw)
         {
             if (ModelState.IsValid)
@@ -90,13 +91,13 @@ namespace WebApp.Controllers
                     if (teacher == null)
                         throw new Exception("Преподаватель не найден!");
 
-                    if ((aw.Subject != null) && (aw.Subject.Count() > 0))
+                    if ((aw.subjects != null) && (aw.subjects.Count() > 0))
                     {
-                        foreach (var sb in aw.Subject)
+                        foreach (var sb in aw.subjects)
                         {
                             TeacherSubjectMappingModel newTeacherSubject = new TeacherSubjectMappingModel()
                             {
-                                TeacherId = aw.TeacherId,
+                                Teacher = teacher as Teacher,
                                 SubjectId = sb.Id
                             };
 
@@ -122,6 +123,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [Route("assing-to-groups")]
         public async Task AssingTeacherToGroups([FromBody] AssignTeacherToGroupsViewModel aw)
         {
             if (ModelState.IsValid)
@@ -132,13 +134,13 @@ namespace WebApp.Controllers
                     if (teacher == null)
                         throw new Exception("Преподаватель не найден!");
 
-                    if ((aw.Group != null) && (aw.Group.Count() > 0))
+                    if ((aw.groups != null) && (aw.groups.Count() > 0))
                     {
-                        foreach (var sb in aw.Group)
+                        foreach (var sb in aw.groups)
                         {
                             GroupTeacherMappingModel newTeacherGroup = new GroupTeacherMappingModel()
                             {
-                                TeacherId = aw.TeacherId,
+                                Teacher = teacher as Teacher,
                                 GroupId = sb.Id
                             };
 

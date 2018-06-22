@@ -1,9 +1,10 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+
 import Input from './components/input.jsx';
-import { register } from './accountAPI.jsx';
 import { Redirect } from 'react-router-dom';
+
 
 export default class Login extends React.Component {
 
@@ -45,39 +46,48 @@ export default class Login extends React.Component {
     onSubmit(e) {
         let self = this;
 
-        register({
+        this.props.login({
             userName: this.state.userName,
             password: this.state.password
-        },
-            function (data) {
-                self.setState({ success: true });
-            },
-            function (error) {
-                if (error.errors) {
-                    self.setState({
-                        errors: error.errors,
-                        success: false
-                    });
-                }
-            }
-        );
+        });
+
         e.preventDefault();
     }
 
+    getClaimFromTarget(target, claim, callback) {
+        if (target.toLowerCase().search(claim.toLowerCase()) != -1) {
+            callback();
+        }
+    }
+
+
+    redirect() {
+        let user = this.props.auth;
+
+        if (user && user.userName != null) {
+            if (user.roles.includes("admin")) {
+                return <Redirect to="/admin" />;
+            }
+            if (user.roles.includes("teacher")) {
+                return <Redirect to="/teacher" />;
+            }
+        }
+    }
+
     render() {
-        console.log(this.state);
+     
         return (
             <form className="std-form" onSubmit={this.onSubmit} >
 
-                <h3>Вход в приложение</h3>
+                <h3>Sign in to Library</h3>
                 <hr />
-
-                {this.state.success && (<Redirect to="/login" />)}
+                
+                {this.redirect()}
                 {this.getErrors() && (this.getErrors())}
 
                 <Input
                     name="userName"
-                    label="Логин:"
+                    label="User name:"
                     type="text"
                     required={true}
                     id="user-name"
@@ -86,7 +96,7 @@ export default class Login extends React.Component {
 
                 <Input
                     name="password"
-                    label="Пароль:"
+                    label="Password:"
                     type="password"
                     required={true}
                     id="user-password"
@@ -94,7 +104,7 @@ export default class Login extends React.Component {
                 />
 
                 <div className="form-group">
-                    <button type="submit" className="btn btn-default">Войти</button>
+                    <button type="submit" className="btn btn-default">Sign in</button>
                 </div>
 
             </form>

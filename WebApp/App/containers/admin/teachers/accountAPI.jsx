@@ -10,6 +10,7 @@
     })
 }
 
+
 export function register(user, onSuccess, onError) {
     return fetch(constants.register,
         {
@@ -64,7 +65,7 @@ export function deleteTeacher(id, onSuccess, onError) {
 }
 
 export function createGroupTeacher(gt, onSuccess, onError) {
-    return fetch(constants.teachers,
+    return fetch(constants.teachersAssingToGroups,
         {
             method: "POST",
             headers: {
@@ -82,7 +83,7 @@ export function createGroupTeacher(gt, onSuccess, onError) {
 }
 
 export function createSubjectTeacher(st, onSuccess, onError) {
-    return fetch(constants.teachers,
+    return fetch(constants.teachersAssingToSubject,
         {
             method: "POST",
             headers: {
@@ -99,3 +100,21 @@ export function createSubjectTeacher(st, onSuccess, onError) {
         });
 }
 
+
+export function getGroupsBySubject(data, onSuccess, onError) {
+    return fetch(constants.groupsBySubjects,
+        {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
