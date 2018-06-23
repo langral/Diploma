@@ -66,14 +66,59 @@ export function getGroupss(courseId, onSuccess, onError) {
         });
 }
 
-export function getAttendence(page, onSuccess, onError) {
+export function getAttestation(page, onSuccess, onError) {
     let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
     let headers = {
         'content-type': 'application/json',
     }
     if (!auth) return;
     headers['Authorization'] = auth.Authorization;
-    return fetch(constants.magazine + `/?page=${page}`,
+    return fetch(constants.getAttestation + `/?page=${page}`,
+        {
+            method: "GET",
+            headers
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+export function getAllAttestationRecordsApi(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.getAllAttestationRecords + `/${id}`,
+        {
+            method: "GET",
+            headers,
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+
+export function getSubjectsGroupsBySubject(subject, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.getGroupsBySubject + `/${subject}`,
         {
             method: "GET",
             headers
@@ -88,7 +133,7 @@ export function getAttendence(page, onSuccess, onError) {
 }
 
 
-export function getSubjects(groupId, onSuccess, onError) {
+export function getSubjects(onSuccess, onError) {
     let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
     let headers = {
         'content-type': 'application/json',
@@ -96,7 +141,7 @@ export function getSubjects(groupId, onSuccess, onError) {
     if (!auth) return;
     headers['Authorization'] = auth.Authorization;
 
-    return fetch(constants.subjectsForTeacherByGroup + `/${groupId}`,
+    return fetch(constants.subjectsForTeacher ,
         {
             method: "GET",
             headers
@@ -110,8 +155,7 @@ export function getSubjects(groupId, onSuccess, onError) {
         });
 }
 
-
-export function createMagazine(magazine, onSuccess, onError) {
+export function getAttestationById(id, onSuccess, onError) {
     let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
     let headers = {
         'content-type': 'application/json',
@@ -119,11 +163,33 @@ export function createMagazine(magazine, onSuccess, onError) {
     if (!auth) return;
     headers['Authorization'] = auth.Authorization;
 
-    return fetch(constants.magazineCreate,
+    return fetch(constants.getAttestationById + `/${id}`,
+        {
+            method: "GET",
+            headers,
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+export function createAttestation(attestation, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.createAttestation,
         {
             method: "POST",
             headers,
-            body: JSON.stringify(magazine)
+            body: JSON.stringify(attestation)
         })
         .then((response) => {
             return checkStatus(response);
@@ -166,6 +232,30 @@ export function magazineCreateRecords(data, onSuccess, onError) {
     headers['Authorization'] = auth.Authorization;
 
     return fetch(constants.magazineCreateRecord,
+        {
+            method: "POST",
+            headers,
+            body: JSON.stringify(data)
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+
+export function createAttestationRecords(data, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.createAttestationRecord,
         {
             method: "POST",
             headers,

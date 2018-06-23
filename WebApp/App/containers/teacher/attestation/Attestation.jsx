@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import AttedenceForm from './attedenceForm.jsx';
-import AttedenceTable from './attedenceTable.jsx';
-import { getAttendence } from './api.jsx'
 import Pagination from '../../utils/pagination.jsx'
+import AttestationForm from './attestationForm.jsx';
+import { getAttestation } from './api.jsx'
+import AttestationTable from './attestationTable.jsx';
 
-class AttedenceList extends React.Component {
+class AttestationList extends React.Component {
     constructor(props) {
         super(props);
 
@@ -19,20 +19,20 @@ class AttedenceList extends React.Component {
             pageSize: 5
         }
 
-        this.getAllAttendences = this.getAllAttendences.bind(this);
+        this.getAllAttestation = this.getAllAttestation.bind(this);
     }
 
     componentWillMount() {
-        this.getAllAttendences();
+        this.getAllAttestation();
     }
 
-    getAllAttendences(page) {
+    getAllAttestation(page) {
 
-        let p = this.state.currentPage;
-
+        let p = null;
         if (page)
             p = page;
-        getAttendence(p,
+
+        getAttestation(p,
             (pageInfo) => {
                 this.setState(pageInfo);
             },
@@ -40,25 +40,25 @@ class AttedenceList extends React.Component {
                 console.log('Error');
             }
         );
-     }
-
-    createAttedenceTable() {
-        let attedence = this.state.records;
         
+    }
+
+    createAttestationTable() {
+        let attestation = this.state.records;
+
         return (
-            attedence.map((atd) => {
+            attestation.map((atd) => {
                 return (
                     <tr key="{atd.id}">
                         <td>{atd.subject.name}</td>
-                        <td>{atd.group.number}</td>
-                        <td>{atd.level}</td>
-                        <td>{atd.specialty}</td>
+                        <td>{atd.department}</td>
+                        <td>{atd.speciality}</td>
                         <td>
-                            <Link to={`/teacher/attedence/open/${atd.id}`}
+                            <Link to={`/teacher/attestation/open/${atd.id}`}
                                 className="btn btn-primary btn-sm">Открыть
                             </Link>
                             &nbsp;
-                            <Link to="/teacher/attedence/delete"
+                            <Link to="/teacher/attestation/delete"
                                 className="btn btn-danger btn-sm">Удалить
                              </Link>
                         </td>
@@ -70,18 +70,16 @@ class AttedenceList extends React.Component {
 
 
     render() {
-
-
         return (
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Ваши учеты посещаемости</h3>
+                        <h3>Ваши аттестации</h3>
                     </div>
                     <div className="actions">
                         <div className="action">
-                            <Link to="/teacher/attedence/create"
-                                className="btn btn-success">Создать новый
+                            <Link to="/teacher/attestation/create"
+                                className="btn btn-success">Создать аттестацию
                             </Link>
                         </div>
                     </div>
@@ -93,11 +91,9 @@ class AttedenceList extends React.Component {
                             <th>
                                 Предмет
                             </th>
+
                             <th>
-                                Группа
-                            </th>
-                            <th>
-                                Образование
+                                Факультет
                             </th>
                             <th>
                                 Направление
@@ -119,35 +115,31 @@ class AttedenceList extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.createAttedenceTable()}
+                        {this.createAttestationTable()}
                     </tbody>
                 </table>
 
                 <Pagination currentPage={this.state.currentPage}
                     totalElements={this.state.totalElements}
-                    update={this.getAllAttendences} />
+                    update={this.getAllAttestation} />
 
             </div>
         );
     }
 };
 
-export default class Attedence extends React.Component {
+export default class Attestation extends React.Component {
     constructor(props) {
         super(props);
-
- 
     }
 
     render() {
-
-
         return (
             <div>
                 <Switch>
-                    <Route path="/teacher/attedence/create" component={AttedenceForm} />
-                    <Route path="/teacher/attedence/open/:id" component={AttedenceTable} />
-                    <Route exact path='/teacher/attedence/' component={AttedenceList} />
+                    <Route path="/teacher/attestation/create" component={AttestationForm} />
+                    <Route path="/teacher/attestation/open/:id" component={AttestationTable} />
+                    <Route exact path='/teacher/attestation/' component={AttestationList} />
                 </Switch>
             </div>
         );

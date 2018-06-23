@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import GroupsList from '../groups/groups.jsx';
 import SubjectsList from '../subjects/subjects.jsx';
 import Attedence from '../attedence/attedence.jsx';
-
+import Attestation from '../attestation/attestation.jsx'
 
 const TeacherPage = () => {
     return (
@@ -32,7 +32,7 @@ export default class TeacherRouting extends React.Component {
             <div className="admin-right-sidebar">
                 <Switch>
                     <Route path="/teacher/attedence" component={Attedence} />
-                    <Route path="/teacher/attestation" component={TeacherPage} />
+                    <Route path="/teacher/attestation" component={Attestation} />
                     <Route path="/teacher/subjects" component={SubjectsList} />
                     <Route path="/teacher/groups" component={GroupsList} />
                     <Route path="/teacher" component={TeacherPage} />

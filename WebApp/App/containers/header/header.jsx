@@ -1,10 +1,39 @@
 ﻿import React from 'react';
 import { Link } from 'react-router-dom';
-
+import { getItem } from '../../utils/localStorageTools.jsx'
+import { AUTH_KEY } from '../../settings/settings.jsx'
+import PropTypes from 'prop-types';
 
 
 export default class Header extends React.Component {
+
+    static contextTypes = {
+        router: PropTypes.object
+    }
+
+    constructor(props) {
+        super(props);       
+
+        this.state = {
+            isAuth: getItem(AUTH_KEY) ? true : false
+        }
+    }
+
+    createButton() {
+        if (getItem(AUTH_KEY))
+            return (
+                <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={this.clearStorage.bind(this)}>Выйти</button>
+            );
+    }
+
+    clearStorage() {
+        localStorage.clear();
+        window.location = "/";
+       
+    }
+
     render() {
+   
         return (
             <header>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -17,6 +46,11 @@ export default class Header extends React.Component {
                          
                         </ul>
                     </div>
+
+                    <form className="form-inline">
+                        {this.createButton()}
+                    </form>
+
                 </nav>
             </header>
         );

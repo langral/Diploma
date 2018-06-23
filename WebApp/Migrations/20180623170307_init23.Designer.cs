@@ -12,8 +12,8 @@ using WebApp.Models;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    [Migration("20180622115951_init")]
-    partial class init
+    [Migration("20180623170307_init23")]
+    partial class init23
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -130,6 +130,54 @@ namespace WebApp.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Models.Attestation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Department");
+
+                    b.Property<int>("Semester");
+
+                    b.Property<string>("Speciality");
+
+                    b.Property<int>("SubjectId");
+
+                    b.Property<string>("TeacherId");
+
+                    b.Property<int>("Year");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("Attestations");
+                });
+
+            modelBuilder.Entity("Models.AttestationRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AttestationId");
+
+                    b.Property<string>("ContingentOfStudents");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<int>("GroupId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttestationId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("AttestationRecords");
+                });
+
             modelBuilder.Entity("Models.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -142,6 +190,8 @@ namespace WebApp.Migrations
                     b.Property<int>("StudentId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Comment");
                 });
@@ -248,6 +298,26 @@ namespace WebApp.Migrations
                     b.ToTable("Magazine");
                 });
 
+            modelBuilder.Entity("Models.Mark", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AttestationRecordId");
+
+                    b.Property<int?>("StudentId");
+
+                    b.Property<string>("mark");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttestationRecordId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Marks");
+                });
+
             modelBuilder.Entity("Models.Record", b =>
                 {
                     b.Property<int>("Id")
@@ -257,11 +327,15 @@ namespace WebApp.Migrations
 
                     b.Property<int>("MagazineId");
 
-                    b.Property<int>("StudentId");
+                    b.Property<int?>("StudentId");
 
                     b.Property<string>("Visit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MagazineId");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Record");
                 });
@@ -276,6 +350,8 @@ namespace WebApp.Migrations
                     b.Property<string>("Name");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
 
                     b.ToTable("Student");
                 });
@@ -422,6 +498,39 @@ namespace WebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Models.Attestation", b =>
+                {
+                    b.HasOne("Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Models.Teacher", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
+                });
+
+            modelBuilder.Entity("Models.AttestationRecord", b =>
+                {
+                    b.HasOne("Models.Attestation", "Attestation")
+                        .WithMany("AttestationRecord")
+                        .HasForeignKey("AttestationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Models.Comment", b =>
+                {
+                    b.HasOne("Models.Student")
+                        .WithMany("Comment")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Models.GroupSubjectMappingModel", b =>
                 {
                     b.HasOne("Models.Group", "Group")
@@ -464,6 +573,38 @@ namespace WebApp.Migrations
                     b.HasOne("Models.Teacher", "Teacher")
                         .WithMany()
                         .HasForeignKey("TeacherId");
+                });
+
+            modelBuilder.Entity("Models.Mark", b =>
+                {
+                    b.HasOne("Models.AttestationRecord", "AttestationRecord")
+                        .WithMany("Marks")
+                        .HasForeignKey("AttestationRecordId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Models.Student", "Student")
+                        .WithMany("Marks")
+                        .HasForeignKey("StudentId");
+                });
+
+            modelBuilder.Entity("Models.Record", b =>
+                {
+                    b.HasOne("Models.Magazine", "Magazine")
+                        .WithMany()
+                        .HasForeignKey("MagazineId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Models.Student", "Student")
+                        .WithMany("Record")
+                        .HasForeignKey("StudentId");
+                });
+
+            modelBuilder.Entity("Models.Student", b =>
+                {
+                    b.HasOne("Models.Group")
+                        .WithMany("Student")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Models.TeacherSubjectMappingModel", b =>

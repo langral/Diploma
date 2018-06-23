@@ -9,6 +9,7 @@ namespace Models
         public Student()
         {
             this.Record = new HashSet<Record>();
+            this.Marks = new HashSet<Mark>();
             this.Comment = new HashSet<Comment>();
         }
 
@@ -17,7 +18,8 @@ namespace Models
         public int GroupId { get; set; }
         public Group Group;
 
-        public ICollection<Record> Record;
-        public ICollection<Comment> Comment;
+        public ICollection<Mark> Marks { get; set; }
+        public ICollection<Record> Record { get; set; }
+        public ICollection<Comment> Comment { get; set; }
     }
 }

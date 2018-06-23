@@ -26,6 +26,7 @@ namespace WebApp.Controllers
         private IGenericRepository<Group> groupRepository;
         private IEagerGenericRepository<TeacherSubjectMappingModel> TeacherSubjectMappingModelRepository;
         private IGenericRepository<GroupSubjectMappingModel> GroupSubjectMappingModelRepository;
+        private IEagerGenericRepository<GroupSubjectMappingModel> eagerGroupSubjectMappingModelRepository;
 
         private int defaultPageSize = 5;
         private readonly string userId;
@@ -37,6 +38,7 @@ namespace WebApp.Controllers
             subjectRepository = this.repositoryFacade.CreateGenericRepository<Subject>();
             GroupSubjectMappingModelRepository = this.repositoryFacade.CreateGenericRepository<GroupSubjectMappingModel>();
             TeacherSubjectMappingModelRepository = this.repositoryFacade.CreateEagerGenericRepository<TeacherSubjectMappingModel>() as IEagerGenericRepository<TeacherSubjectMappingModel>;
+            eagerGroupSubjectMappingModelRepository = this.repositoryFacade.CreateEagerGenericRepository<GroupSubjectMappingModel>() as IEagerGenericRepository<GroupSubjectMappingModel>;
             this.userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         }
 
@@ -92,7 +94,7 @@ namespace WebApp.Controllers
                     var subject = new Subject()
                     {
                         Name = awaiter.GetResult().Name,
-
+                        Id = awaiter.GetResult().Id,
                     };
 
                     foreach (var tmp in record)
@@ -226,5 +228,33 @@ namespace WebApp.Controllers
             }
         }
 
+
+
+        [HttpGet]
+        [Route("subjects-for-teacher/{group}")]
+        public async Task<RevordViewModel<Subject>> GetAllSubjectsForTeacher(int? group)
+        {
+            try
+            {
+                var subjectTeacher = TeacherSubjectMappingModelRepository.GetEager(sb => sb.TeacherId == userId, "Teacher").Distinct();
+                var subjectGroups = eagerGroupSubjectMappingModelRepository.GetEager(sg => sg.GroupId == group, "Subject").Distinct()
+                                    .Where(sg => subjectTeacher.SingleOrDefault(sb => sb.SubjectId == sg.SubjectId) != null);
+
+                var subjects = subjectRepository.Get(s => subjectGroups.SingleOrDefault(t => t.SubjectId == s.Id) != null);
+
+                var result = new RevordViewModel<Subject>() { Records = subjects.ToList() };
+
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("error", e.Message);
+                await Response.BadRequestHelper(ModelState.Values);
+            }
+
+            return null;
+        }
+ 
     }
 }

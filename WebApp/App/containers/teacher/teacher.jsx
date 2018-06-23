@@ -28,7 +28,7 @@ export default class Teacher extends React.Component {
                                 Учет посещаемости
                             </NavLink>
 
-                            <NavLink activeClassName="active" to="/teacher/coursec" className="list-group-item list-group-item-action">
+                            <NavLink activeClassName="active" to="/teacher/attestation" className="list-group-item list-group-item-action">
                                 Итоговая аттестация
                             </NavLink>
 

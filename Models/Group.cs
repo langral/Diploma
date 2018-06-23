@@ -18,7 +18,7 @@ namespace Models
         public int Number { get; set; }
 
         public int CourseId { get; set; }
-        public Course Course;
+        public Course Course { get; set; }
 
         public ICollection<Subject> Subject;
         public ICollection<Teacher> Teacher;

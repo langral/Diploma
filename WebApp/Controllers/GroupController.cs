@@ -158,7 +158,7 @@ namespace WebApp.Controllers
                 {
                     var exists = groupRepository.Get(r => r.Number == group.Number).SingleOrDefault();
                     if ((exists != null) && (exists.CourseId == group.CourseId))
-                        throw new Exception("Курс уже существует!");
+                        throw new Exception(String.Format("Группа номер {0} уже существует на этом курсе!", exists.Number));
 
                     var course = await courseRepository.Get(group.CourseId);
                     if (course == null)
@@ -243,7 +243,7 @@ namespace WebApp.Controllers
 
                     await groupRepository.Update(newGroup);
 
-                    var records = GroupSubjectMappingModelRepository.Get(r => r.GroupId == newGroup.Id);
+                    var records = GroupSubjectMappingModelRepository.Get(r => r.GroupId == newGroup.Id).ToList();
 
                     if(records != null && records.Count() > 0)
                         foreach(var record in records)
@@ -254,7 +254,7 @@ namespace WebApp.Controllers
                     if(group.Subject != null && group.Subject.Count() > 0)
                         foreach(var subject in group.Subject)
                         {
-                            var tmpSb = subjectRepository.Get(subject.Id);
+                            var tmpSb = await subjectRepository.Get(subject.Id);
                             if (tmpSb != null)
                             {
                                 GroupSubjectMappingModel newGroupSubject = new GroupSubjectMappingModel()
@@ -308,6 +308,29 @@ namespace WebApp.Controllers
                 ModelState.AddModelError("error", e.Message);
                 await Response.BadRequestHelper(ModelState.Values);
             }
+        }
+
+        [HttpGet]
+        [Route("groups-for-teacher/{course}")]
+        public async Task<RevordViewModel<Group>> GetAllGroupsForTeacher(int? course)
+        {
+            try
+            {
+                var groupsTeacher = GroupTeacherMappingModelRepository.GetEager(x => x.TeacherId == userId, "Teacher").Distinct();
+                var groups = groupRepository.Get(g => g.CourseId == course.Value && groupsTeacher.SingleOrDefault(t => t.GroupId == g.Id) != null);
+
+                var result = new RevordViewModel<Group>() { Records = groups.ToList() };
+
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("error", e.Message);
+                await Response.BadRequestHelper(ModelState.Values);
+            }
+
+            return null;
         }
 
     }

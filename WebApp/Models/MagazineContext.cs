@@ -22,6 +22,11 @@ namespace WebApp.Models
         public virtual DbSet<Course> Course { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
 
+        public virtual DbSet<Attestation> Attestations { get; set; }
+        public virtual DbSet<AttestationRecord> AttestationRecords { get; set; }
+        public virtual DbSet<Mark> Marks { get; set; }
+
+
         public MagazineContext(DbContextOptions<MagazineContext> options)
             : base(options)
         { }

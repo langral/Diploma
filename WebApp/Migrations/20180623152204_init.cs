@@ -51,21 +51,6 @@ namespace WebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comment",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    MagazineId = table.Column<int>(nullable: false),
-                    Note = table.Column<string>(nullable: true),
-                    StudentId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comment", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Course",
                 columns: table => new
                 {
@@ -90,36 +75,6 @@ namespace WebApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Group", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Record",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Date = table.Column<DateTime>(nullable: false),
-                    MagazineId = table.Column<int>(nullable: false),
-                    StudentId = table.Column<int>(nullable: false),
-                    Visit = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Record", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Student",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    GroupId = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Student", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -268,6 +223,56 @@ namespace WebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Student",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    GroupId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Student", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Student_Group_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Group",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attestations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Department = table.Column<string>(nullable: true),
+                    Semester = table.Column<int>(nullable: false),
+                    Speciality = table.Column<string>(nullable: true),
+                    SubjectId = table.Column<int>(nullable: false),
+                    TeacherId = table.Column<string>(nullable: true),
+                    Year = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attestations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attestations_Subject_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subject",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Attestations_AspNetUsers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GroupSubjectMappingModel",
                 columns: table => new
                 {
@@ -366,6 +371,110 @@ namespace WebApp.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Comment",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    MagazineId = table.Column<int>(nullable: false),
+                    Note = table.Column<string>(nullable: true),
+                    StudentId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comment_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AttestationRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    AttestationId = table.Column<int>(nullable: false),
+                    ContingentOfStudents = table.Column<string>(nullable: true),
+                    Date = table.Column<DateTime>(nullable: false),
+                    GroupId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AttestationRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AttestationRecords_Attestations_AttestationId",
+                        column: x => x.AttestationId,
+                        principalTable: "Attestations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AttestationRecords_Group_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Group",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Record",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(nullable: false),
+                    MagazineId = table.Column<int>(nullable: false),
+                    StudentId = table.Column<int>(nullable: true),
+                    Visit = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Record", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Record_Magazine_MagazineId",
+                        column: x => x.MagazineId,
+                        principalTable: "Magazine",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Record_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Marks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    AttestationRecordId = table.Column<int>(nullable: false),
+                    StudentId = table.Column<int>(nullable: true),
+                    mark = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Marks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Marks_AttestationRecords_AttestationRecordId",
+                        column: x => x.AttestationRecordId,
+                        principalTable: "AttestationRecords",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Marks_Student_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Student",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -404,6 +513,31 @@ namespace WebApp.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AttestationRecords_AttestationId",
+                table: "AttestationRecords",
+                column: "AttestationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AttestationRecords_GroupId",
+                table: "AttestationRecords",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attestations_SubjectId",
+                table: "Attestations",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attestations_TeacherId",
+                table: "Attestations",
+                column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comment_StudentId",
+                table: "Comment",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GroupSubjectMappingModel_GroupId",
@@ -446,6 +580,31 @@ namespace WebApp.Migrations
                 column: "TeacherId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Marks_AttestationRecordId",
+                table: "Marks",
+                column: "AttestationRecordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Marks_StudentId",
+                table: "Marks",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Record_MagazineId",
+                table: "Record",
+                column: "MagazineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Record_StudentId",
+                table: "Record",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Student_GroupId",
+                table: "Student",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TeacherSubjectMappingModel_SubjectId",
                 table: "TeacherSubjectMappingModel",
                 column: "SubjectId");
@@ -483,19 +642,28 @@ namespace WebApp.Migrations
                 name: "GroupTeacherMappingModel");
 
             migrationBuilder.DropTable(
-                name: "Magazine");
+                name: "Marks");
 
             migrationBuilder.DropTable(
                 name: "Record");
-
-            migrationBuilder.DropTable(
-                name: "Student");
 
             migrationBuilder.DropTable(
                 name: "TeacherSubjectMappingModel");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "AttestationRecords");
+
+            migrationBuilder.DropTable(
+                name: "Magazine");
+
+            migrationBuilder.DropTable(
+                name: "Student");
+
+            migrationBuilder.DropTable(
+                name: "Attestations");
 
             migrationBuilder.DropTable(
                 name: "Course");

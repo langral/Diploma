@@ -6,15 +6,15 @@ import { getUserProfileFromJwt } from '../../../utils/jwtTools.jsx'
 import { getItem } from '../../../utils/localStorageTools.jsx'
 import { AUTH_KEY } from '../../../settings/settings.jsx'
 import Input from '../input.jsx'
-import { getCourses, getGroupss, getSubjects, createMagazine } from './api.jsx'
+import {  getSubjects, createAttestation } from './api.jsx'
 
-export default class AttedenceForm extends React.Component {
+export default class AttestationForm extends React.Component {
     constructor(props) {
         super(props);
 
         let auth = getItem(AUTH_KEY).authToken;
         auth = getUserProfileFromJwt(auth);
-
+      
         this.state = {
             FIO: auth.teacherName,
             subjects: [],
@@ -28,35 +28,9 @@ export default class AttedenceForm extends React.Component {
         this.updateForm = this.updateForm.bind(this);
     }
 
-    getAllCourses() {
-
-        getCourses(
-            (pageInfo) => {
-                this.setState({ courses: pageInfo.records });     
-            },
-            () => {
-                console.log('Error');
-            }
-        );
-    }
-
-    getAllGroups(courseId) {
-
-        getGroupss(
-            courseId,
-            (pageInfo) => {
-                this.setState({ groups: pageInfo.records });
-            },
-            () => {
-                console.log('Error');
-            }
-        );
-    }
-
     getAllSubjects(groupId) {
 
         getSubjects(
-            groupId,
             (pageInfo) => {
                 this.setState({ subjects: pageInfo.records });
             },
@@ -73,8 +47,7 @@ export default class AttedenceForm extends React.Component {
 
 
     componentWillMount() {
-        this.getAllCourses();
- 
+        this.getAllSubjects();
     }
 
     goBack() {
@@ -128,20 +101,6 @@ export default class AttedenceForm extends React.Component {
         let obj = {};
         obj[name] = value;
 
-        switch (name) {
-            case "courseId": {
-                this.getAllGroups(value);
-                break;
-            }
-            case "groupId": {
-                this.getAllSubjects(value);
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-
         this.setState(obj);
     }
 
@@ -152,8 +111,10 @@ export default class AttedenceForm extends React.Component {
         delete obj.groups;
         delete obj.courses;
         delete obj.FIO;
+        delete obj.courseId;
+     
 
-        createMagazine(obj,
+        createAttestation(obj,
             (data) => { console.log("success"); },
             (er) => { console.log(er); }
         );
@@ -162,12 +123,12 @@ export default class AttedenceForm extends React.Component {
     }
 
     render() {
-
+     
         return (
             <div>
                 <div className="top-bar">
                     <div className="header">
-                        <h3>Создать учет посещаемости</h3>
+                        <h3>Создать аттестацию</h3>
                     </div>
                     <div className="actions">
                         <div className="action">
@@ -211,30 +172,11 @@ export default class AttedenceForm extends React.Component {
                     />
 
                     <Input
-                        name="filial"
-                        label="Филиал:"
-                        type="text"
-                        required={true}
-                        id="filial"
-                        updateForm={this.updateForm}
-                    />
-
-
-                    <Input
-                        name="level"
-                        label="Образование:"
-                        type="text"
-                        required={true}
-                        id="level"
-                        updateForm={this.updateForm}
-                    />
-
-                    <Input
-                        name="faculty"
+                        name="department"
                         label="Факультет:"
                         type="text"
                         required={true}
-                        id="faculty"
+                        id="department"
                         updateForm={this.updateForm}
                     />
 
@@ -247,34 +189,10 @@ export default class AttedenceForm extends React.Component {
                         updateForm={this.updateForm}
                     />
 
-                    <Input
-                        name="typeOfClass"
-                        label="Вид занятий:"
-                        type="text"
-                        required={true}
-                        id="typeOfClass"
-                        updateForm={this.updateForm}
-                    />
-
-                    <div className="form-group">
-                        <label for="course">Курс:</label>
-                        <select name="courseId" onChange={this.selectOnChange.bind(this)} ref="courseList" className="form-control" id="course">
-                            <option defaultValue>Выберите курс...</option>
-                            {this.getCourses()}
-                        </select>
-                    </div>
-
-                    <div className="form-group">
-                        <label for="group">Группа: </label>
-                        <select disabled={this.state.groups.length == 0} name="groupId" onChange={this.selectOnChange.bind(this)} ref="groupList" className="form-control" id="group">
-                            <option defaultValue>Выберите группу...</option>
-                            {this.getGroups()}
-                        </select>
-                    </div>
 
                     <div className="form-group">
                         <label for="subject">Предмет</label>
-                        <select disabled={this.state.subjects.length == 0} name="subjectId" onChange={this.selectOnChange.bind(this)} ref="subjectList" className="form-control" id="subject">
+                        <select name="subjectId" onChange={this.selectOnChange.bind(this)} ref="subjectList" className="form-control" id="subject">
                             <option defaultValue>Выберите предмет...</option>
                             {this.getSubjects()}
                         </select>

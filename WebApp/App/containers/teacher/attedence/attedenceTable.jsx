@@ -86,7 +86,7 @@ export default class AttedenceTable extends React.Component {
             student.map((st) => {
                 
                 st.record.map(el => {
-                    let currentDate = new Date(el.date)
+                    let currentDate = new Date(el.date);
 
                     currentDate = `${this.format(currentDate.getDate())}.${this.format(currentDate.getMonth())}.${currentDate.getFullYear()}`;
                     if (date.indexOf(currentDate) === -1) {
