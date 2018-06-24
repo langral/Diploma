@@ -29555,7 +29555,7 @@ var Login = function (_React$Component) {
                 _react2.default.createElement(
                     'h3',
                     null,
-                    'Sign in to Library'
+                    '\u0412\u0445\u043E\u0434'
                 ),
                 _react2.default.createElement('hr', null),
                 this.redirect(),
@@ -34256,6 +34256,7 @@ var AttedenceList = function (_React$Component) {
             var attedence = this.state.records;
 
             return attedence.map(function (atd) {
+
                 return _react2.default.createElement(
                     'tr',
                     { key: '{atd.id}' },
@@ -35176,81 +35177,7 @@ var AttedenceTable = function (_React$Component) {
                         _react2.default.createElement(
                             'td',
                             null,
-                            student.note ? student.note : _react2.default.createElement(
-                                'div',
-                                null,
-                                _react2.default.createElement(
-                                    'button',
-                                    { className: 'btn btn-primary btn-sm', 'data-toggle': 'modal', 'data-target': _this4.createId(student.id) },
-                                    '\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u043F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'modal fade', id: student.id, tabIndex: '-1', role: 'dialog', 'aria-labelledby': 'exampleModalLabel', 'aria-hidden': 'true' },
-                                    _react2.default.createElement(
-                                        'div',
-                                        { className: 'modal-dialog', role: 'document' },
-                                        _react2.default.createElement(
-                                            'div',
-                                            { className: 'modal-content' },
-                                            _react2.default.createElement(
-                                                'div',
-                                                { className: 'modal-header' },
-                                                _react2.default.createElement(
-                                                    'h5',
-                                                    { className: 'modal-title', id: 'exampleModalLabel' },
-                                                    student.name
-                                                ),
-                                                _react2.default.createElement(
-                                                    'button',
-                                                    { type: 'button', className: 'close', 'data-dismiss': 'modal', 'aria-label': 'Close' },
-                                                    _react2.default.createElement(
-                                                        'span',
-                                                        { 'aria-hidden': 'true' },
-                                                        '\xD7'
-                                                    )
-                                                )
-                                            ),
-                                            _react2.default.createElement(
-                                                'div',
-                                                { className: 'modal-body' },
-                                                _react2.default.createElement(
-                                                    'div',
-                                                    { className: 'form-group', style: { textAlign: "left" } },
-                                                    _react2.default.createElement(
-                                                        'label',
-                                                        {
-                                                            htmlFor: 'note',
-                                                            className: 'control-label' },
-                                                        '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
-                                                    ),
-                                                    _react2.default.createElement('input', {
-                                                        type: 'text',
-                                                        name: 'note',
-                                                        id: 'note',
-                                                        required: '',
-                                                        className: 'form-control'
-                                                    })
-                                                )
-                                            ),
-                                            _react2.default.createElement(
-                                                'div',
-                                                { className: 'modal-footer' },
-                                                _react2.default.createElement(
-                                                    'button',
-                                                    { type: 'button', className: 'btn btn-primary', 'data-id': student.id, 'data-dismiss': 'modal' },
-                                                    '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C'
-                                                ),
-                                                _react2.default.createElement(
-                                                    'button',
-                                                    { type: 'button', className: 'btn btn-secondary', 'data-dismiss': 'modal' },
-                                                    '\u041E\u0442\u043C\u0435\u043D\u0430'
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
+                            student.note ? student.note : "-"
                         )
                     );
                 });
@@ -35436,6 +35363,80 @@ var AttedenceTable = function (_React$Component) {
             );
         }
     }, {
+        key: 'addComment',
+        value: function addComment(id) {
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'div',
+                    { className: 'modal fade', id: id, tabIndex: '-1', role: 'dialog', 'aria-labelledby': 'exampleModalLabel', 'aria-hidden': 'true' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'modal-dialog', role: 'document' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'modal-content' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'modal-header' },
+                                _react2.default.createElement(
+                                    'h5',
+                                    { className: 'modal-title', id: 'exampleModalLabel' },
+                                    '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
+                                ),
+                                _react2.default.createElement(
+                                    'button',
+                                    { type: 'button', className: 'close', 'data-dismiss': 'modal', 'aria-label': 'Close' },
+                                    _react2.default.createElement(
+                                        'span',
+                                        { 'aria-hidden': 'true' },
+                                        '\xD7'
+                                    )
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'modal-body' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'form-group', style: { textAlign: "left" } },
+                                    _react2.default.createElement(
+                                        'label',
+                                        {
+                                            htmlFor: 'note',
+                                            className: 'control-label' },
+                                        '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
+                                    ),
+                                    _react2.default.createElement('input', {
+                                        type: 'text',
+                                        name: 'note',
+                                        id: 'note',
+                                        required: '',
+                                        className: 'form-control'
+                                    })
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'modal-footer' },
+                                _react2.default.createElement(
+                                    'button',
+                                    { type: 'button', className: 'btn btn-primary', 'data-dismiss': 'modal' },
+                                    '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C'
+                                ),
+                                _react2.default.createElement(
+                                    'button',
+                                    { type: 'button', className: 'btn btn-secondary', 'data-dismiss': 'modal' },
+                                    '\u041E\u0442\u043C\u0435\u043D\u0430'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }, {
         key: 'sendMagazineToService',
         value: function sendMagazineToService(data) {
             console.log(data);
@@ -35543,7 +35544,12 @@ var AttedenceTable = function (_React$Component) {
                                 _react2.default.createElement(
                                     'th',
                                     { style: { textAlign: "center" } },
-                                    '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
+                                    _react2.default.createElement(
+                                        'button',
+                                        { className: 'btn btn-primary btn-sm', 'data-toggle': 'modal', 'data-target': '#addComment' },
+                                        '\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u043F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
+                                    ),
+                                    this.addComment("addComment")
                                 )
                             )
                         ),

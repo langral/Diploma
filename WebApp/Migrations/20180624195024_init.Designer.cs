@@ -12,8 +12,8 @@ using WebApp.Models;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    [Migration("20180623170307_init23")]
-    partial class init23
+    [Migration("20180624195024_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -218,6 +218,8 @@ namespace WebApp.Migrations
                     b.Property<int>("Number");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Group");
                 });
@@ -528,6 +530,14 @@ namespace WebApp.Migrations
                     b.HasOne("Models.Student")
                         .WithMany("Comment")
                         .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Models.Group", b =>
+                {
+                    b.HasOne("Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

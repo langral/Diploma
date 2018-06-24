@@ -139,46 +139,7 @@ export default class AttedenceTable extends React.Component {
                                     ( student.note )
                                         :
                                     (
-                                        <div>
-                                            <button className="btn btn-primary btn-sm" data-toggle="modal" data-target={this.createId(student.id)} >
-                                                Добавить примечание
-                                            </button>
-
-                                            <div className="modal fade" id={student.id} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div className="modal-dialog" role="document">
-                                                    <div className="modal-content">
-                                                        <div className="modal-header">
-                                                            <h5 className="modal-title" id="exampleModalLabel">{student.name}</h5>
-                                                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div className="modal-body">
-
-                                                            <div className="form-group" style={{ textAlign: "left"}} >
-                                                                <label
-                                                                    htmlFor="note"
-                                                                    className="control-label">
-                                                                    Примечание
-                                                                </label>
-                                                                <input
-                                                                        type="text"
-                                                                        name="note"
-                                                                        id="note"
-                                                                        required=""
-                                                                        className="form-control"
-                                                                    />
-                                                            </div>
-
-                                                        </div>
-                                                        <div className="modal-footer">
-                                                            <button type="button" className="btn btn-primary" data-id={student.id} data-dismiss="modal">Сохранить</button>
-                                                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> 
-                                        </div>
+                                        "-"
                                     )}
                             </td>
                         </tr>
@@ -324,6 +285,47 @@ export default class AttedenceTable extends React.Component {
         );
     }
 
+    addComment(id) {
+        return (
+                <div>
+                    <div className="modal fade" id={id} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel">Примечание</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+
+                                    <div className="form-group" style={{ textAlign: "left" }} >
+                                        <label
+                                            htmlFor="note"
+                                            className="control-label">
+                                            Примечание
+                                                                    </label>
+                                        <input
+                                            type="text"
+                                            name="note"
+                                            id="note"
+                                            required=""
+                                            className="form-control"
+                                        />
+                                    </div>
+
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-primary"  data-dismiss="modal">Сохранить</button>
+                                    <button type="button" className="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+    }
+
     sendMagazineToService(data) {
         console.log(data);
         sendJsonToService(data,
@@ -381,7 +383,10 @@ export default class AttedenceTable extends React.Component {
                                 {this.getRecordsToTh(this.state.group)}
                  
                                 <th style={{ textAlign: "center" }}>
-                                    Примечание
+                                    <button className="btn btn-primary btn-sm" data-toggle="modal" data-target="#addComment" >
+                                        Добавить примечание
+                                    </button>
+                                    {this.addComment("addComment")}
                                 </th>
                            
                             </tr>

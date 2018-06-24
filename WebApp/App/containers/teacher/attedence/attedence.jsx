@@ -47,6 +47,7 @@ class AttedenceList extends React.Component {
         
         return (
             attedence.map((atd) => {
+
                 return (
                     <tr key="{atd.id}">
                         <td>{atd.subject.name}</td>

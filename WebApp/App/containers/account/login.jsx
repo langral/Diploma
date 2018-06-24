@@ -79,7 +79,7 @@ export default class Login extends React.Component {
         return (
             <form className="std-form" onSubmit={this.onSubmit} >
 
-                <h3>Sign in to Library</h3>
+                <h3>Вход</h3>
                 <hr />
                 
                 {this.redirect()}
