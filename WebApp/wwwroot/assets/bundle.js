@@ -2436,6 +2436,7 @@ exports.createMagazine = createMagazine;
 exports.getMagazine = getMagazine;
 exports.magazineCreateRecords = magazineCreateRecords;
 exports.getMagazineAsJson = getMagazineAsJson;
+exports.deleteMagazine = deleteMagazine;
 exports.sendJsonToService = sendJsonToService;
 
 var _localStorageTools = __webpack_require__(6);
@@ -2611,6 +2612,26 @@ function getMagazineAsJson(id, onSuccess, onError) {
 
     return fetch(constants.getMagazineAsJson + ('/' + id), {
         method: "GET",
+        headers: headers
+    }).then(function (response) {
+        return checkStatus(response);
+    }).then(function (data) {
+        onSuccess && onSuccess(data);
+    }).catch(function (error) {
+        onError && onError(error);
+    });
+}
+
+function deleteMagazine(id, onSuccess, onError) {
+    var auth = { Authorization: 'Bearer ' + (0, _localStorageTools.getItem)(_settings.AUTH_KEY).authToken };
+    var headers = {
+        'content-type': 'application/json'
+    };
+    if (!auth) return;
+
+    headers['Authorization'] = auth.Authorization;
+    return fetch(constants.deleteMagazine + ('/' + id), {
+        method: "DELETE",
         headers: headers
     }).then(function (response) {
         return checkStatus(response);
@@ -34251,8 +34272,27 @@ var AttedenceList = function (_React$Component) {
             });
         }
     }, {
+        key: 'createId',
+        value: function createId(str) {
+            return "#" + str;
+        }
+    }, {
+        key: 'deleteHandler',
+        value: function deleteHandler(e) {
+            var _this3 = this;
+
+            var id = e.target.dataset.id;
+            (0, _api.deleteMagazine)(id, function (data) {
+                _this3.getAllAttendences();
+            }, function (error) {
+                _this3.getAllAttendences();
+            });
+        }
+    }, {
         key: 'createAttedenceTable',
         value: function createAttedenceTable() {
+            var _this4 = this;
+
             var attedence = this.state.records;
 
             return attedence.map(function (atd) {
@@ -34290,10 +34330,59 @@ var AttedenceList = function (_React$Component) {
                         ),
                         '\xA0',
                         _react2.default.createElement(
-                            _reactRouterDom.Link,
-                            { to: '/teacher/attedence/delete',
-                                className: 'btn btn-danger btn-sm' },
+                            'button',
+                            {
+                                className: 'btn btn-danger btn-sm', 'data-toggle': 'modal', 'data-target': _this4.createId(atd.id) },
                             '\u0423\u0434\u0430\u043B\u0438\u0442\u044C'
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { 'class': 'modal fade', id: atd.id, tabindex: '-1', role: 'dialog', 'aria-labelledby': 'exampleModalLabel', 'aria-hidden': 'true' },
+                            _react2.default.createElement(
+                                'div',
+                                { 'class': 'modal-dialog', role: 'document' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { 'class': 'modal-content' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { 'class': 'modal-header' },
+                                        _react2.default.createElement(
+                                            'h5',
+                                            { 'class': 'modal-title', id: 'exampleModalLabel' },
+                                            '\u0423\u0434\u0430\u043B\u0435\u043D\u0438\u0435'
+                                        ),
+                                        _react2.default.createElement(
+                                            'button',
+                                            { type: 'button', 'class': 'close', 'data-dismiss': 'modal', 'aria-label': 'Close' },
+                                            _react2.default.createElement(
+                                                'span',
+                                                { 'aria-hidden': 'true' },
+                                                '\xD7'
+                                            )
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { 'class': 'modal-body' },
+                                        '\u0412\u044B \u0443\u0432\u0435\u0440\u0435\u043D\u044B \u0447\u0442\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C \u0434\u0430\u043D\u043D\u0443\u044E \u0433\u0440\u0443\u043F\u043F\u0443?'
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { 'class': 'modal-footer' },
+                                        _react2.default.createElement(
+                                            'button',
+                                            { type: 'button', 'class': 'btn btn-primary', onClick: _this4.deleteHandler.bind(_this4), 'data-id': atd.id, 'data-dismiss': 'modal' },
+                                            '\u0414\u0430'
+                                        ),
+                                        _react2.default.createElement(
+                                            'button',
+                                            { type: 'button', 'class': 'btn btn-secondary', 'data-dismiss': 'modal' },
+                                            '\u041D\u0435\u0442'
+                                        )
+                                    )
+                                )
+                            )
                         )
                     )
                 );
@@ -35255,7 +35344,7 @@ var AttedenceTable = function (_React$Component) {
         }
     }, {
         key: 'submitRecords',
-        value: function submitRecords() {
+        value: function submitRecords(e) {
             var _this5 = this;
 
             var form = this.refs.sumbitForm;
@@ -35339,7 +35428,8 @@ var AttedenceTable = function (_React$Component) {
                                     name: 'date',
                                     id: 'date',
                                     required: '',
-                                    className: 'form-control'
+                                    className: 'form-control',
+                                    value: new Date().toISOString().substr(0, 10)
                                 })
                             ),
                             this.createRecordsInput(students)

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AttedenceForm from './attedenceForm.jsx';
 import AttedenceTable from './attedenceTable.jsx';
-import { getAttendence } from './api.jsx'
+import { getAttendence, deleteMagazine } from './api.jsx'
 import Pagination from '../../utils/pagination.jsx'
 
 class AttedenceList extends React.Component {
@@ -40,7 +40,24 @@ class AttedenceList extends React.Component {
                 console.log('Error');
             }
         );
-     }
+    }
+
+    createId(str) {
+        return "#" + str;
+    }
+
+    deleteHandler(e) {
+        let id = e.target.dataset.id;
+        deleteMagazine(id,
+            (data) => {
+                this.getAllAttendences();
+            },
+            (error) => {
+                this.getAllAttendences();
+            }
+        );
+    }
+
 
     createAttedenceTable() {
         let attedence = this.state.records;
@@ -58,9 +75,29 @@ class AttedenceList extends React.Component {
                                 className="btn btn-primary btn-sm">Открыть
                             </Link>
                             &nbsp;
-                            <Link to="/teacher/attedence/delete"
-                                className="btn btn-danger btn-sm">Удалить
-                             </Link>
+                            <button
+                                className="btn btn-danger btn-sm" data-toggle="modal" data-target={this.createId(atd.id)} >Удалить
+                             </button>
+
+                            <div class="modal fade" id={atd.id} tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Удаление</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Вы уверены что хотите удалить данную группу?
+                                                </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" onClick={this.deleteHandler.bind(this)} data-id={atd.id} data-dismiss="modal">Да</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 );

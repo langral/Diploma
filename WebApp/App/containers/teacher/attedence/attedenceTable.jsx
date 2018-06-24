@@ -206,7 +206,8 @@ export default class AttedenceTable extends React.Component {
     }
 
  
-    submitRecords() {
+    submitRecords(e) {
+   
         let form = this.refs.sumbitForm;
 
         if (!form) return;
@@ -270,6 +271,7 @@ export default class AttedenceTable extends React.Component {
                                     id="date"
                                     required=""
                                     className="form-control"
+                                    value={new Date().toISOString().substr(0, 10)}
                                 />
                             </div>
 

@@ -73,7 +73,7 @@ export default class GroupsList extends React.Component {
                                     </Link>
                                     &nbsp;
                                     <button
-                                    className="btn btn-danger btn-sm" data-toggle="modal" data-target={this.createId(group.id)} >Удалить
+                                        className="btn btn-danger btn-sm" data-toggle="modal" data-target={this.createId(group.id)} >Удалить
                                     </button>
          
                                 <div class="modal fade" id={group.id} tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

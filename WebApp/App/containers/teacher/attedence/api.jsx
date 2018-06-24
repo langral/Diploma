@@ -204,6 +204,30 @@ export function getMagazineAsJson(id, onSuccess, onError) {
         });
 }
 
+
+export function deleteMagazine(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+
+    headers['Authorization'] = auth.Authorization;
+    return fetch(constants.deleteMagazine +`/${id}`,
+        {
+            method: "DELETE",
+            headers,
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+
 export function sendJsonToService(magazine, onSuccess, onError) {
     let headers = {
         'content-type': 'application/json',
@@ -222,3 +246,4 @@ export function sendJsonToService(magazine, onSuccess, onError) {
             onError && onError(error);
         });
 }
+
