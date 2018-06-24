@@ -588,7 +588,7 @@ var Pagination = function (_React$Component) {
                     var index = ++i;
                     if (index === _this2.props.currentPage) return _react2.default.createElement(
                         'li',
-                        { className: 'page-item active' },
+                        { key: index, className: 'page-item active' },
                         _react2.default.createElement(
                             'span',
                             { className: 'page-link', onClick: _this2.pageHandler },
@@ -596,7 +596,7 @@ var Pagination = function (_React$Component) {
                         )
                     );else return _react2.default.createElement(
                         'li',
-                        { className: 'page-item' },
+                        { key: index, className: 'page-item' },
                         _react2.default.createElement(
                             'span',
                             { className: 'page-link', onClick: _this2.pageHandler },
@@ -34256,10 +34256,9 @@ var AttedenceList = function (_React$Component) {
             var attedence = this.state.records;
 
             return attedence.map(function (atd) {
-
                 return _react2.default.createElement(
                     'tr',
-                    { key: '{atd.id}' },
+                    { key: atd.id },
                     _react2.default.createElement(
                         'td',
                         null,
@@ -35186,6 +35185,7 @@ var AttedenceTable = function (_React$Component) {
     }, {
         key: 'showGroupNumber',
         value: function showGroupNumber() {
+            console.log(this.state);
             if (this.state.group) {
                 return this.state.group.number;
             }

@@ -44,12 +44,11 @@ class AttedenceList extends React.Component {
 
     createAttedenceTable() {
         let attedence = this.state.records;
-        
+  
         return (
             attedence.map((atd) => {
-
                 return (
-                    <tr key="{atd.id}">
+                    <tr key={atd.id}>
                         <td>{atd.subject.name}</td>
                         <td>{atd.group.number}</td>
                         <td>{atd.level}</td>

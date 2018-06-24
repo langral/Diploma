@@ -18,11 +18,11 @@ export default class Pagination extends React.Component {
                     let index = ++i;
                     if (index === this.props.currentPage) 
                         return (
-                            <li className="page-item active"><span className="page-link" onClick={this.pageHandler} >{index}</span></li>
+                            <li key={index} className="page-item active"><span className="page-link" onClick={this.pageHandler} >{index}</span></li>
                         );
                     else
                         return (
-                            <li className="page-item"><span className="page-link" onClick={this.pageHandler} >{index}</span></li>
+                            <li key={index}  className="page-item"><span className="page-link" onClick={this.pageHandler} >{index}</span></li>
                         );
                 })
             )

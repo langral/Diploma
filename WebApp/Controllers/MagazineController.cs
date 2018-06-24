@@ -85,7 +85,7 @@ namespace WebApp.Controllersуу
 
         [HttpGet]
         [Route("get-attendences")]
-        public PageInfo<Magazine> GetRecords(int? page)
+        public async Task<PageInfo<Magazine>> GetRecords(int? page)
         {
             int currentPage = page ?? 1;
 
@@ -95,8 +95,8 @@ namespace WebApp.Controllersуу
                 var magazines = magazineRepository.Get(r => r.TeacherId == userId);
                 foreach(var mag  in magazines)
                 {
-                    var subject = subjectRepository.Get(mag.SubjectId).GetAwaiter().GetResult();
-                    var group = groupRepository.GetEager(mag.SubjectId, "Student").GetAwaiter().GetResult();
+                    var subject = await subjectRepository.Get(mag.SubjectId);
+                    var group = await groupRepository.GetEager(mag.GroupId, "Student");
 
                     mag.Group = group;
                     mag.Subject = subject;

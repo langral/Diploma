@@ -151,6 +151,7 @@ export default class AttedenceTable extends React.Component {
     }
    
     showGroupNumber() {
+        console.log(this.state);
         if (this.state.group) {
             return this.state.group.number;
         }
