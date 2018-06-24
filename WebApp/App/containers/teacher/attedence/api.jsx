@@ -1,6 +1,7 @@
 ﻿import { getItem } from '../../../utils/localStorageTools.jsx'
 import { AUTH_KEY } from '../../../settings/settings.jsx'
 
+
 function checkStatus(response) {
     if (response.ok) {
         try {
@@ -170,6 +171,48 @@ export function magazineCreateRecords(data, onSuccess, onError) {
             method: "POST",
             headers,
             body: JSON.stringify(data)
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+
+export function getMagazineAsJson(id, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.getMagazineAsJson + `/${id}`,
+        {
+            method: "GET",
+            headers,
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
+
+export function sendJsonToService(magazine, onSuccess, onError) {
+    let headers = {
+        'content-type': 'application/json',
+    }
+    return fetch(constants.getMagazineDocx,
+        {
+            method: "POST",
+            headers,
+            body: JSON.stringify(magazine)
         })
         .then((response) => {
             return checkStatus(response);

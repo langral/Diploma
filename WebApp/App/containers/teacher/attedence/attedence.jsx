@@ -135,8 +135,6 @@ class AttedenceList extends React.Component {
 export default class Attedence extends React.Component {
     constructor(props) {
         super(props);
-
- 
     }
 
     render() {

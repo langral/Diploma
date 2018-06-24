@@ -2435,6 +2435,8 @@ exports.getSubjects = getSubjects;
 exports.createMagazine = createMagazine;
 exports.getMagazine = getMagazine;
 exports.magazineCreateRecords = magazineCreateRecords;
+exports.getMagazineAsJson = getMagazineAsJson;
+exports.sendJsonToService = sendJsonToService;
 
 var _localStorageTools = __webpack_require__(6);
 
@@ -2599,6 +2601,43 @@ function magazineCreateRecords(data, onSuccess, onError) {
     });
 }
 
+function getMagazineAsJson(id, onSuccess, onError) {
+    var auth = { Authorization: 'Bearer ' + (0, _localStorageTools.getItem)(_settings.AUTH_KEY).authToken };
+    var headers = {
+        'content-type': 'application/json'
+    };
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.getMagazineAsJson + ('/' + id), {
+        method: "GET",
+        headers: headers
+    }).then(function (response) {
+        return checkStatus(response);
+    }).then(function (data) {
+        onSuccess && onSuccess(data);
+    }).catch(function (error) {
+        onError && onError(error);
+    });
+}
+
+function sendJsonToService(magazine, onSuccess, onError) {
+    var headers = {
+        'content-type': 'application/json'
+    };
+    return fetch(constants.getMagazineDocx, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(magazine)
+    }).then(function (response) {
+        return checkStatus(response);
+    }).then(function (data) {
+        onSuccess && onSuccess(data);
+    }).catch(function (error) {
+        onError && onError(error);
+    });
+}
+
 /***/ }),
 /* 36 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2620,6 +2659,8 @@ exports.createAttestation = createAttestation;
 exports.getMagazine = getMagazine;
 exports.magazineCreateRecords = magazineCreateRecords;
 exports.createAttestationRecords = createAttestationRecords;
+exports.getAttestationAsJson = getAttestationAsJson;
+exports.sendJsonToService = sendJsonToService;
 
 var _localStorageTools = __webpack_require__(6);
 
@@ -2856,6 +2897,43 @@ function createAttestationRecords(data, onSuccess, onError) {
         method: "POST",
         headers: headers,
         body: JSON.stringify(data)
+    }).then(function (response) {
+        return checkStatus(response);
+    }).then(function (data) {
+        onSuccess && onSuccess(data);
+    }).catch(function (error) {
+        onError && onError(error);
+    });
+}
+
+function getAttestationAsJson(id, onSuccess, onError) {
+    var auth = { Authorization: 'Bearer ' + (0, _localStorageTools.getItem)(_settings.AUTH_KEY).authToken };
+    var headers = {
+        'content-type': 'application/json'
+    };
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.getAttestationAsJson + ('/' + id), {
+        method: "GET",
+        headers: headers
+    }).then(function (response) {
+        return checkStatus(response);
+    }).then(function (data) {
+        onSuccess && onSuccess(data);
+    }).catch(function (error) {
+        onError && onError(error);
+    });
+}
+
+function sendJsonToService(magazine, onSuccess, onError) {
+    var headers = {
+        'content-type': 'application/json'
+    };
+    return fetch(constants.getAttestationDocx, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(magazine)
     }).then(function (response) {
         return checkStatus(response);
     }).then(function (data) {
@@ -35358,6 +35436,27 @@ var AttedenceTable = function (_React$Component) {
             );
         }
     }, {
+        key: 'sendMagazineToService',
+        value: function sendMagazineToService(data) {
+            console.log(data);
+            (0, _api.sendJsonToService)(data, function () {
+                console.log("success");
+            }, function (er) {
+                console.log(er);
+            });
+        }
+    }, {
+        key: 'downloadAsJson',
+        value: function downloadAsJson() {
+            var _this6 = this;
+
+            (0, _api.getMagazineAsJson)(this.id, function (data) {
+                _this6.sendMagazineToService(data);
+            }, function (er) {
+                console.log(er);
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -35411,7 +35510,7 @@ var AttedenceTable = function (_React$Component) {
                             { className: 'action' },
                             _react2.default.createElement(
                                 'button',
-                                { className: 'btn btn-primary', 'data-toggle': 'modal', 'data-target': '#addRecord' },
+                                { className: 'btn btn-primary', onClick: this.downloadAsJson.bind(this) },
                                 '\u0421\u043A\u0430\u0447\u0430\u0442\u044C \u0432 .docx'
                             )
                         )
@@ -36439,6 +36538,27 @@ var AttestationTable = function (_React$Component) {
             this.getAllSubjects();
         }
     }, {
+        key: 'sendAttestationToService',
+        value: function sendAttestationToService(data) {
+            console.log(data);
+            (0, _api.sendJsonToService)(data, function () {
+                console.log("success");
+            }, function (er) {
+                console.log(er);
+            });
+        }
+    }, {
+        key: 'downloadAsJson',
+        value: function downloadAsJson() {
+            var _this7 = this;
+
+            (0, _api.getAttestationAsJson)(this.id, function (data) {
+                _this7.sendAttestationToService(data);
+            }, function (er) {
+                console.log(er);
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
 
@@ -36491,7 +36611,7 @@ var AttestationTable = function (_React$Component) {
                             { className: 'action' },
                             _react2.default.createElement(
                                 'button',
-                                { className: 'btn btn-primary', 'data-toggle': 'modal', 'data-target': '#addRecord' },
+                                { className: 'btn btn-primary', onClick: this.downloadAsJson.bind(this) },
                                 '\u0421\u043A\u0430\u0447\u0430\u0442\u044C \u0432 .docx'
                             )
                         )

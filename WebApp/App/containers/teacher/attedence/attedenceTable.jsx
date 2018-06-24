@@ -2,7 +2,7 @@
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getMagazine, magazineCreateRecords } from './api.jsx'
+import { getMagazine, magazineCreateRecords, getMagazineAsJson, sendJsonToService } from './api.jsx'
 
 
 export default class AttedenceTable extends React.Component {
@@ -324,6 +324,20 @@ export default class AttedenceTable extends React.Component {
         );
     }
 
+    sendMagazineToService(data) {
+        console.log(data);
+        sendJsonToService(data,
+            () => { console.log("success") },
+            (er) => { console.log(er) });
+    }
+
+    downloadAsJson() {
+
+        getMagazineAsJson(this.id,
+            (data) => { this.sendMagazineToService(data) },
+            (er) => { console.log(er) });
+    }
+
     render() {
         return (
             <div>
@@ -346,7 +360,7 @@ export default class AttedenceTable extends React.Component {
                         </div>
 
                         <div className="action">
-                            <button className="btn btn-primary" data-toggle="modal" data-target="#addRecord" >
+                            <button className="btn btn-primary" onClick={this.downloadAsJson.bind(this)} >
                                 Скачать в .docx
                             </button>
                         </div>

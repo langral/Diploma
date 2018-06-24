@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using WebApp.Infrastructure.Extenstions;
 using WebApp.Models;
+using WebApp.Models.SpecialViewModels;
 using WebApp.Models.ViewModels;
 
 namespace WebApp.Controllers
@@ -31,8 +32,11 @@ namespace WebApp.Controllers
         private IGenericRepository<Mark> markRepository;
         private IGenericRepository<Student> studentRepository;
         private IGenericRepository<AttestationRecord> attestationRecordRepository;
+        private IEagerGenericRepository<Mark> eagerMarkRepository;
 
-        public AttestationController(IHttpContextAccessor httpContextAccessor, IRepositoryFacade repositoryFacade)
+        private readonly MagazineContext magazineContext;
+
+        public AttestationController(IHttpContextAccessor httpContextAccessor, IRepositoryFacade repositoryFacade, MagazineContext magazineContext)
         {
             this.userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             this.attestationRepository = repositoryFacade.CreateGenericRepository<Attestation>();
@@ -45,6 +49,8 @@ namespace WebApp.Controllers
             groupTeacherRepository = repositoryFacade.CreateGenericRepository<GroupTeacherMappingModel>();
             studentRepository = repositoryFacade.CreateGenericRepository<Student>();
             attestationRecordRepository = repositoryFacade.CreateGenericRepository<AttestationRecord>();
+            eagerMarkRepository = repositoryFacade.CreateEagerGenericRepository<Mark>() as IEagerGenericRepository<Mark>;
+            this.magazineContext = magazineContext;
         }
 
 
@@ -203,7 +209,7 @@ namespace WebApp.Controllers
                     Mark m = new Mark()
                     {
                         StudentId = mk.StudentId,
-                        mark = mk.mark,
+                        mark = mk.note,
                         AttestationRecordId = attestationRecord.Id
                     };
 
@@ -258,6 +264,75 @@ namespace WebApp.Controllers
             }
         }
 
+        private async Task<List<AttestationRecordExport>> GetAttestationRecordsToExport(List<AttestationRecord> attestationRecords)
+        {
+            List<AttestationRecordExport> attestationRecordsExport = new List<AttestationRecordExport>();
+
+            foreach (var record in attestationRecords) { 
+
+                var group = await eagerGroupRepository.GetEager(record.GroupId, "Course");
+                var marks = eagerMarkRepository.GetEager(x => x.AttestationRecordId == record.Id, "Student");
+                                               
+
+                AttestationRecordExport attRExp = new AttestationRecordExport()
+                {
+                    group = group.Number,
+                    course = group.Course.Number,
+                    contingentOfStudents = record.ContingentOfStudents,
+                    date = record.Date.ToShortDateString(),
+                    marks = marks.Select(x => new MarkExport() { FIO = x.Student.Name, mark = Int32.Parse(x.mark) }).ToList()
+            };
+
+                attestationRecordsExport.Add(attRExp);
+            }
+
+            return attestationRecordsExport;
+        }
+
+        [HttpGet]
+        [Route("get-attestation-as-json/{id}")]
+        public async Task<AttestationExport> GetAttestationAsAJson(int id)
+        {
+            try
+            {
+                var attestation = await attestationRepository.Get(id);
+
+                if (attestation == null) throw new Exception(String.Format("Аттестации не существует!"));
+
+                var attestationSubject = await subjectRepository.Get(attestation.SubjectId);
+
+                var teacher = magazineContext.Teacher.Where(t => t.Id == attestation.TeacherId).First();
+
+                if (teacher == null) throw new Exception(String.Format("Преподаватель не существует!"));
+
+                var attestationRecords = attestationRecordRepository.Get(s => s.AttestationId == attestation.Id).ToList();
+
+                List<AttestationRecordExport> attestationRecordsExport = await GetAttestationRecordsToExport(attestationRecords);
+
+                AttestationExport result = new AttestationExport()
+                {
+                    Semester = attestation.Semester.ToString(),
+                    Department = attestation.Department,
+                    Speciality = attestation.Speciality,
+                    Subject = attestationSubject.Name,
+                    Teacher = teacher.FIO,
+                    Year = attestation.Year,
+                    attestationRecords = attestationRecordsExport
+                };
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("error", e.Message);
+                await Response.BadRequestHelper(ModelState.Values);
+            }
+
+
+            return null;
+        }
 
     }
+
+
 }

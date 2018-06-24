@@ -7,7 +7,7 @@ namespace WebApp.Models.ViewModels
 {
     public class MarkViewModel
     {
-        public string mark { get; set; }
+        public string note { get; set; }
         public int StudentId { get; set; }
     }
 }

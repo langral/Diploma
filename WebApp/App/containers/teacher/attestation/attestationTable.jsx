@@ -2,7 +2,11 @@
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getAttestationById, getSubjectsGroupsBySubject, createAttestationRecords, getAllAttestationRecordsApi } from './api.jsx'
+import {
+    getAttestationById, getSubjectsGroupsBySubject,
+    createAttestationRecords, getAllAttestationRecordsApi,
+    getAttestationAsJson, sendJsonToService
+} from './api.jsx'
 
 
 export default class AttestationTable extends React.Component {
@@ -293,6 +297,20 @@ export default class AttestationTable extends React.Component {
         this.getAllSubjects();
     }
 
+    sendAttestationToService(data) {
+        console.log(data);
+        sendJsonToService(data,
+            () => { console.log("success") },
+            (er) => { console.log(er) });
+    }
+
+    downloadAsJson() {
+
+        getAttestationAsJson(this.id,
+            (data) => { this.sendAttestationToService(data) },
+            (er) => { console.log(er) });
+    }
+
     render() {
    
         return (
@@ -316,7 +334,7 @@ export default class AttestationTable extends React.Component {
                         </div>
 
                         <div className="action">
-                            <button className="btn btn-primary" data-toggle="modal" data-target="#addRecord" >
+                            <button className="btn btn-primary" onClick={this.downloadAsJson.bind(this)}  >
                                 Скачать в .docx
                             </button>
                         </div>

@@ -12,6 +12,7 @@ using Models;
 using Newtonsoft.Json;
 using WebApp.Infrastructure.Extenstions;
 using WebApp.Models;
+using WebApp.Models.SpecialViewModels;
 using WebApp.Models.ViewModels;
 
 namespace WebApp.Controllersуу
@@ -25,13 +26,15 @@ namespace WebApp.Controllersуу
 
         private IGenericRepository<Record> recordsRepository;
         private IGenericRepository<Magazine> magazineRepository;
+        private IGenericRepository<Student> studentRepository;
         private IGenericRepository<Subject> subjectRepository;
         private IEagerGenericRepository<Group> groupRepository;
         private IEagerGenericRepository<Magazine> magazineRepositoryEager;
         private int defaultPageSize = 5;
         private readonly string userId;
+        private readonly MagazineContext magazineContext;
 
-        public MagazineController(IRepositoryFacade repositoryFacade, IHttpContextAccessor httpContextAccessor)
+        public MagazineController(IRepositoryFacade repositoryFacade, IHttpContextAccessor httpContextAccessor, MagazineContext magazineContext)
         {
             this.repositoryFacade = repositoryFacade;
             magazineRepository = this.repositoryFacade.CreateEagerGenericRepository<Magazine>();
@@ -40,6 +43,8 @@ namespace WebApp.Controllersуу
             groupRepository = this.repositoryFacade.CreateEagerGenericRepository<Group>() as IEagerGenericRepository<Group>;
             recordsRepository = this.repositoryFacade.CreateGenericRepository<Record>();
             this.userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            this.magazineContext = magazineContext;
+            studentRepository = this.repositoryFacade.CreateGenericRepository<Student>();
         }
 
         [HttpGet]
@@ -60,7 +65,13 @@ namespace WebApp.Controllersуу
 
                 foreach(var student in group.Student){
                     var records = recordsRepository.Get(r => r.StudentId == student.Id && r.MagazineId == magazine.Id).OrderBy(x => x.Date);
-                    student.Record = records.ToList();
+                    student.Record = records.Select(r => new Record() {
+                        Date = r.Date,
+                        MagazineId = r.MagazineId,
+                        Visit = r.Visit,
+                        Id = r.Id,
+                        StudentId = r.StudentId
+                    }).ToList();
                 }
 
 
@@ -243,6 +254,75 @@ namespace WebApp.Controllersуу
                 ModelState.AddModelError("error", e.Message);
                 await Response.BadRequestHelper(ModelState.Values);
             }
+        }
+
+        private List<StudentExport> GetStudentsToExport(List<Student> students, int magazineId)
+        {
+            List<StudentExport> studentExports = new List<StudentExport>();
+
+            foreach(var student in students)
+            {
+                StudentExport studentExport = new StudentExport()
+                {
+                    FIO = student.Name,
+                    Note = "test", //TO DO
+                    Records = recordsRepository.Get(r => r.MagazineId == magazineId && r.StudentId == student.Id)
+                                               .Select(r => new RecordExport() { Date = r.Date.ToShortDateString(), Note = r.Visit })
+                                               .ToList()
+                };
+
+                studentExports.Add(studentExport);
+            }
+
+            return studentExports;
+        }
+
+        [HttpGet]
+        [Route("get-magazine-as-json/{id}")]
+        public async Task<MagazineExport> GetMagazineAsAJson(int id)
+        {
+            try
+            {
+                var magzine = await magazineRepository.Get(id);
+
+                if (magzine == null) throw new Exception(String.Format("Учет посещаемости не существует!"));
+
+                var magazinesSubject = await subjectRepository.Get(magzine.SubjectId);
+                var teacher = magazineContext.Teacher.Where(t => t.Id == magzine.TeacherId).First();
+
+                if (teacher == null) throw new Exception(String.Format("Преподаватель не существует!"));
+
+                var group = groupRepository.GetEager(g => g.Id == magzine.GroupId, "Course").First();
+
+                var students = studentRepository.Get(s => s.GroupId == group.Id).ToList();
+
+                List<StudentExport> studentExports = GetStudentsToExport(students, magzine.Id);
+
+                MagazineExport result = new MagazineExport()
+                {
+                    Branch = magzine.Filial,
+                    Semester = magzine.Semester.ToString(),
+                    Speciality = magzine.Specialty,
+                    Subject = magazinesSubject.Name,
+                    Teacher = teacher.FIO,
+                    Department = magzine.Faculty,
+                    Level = magzine.Level,
+                    Year = Int32.Parse(magzine.Year),
+                    Course = group.Course.Number,
+                    Group = group.Number,
+                    Students = studentExports,
+                };
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("error", e.Message);
+                await Response.BadRequestHelper(ModelState.Values);
+            }
+           
+
+            return null;
         }
 
     }
