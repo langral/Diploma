@@ -2435,6 +2435,7 @@ exports.getSubjects = getSubjects;
 exports.createMagazine = createMagazine;
 exports.getMagazine = getMagazine;
 exports.magazineCreateRecords = magazineCreateRecords;
+exports.magazineCreateComments = magazineCreateComments;
 exports.getMagazineAsJson = getMagazineAsJson;
 exports.deleteMagazine = deleteMagazine;
 exports.sendJsonToService = sendJsonToService;
@@ -2590,6 +2591,27 @@ function magazineCreateRecords(data, onSuccess, onError) {
     headers['Authorization'] = auth.Authorization;
 
     return fetch(constants.magazineCreateRecord, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data)
+    }).then(function (response) {
+        return checkStatus(response);
+    }).then(function (data) {
+        onSuccess && onSuccess(data);
+    }).catch(function (error) {
+        onError && onError(error);
+    });
+}
+
+function magazineCreateComments(data, onSuccess, onError) {
+    var auth = { Authorization: 'Bearer ' + (0, _localStorageTools.getItem)(_settings.AUTH_KEY).authToken };
+    var headers = {
+        'content-type': 'application/json'
+    };
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.magazineCreateComments, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(data)
@@ -35080,12 +35102,15 @@ var AttedenceTable = function (_React$Component) {
 
         _this.state = {
             group: null,
-            records: []
+            records: [],
+            errors: [],
+            success: false
         };
 
         _this.id = _this.props.match.params.id;
         _this.goBack = _this.goBack.bind(_this);
         _this.getTable = _this.getTable.bind(_this);
+        _this.getErrors = _this.getErrors.bind(_this);
         return _this;
     }
 
@@ -35200,7 +35225,7 @@ var AttedenceTable = function (_React$Component) {
 
             if (this.state.group) {
                 var _student = this.state.group.student;
-                var date = [];
+                var _date = [];
 
                 _student.map(function (st) {
 
@@ -35208,12 +35233,12 @@ var AttedenceTable = function (_React$Component) {
                         var currentDate = new Date(el.date);
 
                         currentDate = _this3.format(currentDate.getDate()) + '.' + _this3.format(currentDate.getMonth()) + '.' + currentDate.getFullYear();
-                        if (date.indexOf(currentDate) === -1) {
-                            date.push(currentDate);
+                        if (_date.indexOf(currentDate) === -1) {
+                            _date.push(currentDate);
                         }
                     });
                 });
-                return date.map(function (record) {
+                return _date.map(function (record) {
                     return _react2.default.createElement(
                         'th',
                         { style: { textAlign: "center" } },
@@ -35265,7 +35290,7 @@ var AttedenceTable = function (_React$Component) {
                         _react2.default.createElement(
                             'td',
                             null,
-                            student.note ? student.note : "-"
+                            student.comment[0] ? student.comment[0].note : "-"
                         )
                     );
                 });
@@ -35343,6 +35368,106 @@ var AttedenceTable = function (_React$Component) {
             );
         }
     }, {
+        key: 'createCommentsInput',
+        value: function createCommentsInput(students) {
+            return _react2.default.createElement(
+                'table',
+                { style: {
+                        width: "100%"
+
+                    } },
+                _react2.default.createElement(
+                    'thead',
+                    null,
+                    _react2.default.createElement(
+                        'tr',
+                        null,
+                        _react2.default.createElement(
+                            'th',
+                            { style: {
+                                    paddingRight: "20px",
+                                    textAlign: "left"
+                                } },
+                            '\u0421\u0442\u0443\u0434\u0435\u043D\u0442'
+                        ),
+                        _react2.default.createElement(
+                            'th',
+                            null,
+                            '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    'tbody',
+                    null,
+                    students.map(function (elem, index) {
+
+                        return _react2.default.createElement(
+                            'tr',
+                            { key: index },
+                            _react2.default.createElement(
+                                'td',
+                                { style: {
+                                        paddingRight: "20px",
+                                        textAlign: "left"
+                                    } },
+                                elem.name
+                            ),
+                            _react2.default.createElement(
+                                'td',
+                                { style: {
+                                        width: "200px"
+
+                                    } },
+                                _react2.default.createElement('textarea', {
+                                    style: {
+                                        height: "50px"
+
+                                    },
+                                    name: elem.id,
+                                    id: elem.name,
+                                    required: '',
+                                    className: 'form-control'
+                                })
+                            )
+                        );
+                    })
+                )
+            );
+        }
+    }, {
+        key: 'showSuccess',
+        value: function showSuccess(success) {
+            if (success) {
+                return _react2.default.createElement(
+                    'div',
+                    { 'class': 'alert alert-success', role: 'alert' },
+                    this.state.success
+                );
+            } else {
+                return _react2.default.createElement('div', { className: 'hidden' });
+            }
+        }
+    }, {
+        key: 'getErrors',
+        value: function getErrors() {
+            if (this.state.errors.length > 0) {
+                var errors = this.state.errors.map(function (error, index) {
+                    return _react2.default.createElement(
+                        'p',
+                        { key: index },
+                        error
+                    );
+                });
+
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'alert alert-danger' },
+                    errors
+                );
+            }
+        }
+    }, {
         key: 'submitRecords',
         value: function submitRecords(e) {
             var _this5 = this;
@@ -35372,9 +35497,47 @@ var AttedenceTable = function (_React$Component) {
             };
 
             (0, _api.magazineCreateRecords)(data, function (data) {
+                _this5.setState({ success: data.success, errors: [] });
                 _this5.getMagazineById();
             }, function (er) {
+                _this5.setState({ errors: er.errors, success: false });
                 _this5.getMagazineById();
+            });
+        }
+    }, {
+        key: 'submitComments',
+        value: function submitComments(e) {
+            var _this6 = this;
+
+            var form = this.refs.commentForm;
+
+            if (!form) return;
+
+            date = this.convertDate(date);
+
+            if (!date) return;
+
+            var inputs = Array.from(form.querySelectorAll("textarea")).map(function (el) {
+
+                return {
+                    studentId: el.name,
+                    note: el.value ? el.value : "н"
+                };
+            });
+
+            if (!inputs) return;
+
+            var data = {
+                magazineId: this.id,
+                records: inputs
+            };
+
+            (0, _api.magazineCreateComments)(data, function (data) {
+                _this6.setState({ success: data.success, errors: [] });
+                _this6.getMagazineById();
+            }, function (er) {
+                _this6.setState({ errors: er.errors, success: false });
+                _this6.getMagazineById();
             });
         }
     }, {
@@ -35429,7 +35592,7 @@ var AttedenceTable = function (_React$Component) {
                                     id: 'date',
                                     required: '',
                                     className: 'form-control',
-                                    value: new Date().toISOString().substr(0, 10)
+                                    defaultValue: new Date().toISOString().substr(0, 10)
                                 })
                             ),
                             this.createRecordsInput(students)
@@ -35455,12 +35618,16 @@ var AttedenceTable = function (_React$Component) {
     }, {
         key: 'addComment',
         value: function addComment(id) {
+            var students = this.state.group;
+
+            if (students) students = students.student;else return;
+
             return _react2.default.createElement(
                 'div',
                 null,
                 _react2.default.createElement(
                     'div',
-                    { className: 'modal fade', id: id, tabIndex: '-1', role: 'dialog', 'aria-labelledby': 'exampleModalLabel', 'aria-hidden': 'true' },
+                    { ref: 'commentForm', className: 'modal fade', id: id, tabIndex: '-1', role: 'dialog', 'aria-labelledby': 'exampleModalLabel', 'aria-hidden': 'true' },
                     _react2.default.createElement(
                         'div',
                         { className: 'modal-dialog', role: 'document' },
@@ -35488,31 +35655,14 @@ var AttedenceTable = function (_React$Component) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'modal-body' },
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'form-group', style: { textAlign: "left" } },
-                                    _react2.default.createElement(
-                                        'label',
-                                        {
-                                            htmlFor: 'note',
-                                            className: 'control-label' },
-                                        '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435'
-                                    ),
-                                    _react2.default.createElement('input', {
-                                        type: 'text',
-                                        name: 'note',
-                                        id: 'note',
-                                        required: '',
-                                        className: 'form-control'
-                                    })
-                                )
+                                this.createCommentsInput(students)
                             ),
                             _react2.default.createElement(
                                 'div',
                                 { className: 'modal-footer' },
                                 _react2.default.createElement(
                                     'button',
-                                    { type: 'button', className: 'btn btn-primary', 'data-dismiss': 'modal' },
+                                    { type: 'button', className: 'btn btn-primary', onClick: this.submitComments.bind(this), 'data-dismiss': 'modal' },
                                     '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C'
                                 ),
                                 _react2.default.createElement(
@@ -35539,10 +35689,10 @@ var AttedenceTable = function (_React$Component) {
     }, {
         key: 'downloadAsJson',
         value: function downloadAsJson() {
-            var _this6 = this;
+            var _this7 = this;
 
             (0, _api.getMagazineAsJson)(this.id, function (data) {
-                _this6.sendMagazineToService(data);
+                _this7.sendMagazineToService(data);
             }, function (er) {
                 console.log(er);
             });
@@ -35608,6 +35758,8 @@ var AttedenceTable = function (_React$Component) {
                     )
                 ),
                 _react2.default.createElement('hr', null),
+                this.getErrors() && this.getErrors(),
+                this.showSuccess(this.state.success),
                 _react2.default.createElement(
                     'div',
                     { className: 'table-wrap' },
@@ -35633,7 +35785,7 @@ var AttedenceTable = function (_React$Component) {
                                 this.getRecordsToTh(this.state.group),
                                 _react2.default.createElement(
                                     'th',
-                                    { style: { textAlign: "center" } },
+                                    { style: { textAlign: "right" } },
                                     _react2.default.createElement(
                                         'button',
                                         { className: 'btn btn-primary btn-sm', 'data-toggle': 'modal', 'data-target': '#addComment' },

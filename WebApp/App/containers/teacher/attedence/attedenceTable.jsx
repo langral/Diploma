@@ -2,7 +2,7 @@
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getMagazine, magazineCreateRecords, getMagazineAsJson, sendJsonToService } from './api.jsx'
+import { getMagazine, magazineCreateRecords, getMagazineAsJson, sendJsonToService, magazineCreateComments } from './api.jsx'
 
 
 export default class AttedenceTable extends React.Component {
@@ -11,12 +11,15 @@ export default class AttedenceTable extends React.Component {
 
         this.state = {
             group: null,
-            records: []
-        }
+            records: [],
+            errors: [],
+            success: false
+        };
 
         this.id = this.props.match.params.id;
         this.goBack = this.goBack.bind(this);
         this.getTable = this.getTable.bind(this);
+        this.getErrors = this.getErrors.bind(this);
     }
 
 
@@ -123,6 +126,7 @@ export default class AttedenceTable extends React.Component {
         return "#" + str;
     }
 
+
     getTable() {
         if (this.state.group) {
             let students = this.state.group.student;
@@ -135,8 +139,8 @@ export default class AttedenceTable extends React.Component {
                             <td>{student.name}</td>
                             {this.getRecordsFromStudent(student)}
                             <td>
-                                {student.note ?
-                                    ( student.note )
+                                {student.comment[0] ?
+                                    ( student.comment[0].note )
                                         :
                                     (
                                         "-"
@@ -205,6 +209,96 @@ export default class AttedenceTable extends React.Component {
         )
     }
 
+    createCommentsInput(students) {
+        return (
+            <table style={
+                {
+                    width: "100%",
+
+                }}>
+                <thead>
+                    <tr>
+                        <th style={
+                            {
+                                paddingRight: "20px",
+                                textAlign: "left",
+                            }}>Студент</th>
+                        <th>Примечание</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        students.map((elem, index) => {
+
+                            return (
+                                <tr key={index}>
+
+                                    <td style={
+                                        {
+                                            paddingRight: "20px",
+                                            textAlign: "left",
+                                        }}>{elem.name}
+                                    </td>
+
+                                    <td style={
+                                        {
+                                            width: "200px",
+
+                                        }}>
+                                        <textarea
+                                            style={
+                                                {
+                                                    height: "50px",
+
+                                                }}
+                                            name={elem.id}
+                                            id={elem.name}
+                                            required=""
+                                            className="form-control"
+                                        ></textarea>
+                                    </td>
+
+                                </tr>
+                            );
+                        })
+                    }
+                </tbody>
+            </table>
+        )
+    }
+
+
+    showSuccess(success) {
+        if (success) {
+            return (
+                <div class="alert alert-success" role="alert">
+                    {this.state.success}
+                </div>
+            );
+        } else {
+            return (
+                <div className="hidden" ></div>
+            )
+        }
+    }
+
+
+    getErrors() {
+        if (this.state.errors.length > 0) {
+            let errors = this.state.errors.map((error, index) => {
+                return (
+                    <p key={index}>{error}</p>
+                );
+            });
+
+            return (
+                <div className="alert alert-danger">
+                    {errors}
+                </div>
+            );
+        }
+    }
+
  
     submitRecords(e) {
    
@@ -235,9 +329,55 @@ export default class AttedenceTable extends React.Component {
         };
 
         magazineCreateRecords(data,
-            (data) => { this.getMagazineById() },
-            (er) => { this.getMagazineById() }
+            (data) => {
+                this.setState({ success: data.success, errors: [] });
+                this.getMagazineById()
+            },
+            (er) => {
+                this.setState({ errors: er.errors, success: false });
+                this.getMagazineById()
+            }
         );
+    }
+
+    submitComments(e) {
+        let form = this.refs.commentForm;
+
+        if (!form) return;
+       
+
+        date = this.convertDate(date);
+
+
+        if (!date) return;
+
+        let inputs = Array.from(form.querySelectorAll("textarea"))
+            .map((el) => {
+       
+                return {
+                    studentId: el.name,
+                    note: el.value ? el.value : "н"
+                }
+            });
+
+        if (!inputs) return;
+
+        let data = {
+            magazineId: this.id,
+            records: inputs
+        };
+
+        magazineCreateComments(data,
+            (data) => {
+                this.setState({ success: data.success, errors: [] });
+                this.getMagazineById()
+            },
+            (er) => {
+                this.setState({ errors: er.errors, success: false });
+                this.getMagazineById()
+            }
+        );
+
     }
 
     addRecord(id) {
@@ -271,7 +411,7 @@ export default class AttedenceTable extends React.Component {
                                     id="date"
                                     required=""
                                     className="form-control"
-                                    value={new Date().toISOString().substr(0, 10)}
+                                    defaultValue={new Date().toISOString().substr(0, 10)}
                                 />
                             </div>
 
@@ -288,10 +428,19 @@ export default class AttedenceTable extends React.Component {
         );
     }
 
+
+
     addComment(id) {
+        let students = this.state.group;
+
+        if (students)
+            students = students.student;
+        else
+            return;
+
         return (
                 <div>
-                    <div className="modal fade" id={id} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                     <div ref="commentForm"  className="modal fade" id={id} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div className="modal-dialog" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
@@ -302,24 +451,11 @@ export default class AttedenceTable extends React.Component {
                                 </div>
                                 <div className="modal-body">
 
-                                    <div className="form-group" style={{ textAlign: "left" }} >
-                                        <label
-                                            htmlFor="note"
-                                            className="control-label">
-                                            Примечание
-                                                                    </label>
-                                        <input
-                                            type="text"
-                                            name="note"
-                                            id="note"
-                                            required=""
-                                            className="form-control"
-                                        />
-                                    </div>
+                                    {this.createCommentsInput(students)}
 
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-primary"  data-dismiss="modal">Сохранить</button>
+                                <button type="button" className="btn btn-primary" onClick={this.submitComments.bind(this)}  data-dismiss="modal">Сохранить</button>
                                     <button type="button" className="btn btn-secondary" data-dismiss="modal">Отмена</button>
                                 </div>
                             </div>
@@ -372,6 +508,11 @@ export default class AttedenceTable extends React.Component {
                     </div>
                 </div>
                 <hr />
+
+                {this.getErrors() && (this.getErrors())}
+                {this.showSuccess(this.state.success)}
+
+
                 <div className= "table-wrap">
                     <table className="table attedence-table" >
                         <thead>
@@ -384,8 +525,8 @@ export default class AttedenceTable extends React.Component {
                                 </th>
 
                                 {this.getRecordsToTh(this.state.group)}
-                 
-                                <th style={{ textAlign: "center" }}>
+
+                                <th style={{ textAlign: "right" }}>
                                     <button className="btn btn-primary btn-sm" data-toggle="modal" data-target="#addComment" >
                                         Добавить примечание
                                     </button>

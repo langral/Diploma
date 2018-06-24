@@ -181,6 +181,28 @@ export function magazineCreateRecords(data, onSuccess, onError) {
         });
 }
 
+export function magazineCreateComments(data, onSuccess, onError) {
+    let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };
+    let headers = {
+        'content-type': 'application/json',
+    }
+    if (!auth) return;
+    headers['Authorization'] = auth.Authorization;
+
+    return fetch(constants.magazineCreateComments,
+        {
+            method: "POST",
+            headers,
+            body: JSON.stringify(data)
+        })
+        .then((response) => {
+            return checkStatus(response);
+        }).then((data) => {
+            onSuccess && onSuccess(data);
+        }).catch((error) => {
+            onError && onError(error);
+        });
+}
 
 export function getMagazineAsJson(id, onSuccess, onError) {
     let auth = { Authorization: `Bearer ${getItem(AUTH_KEY).authToken}` };

@@ -24,6 +24,7 @@ namespace WebApp.Controllersуу
     {
         protected readonly IRepositoryFacade repositoryFacade;
 
+        private IGenericRepository<Comment> commentRepository;
         private IGenericRepository<Record> recordsRepository;
         private IGenericRepository<Magazine> magazineRepository;
         private IGenericRepository<Student> studentRepository;
@@ -44,6 +45,7 @@ namespace WebApp.Controllersуу
             recordsRepository = this.repositoryFacade.CreateGenericRepository<Record>();
             this.userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             this.magazineContext = magazineContext;
+            commentRepository = this.repositoryFacade.CreateGenericRepository<Comment>();
             studentRepository = this.repositoryFacade.CreateGenericRepository<Student>();
         }
 
@@ -59,9 +61,11 @@ namespace WebApp.Controllersуу
 
                 var subject = subjectRepository.Get(magazine.SubjectId).GetAwaiter().GetResult();
                 var group = groupRepository.GetEager(magazine.GroupId, "Student").GetAwaiter().GetResult();
+              
 
                 magazine.Group = group;
                 magazine.Subject = subject;
+
 
                 foreach(var student in group.Student){
                     var records = recordsRepository.Get(r => r.StudentId == student.Id && r.MagazineId == magazine.Id).OrderBy(x => x.Date);
@@ -70,10 +74,20 @@ namespace WebApp.Controllersуу
                         MagazineId = r.MagazineId,
                         Visit = r.Visit,
                         Id = r.Id,
-                        StudentId = r.StudentId
+                        StudentId = r.StudentId,
+                    }).ToList();
+
+                    var comments = commentRepository.Get(r => r.StudentId == student.Id && r.MagazineId == magazine.Id);
+
+                    student.Comment = comments.Select(r => new Comment()
+                    {
+                        MagazineId = r.MagazineId,
+                        Note = r.Note,
+                        Id = r.Id,
+                        StudentId = r.StudentId,
                     }).ToList();
                 }
-
+  
 
                 return magazine;
             }
@@ -123,26 +137,102 @@ namespace WebApp.Controllersуу
         {
             if (ModelState.IsValid)
             {
-                foreach (var record in magazine.records)
+                try
                 {
-                    Record newRecord = new Record()
+                    var date = DateTime.Parse(magazine.records.First().Date);
+
+                    var exist = recordsRepository.Get(r => r.MagazineId == magazine.MagazineId && r.Date == date).FirstOrDefault();
+                    if (exist != null) throw new Exception(String.Format("Для даты {0} уже существуют записи!", date.ToShortDateString()));
+
+                    foreach (var record in magazine.records)
                     {
-                        Date = DateTime.Parse(record.Date),
-                        MagazineId = magazine.MagazineId,
-                        StudentId = record.studentId,
-                        Visit = record.Note
+                        Record newRecord = new Record()
+                        {
+                            Date = DateTime.Parse(record.Date),
+                            MagazineId = magazine.MagazineId,
+                            StudentId = record.studentId,
+                            Visit = record.Note
+                        };
+
+                        await recordsRepository.Insert(newRecord);
+                    }
+
+                    var answer = new
+                    {
+                        success = String.Format("Запись успешно создана!")
                     };
 
-                    await recordsRepository.Insert(newRecord);
+                    Response.StatusCode = StatusCodes.Status200OK;
+                    await Response.WriteAsync(ConvertToJson(answer));
                 }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("error", e.Message);
+                    await Response.BadRequestHelper(ModelState.Values);
+                }
+                
             }
             else
             {
                 await Response.BadRequestHelper(ModelState.Values);
             }
 
-            Response.StatusCode = StatusCodes.Status200OK;
-            await Response.WriteAsync("Ok");
+            
+        }
+
+        [HttpPost]
+        [Route("create-comments")]
+        public async Task CreateComments([FromBody] RecordsViewModel magazine)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    foreach (var record in magazine.records)
+                    {
+                        var exist = commentRepository.Get(r => r.MagazineId == magazine.MagazineId && r.StudentId == record.studentId).FirstOrDefault();
+
+                        Comment newComment = new Comment()
+                        {
+                            MagazineId = magazine.MagazineId,
+                            StudentId = record.studentId,
+                            Note = record.Note,
+                        };
+
+                        if(exist != null)
+                        {
+                            exist.Note = newComment.Note;
+                            await commentRepository.Update(exist);
+                        }
+                        else
+                        {
+                            await commentRepository.Insert(newComment);
+                        }
+                       
+                    }
+
+                    var answer = new
+                    {
+                        success = String.Format("Примечание успешно создано!")
+                    };
+
+                    Response.StatusCode = StatusCodes.Status200OK;
+                    await Response.WriteAsync(ConvertToJson(answer));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("error", e.Message);
+                    await Response.BadRequestHelper(ModelState.Values);
+                }
+
+            }
+            else
+            {
+                await Response.BadRequestHelper(ModelState.Values);
+            }
+
+
         }
 
         [HttpPost]
@@ -246,8 +336,7 @@ namespace WebApp.Controllersуу
                     throw new Exception("Record is not found");
 
                 Response.StatusCode = StatusCodes.Status200OK;
-                await Response.WriteAsync(JsonConvert.SerializeObject(magazine,
-                    new JsonSerializerSettings { Formatting = Formatting.Indented }));
+                await Response.WriteAsync(ConvertToJson(magazine));
             }
             catch (Exception e)
             {
@@ -323,6 +412,12 @@ namespace WebApp.Controllersуу
            
 
             return null;
+        }
+
+        private string ConvertToJson(object data)
+        {
+            return JsonConvert.SerializeObject(data,
+                        new JsonSerializerSettings { Formatting = Formatting.Indented });
         }
 
     }

@@ -105,6 +105,8 @@ class AttedenceList extends React.Component {
         );
     }
 
+  
+
 
     render() {
 
@@ -124,6 +126,7 @@ class AttedenceList extends React.Component {
                     </div>
                 </div>
                 <hr />
+
                 <table className="table">
                     <thead>
                         <tr>
