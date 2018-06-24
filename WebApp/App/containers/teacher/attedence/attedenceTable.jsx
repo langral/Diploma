@@ -317,7 +317,7 @@ export default class AttedenceTable extends React.Component {
                 return {
                     date: date,
                     studentId: el.name,
-                    note: el.value ? el.value : "н"
+                    note: el.value ? el.value : "-"
                 }
             });
 

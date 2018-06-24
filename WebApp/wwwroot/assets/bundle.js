@@ -35485,7 +35485,7 @@ var AttedenceTable = function (_React$Component) {
                 return {
                     date: date,
                     studentId: el.name,
-                    note: el.value ? el.value : "н"
+                    note: el.value ? el.value : "-"
                 };
             });
 

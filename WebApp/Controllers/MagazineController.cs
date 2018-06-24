@@ -351,10 +351,11 @@ namespace WebApp.Controllersуу
 
             foreach(var student in students)
             {
+                var comment = commentRepository.Get(r => r.MagazineId == magazineId && r.StudentId == student.Id).FirstOrDefault();
                 StudentExport studentExport = new StudentExport()
                 {
                     FIO = student.Name,
-                    Note = "test", //TO DO
+                    Note = comment == null ? "-" : comment.Note,
                     Records = recordsRepository.Get(r => r.MagazineId == magazineId && r.StudentId == student.Id)
                                                .Select(r => new RecordExport() { Date = r.Date.ToShortDateString(), Note = r.Visit })
                                                .ToList()
