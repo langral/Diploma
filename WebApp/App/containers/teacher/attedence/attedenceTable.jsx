@@ -469,7 +469,7 @@ export default class AttedenceTable extends React.Component {
         console.log(data);
         sendJsonToService(data,
             (data) => {
-                let fileName = `AttendanceOfGroup${this.state.subject.name}.docx`;
+                let fileName = `AttendanceOfGroup${this.state.group.number}.docx`;
                 fileDownload(data, fileName);
             },
             (er) => { console.log(er) });

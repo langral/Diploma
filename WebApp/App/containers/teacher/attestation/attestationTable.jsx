@@ -302,8 +302,8 @@ export default class AttestationTable extends React.Component {
     sendAttestationToService(data) {
         console.log(data);
         sendJsonToService(data,
-            () => {
-                let fileName = `AttendanceOfGroup${this.state.group.number}.docx`;
+            (data) => {
+                let fileName = `AttendanceOfGroup${this.state.subject.name}.docx`;
                 fileDownload(data, fileName);
             },
             (er) => { console.log(er) });

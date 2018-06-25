@@ -35719,7 +35719,7 @@ var AttedenceTable = function (_React$Component) {
 
             console.log(data);
             (0, _api.sendJsonToService)(data, function (data) {
-                var fileName = 'AttendanceOfGroup' + _this7.state.subject.name + '.docx';
+                var fileName = 'AttendanceOfGroup' + _this7.state.group.number + '.docx';
                 (0, _jsFileDownload2.default)(data, fileName);
             }, function (er) {
                 console.log(er);
@@ -36870,8 +36870,8 @@ var AttestationTable = function (_React$Component) {
             var _this7 = this;
 
             console.log(data);
-            (0, _api.sendJsonToService)(data, function () {
-                var fileName = 'AttendanceOfGroup' + _this7.state.group.number + '.docx';
+            (0, _api.sendJsonToService)(data, function (data) {
+                var fileName = 'AttendanceOfGroup' + _this7.state.subject.name + '.docx';
                 (0, _jsFileDownload2.default)(data, fileName);
             }, function (er) {
                 console.log(er);
