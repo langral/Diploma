@@ -20,6 +20,7 @@ export default class AttestationTable extends React.Component {
             records: [],
             attestationRecords: [],
             selectedGroup: null,
+            isFileDownloaded: false
         }
 
         this.id = this.props.match.params.id;
@@ -300,20 +301,38 @@ export default class AttestationTable extends React.Component {
     }
 
     sendAttestationToService(data) {
-        console.log(data);
+      
         sendJsonToService(data,
             (data) => {
                 let fileName = `AttendanceOfGroup${this.state.subject.name}.docx`;
                 fileDownload(data, fileName);
+                this.setState({ isFileDownloaded: false });
             },
             (er) => { console.log(er) });
     }
 
     downloadAsJson() {
 
+        this.setState({ isFileDownloaded: true });
         getAttestationAsJson(this.id,
             (data) => { this.sendAttestationToService(data) },
             (er) => { console.log(er) });
+    }
+
+    showDownloadButton() {
+        if (this.state.isFileDownloaded) {
+            return (
+                <div className="loader">
+                    <img src={loader} />
+                </div>
+            );
+        }
+
+        return (
+            <button className="btn btn-primary" onClick={this.downloadAsJson.bind(this)}  >
+                Скачать в .docx
+                </button>
+        );
     }
 
     render() {
@@ -339,9 +358,7 @@ export default class AttestationTable extends React.Component {
                         </div>
 
                         <div className="action">
-                            <button className="btn btn-primary" onClick={this.downloadAsJson.bind(this)}  >
-                                Скачать в .docx
-                            </button>
+                            {this.showDownloadButton()}
                         </div>
                     </div>
                 </div>

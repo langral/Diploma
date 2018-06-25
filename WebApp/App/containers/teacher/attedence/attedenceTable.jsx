@@ -471,15 +471,33 @@ export default class AttedenceTable extends React.Component {
             (data) => {
                 let fileName = `AttendanceOfGroup${this.state.group.number}.docx`;
                 fileDownload(data, fileName);
+                this.setState({ isFileDownloaded: false });
             },
             (er) => { console.log(er) });
     }
 
     downloadAsJson() {
 
+        this.setState({ isFileDownloaded: true });
         getMagazineAsJson(this.id,
             (data) => { this.sendMagazineToService(data) },
             (er) => { console.log(er) });
+    }
+
+    showDownloadButton() {
+        if (this.state.isFileDownloaded) {
+            return (
+                <div className="loader">
+                    <img src={loader} />
+                </div>
+            );
+        }
+
+        return (
+            <button className="btn btn-primary" onClick={this.downloadAsJson.bind(this)}  >
+                Скачать в .docx
+                </button>
+        );
     }
 
     render() {
@@ -504,9 +522,7 @@ export default class AttedenceTable extends React.Component {
                         </div>
 
                         <div className="action">
-                            <button className="btn btn-primary" onClick={this.downloadAsJson.bind(this)} >
-                                Скачать в .docx
-                            </button>
+                            {this.showDownloadButton()}
                         </div>
                     </div>
                 </div>
