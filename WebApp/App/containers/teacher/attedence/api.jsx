@@ -250,6 +250,25 @@ export function deleteMagazine(id, onSuccess, onError) {
 }
 
 
+
+function checkServiceStatus(response) {
+    if (response.ok) {
+        try {
+            return Promise.resolve(response.arrayBuffer())
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    return response.json().then(json => {
+        const error = new Error(json.message || response.statusText)
+        error.errors = json.errors;
+        return Promise.reject(Object.assign(error, { response }))
+    })
+}
+
+
 export function sendJsonToService(magazine, onSuccess, onError) {
     let headers = {
         'content-type': 'application/json',
@@ -261,7 +280,7 @@ export function sendJsonToService(magazine, onSuccess, onError) {
             body: JSON.stringify(magazine)
         })
         .then((response) => {
-            return checkStatus(response);
+            return checkServiceStatus(response);
         }).then((data) => {
             onSuccess && onSuccess(data);
         }).catch((error) => {

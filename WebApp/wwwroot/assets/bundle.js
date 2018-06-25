@@ -2664,6 +2664,22 @@ function deleteMagazine(id, onSuccess, onError) {
     });
 }
 
+function checkServiceStatus(response) {
+    if (response.ok) {
+        try {
+            return Promise.resolve(response.arrayBuffer());
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    return response.json().then(function (json) {
+        var error = new Error(json.message || response.statusText);
+        error.errors = json.errors;
+        return Promise.reject(Object.assign(error, { response: response }));
+    });
+}
+
 function sendJsonToService(magazine, onSuccess, onError) {
     var headers = {
         'content-type': 'application/json'
@@ -2673,7 +2689,7 @@ function sendJsonToService(magazine, onSuccess, onError) {
         headers: headers,
         body: JSON.stringify(magazine)
     }).then(function (response) {
-        return checkStatus(response);
+        return checkServiceStatus(response);
     }).then(function (data) {
         onSuccess && onSuccess(data);
     }).catch(function (error) {
@@ -2969,6 +2985,22 @@ function getAttestationAsJson(id, onSuccess, onError) {
     });
 }
 
+function checkServiceStatus(response) {
+    if (response.ok) {
+        try {
+            return Promise.resolve(response.arrayBuffer());
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    return response.json().then(function (json) {
+        var error = new Error(json.message || response.statusText);
+        error.errors = json.errors;
+        return Promise.reject(Object.assign(error, { response: response }));
+    });
+}
+
 function sendJsonToService(magazine, onSuccess, onError) {
     var headers = {
         'content-type': 'application/json'
@@ -2978,7 +3010,7 @@ function sendJsonToService(magazine, onSuccess, onError) {
         headers: headers,
         body: JSON.stringify(magazine)
     }).then(function (response) {
-        return checkStatus(response);
+        return checkServiceStatus(response);
     }).then(function (data) {
         onSuccess && onSuccess(data);
     }).catch(function (error) {
@@ -6320,13 +6352,13 @@ var _app = __webpack_require__(100);
 
 var _app2 = _interopRequireDefault(_app);
 
-var _configureStore = __webpack_require__(168);
+var _configureStore = __webpack_require__(169);
 
 var _configureStore2 = _interopRequireDefault(_configureStore);
 
-__webpack_require__(172);
+__webpack_require__(173);
 
-__webpack_require__(177);
+__webpack_require__(178);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27404,7 +27436,7 @@ var _route = __webpack_require__(124);
 
 var _route2 = _interopRequireDefault(_route);
 
-var _header = __webpack_require__(167);
+var _header = __webpack_require__(168);
 
 var _header2 = _interopRequireDefault(_header);
 
@@ -29306,7 +29338,7 @@ var _teacher = __webpack_require__(151);
 
 var _teacher2 = _interopRequireDefault(_teacher);
 
-var _authorization = __webpack_require__(166);
+var _authorization = __webpack_require__(167);
 
 var _authorization2 = _interopRequireDefault(_authorization);
 
@@ -33641,7 +33673,7 @@ var _attedence = __webpack_require__(157);
 
 var _attedence2 = _interopRequireDefault(_attedence);
 
-var _attestation = __webpack_require__(163);
+var _attestation = __webpack_require__(164);
 
 var _attestation2 = _interopRequireDefault(_attestation);
 
@@ -35084,6 +35116,10 @@ var _reactRouterDom = __webpack_require__(3);
 
 var _api = __webpack_require__(35);
 
+var _jsFileDownload = __webpack_require__(163);
+
+var _jsFileDownload2 = _interopRequireDefault(_jsFileDownload);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35679,9 +35715,12 @@ var AttedenceTable = function (_React$Component) {
     }, {
         key: 'sendMagazineToService',
         value: function sendMagazineToService(data) {
+            var _this7 = this;
+
             console.log(data);
-            (0, _api.sendJsonToService)(data, function () {
-                console.log("success");
+            (0, _api.sendJsonToService)(data, function (data) {
+                var fileName = 'AttendanceOfGroup' + _this7.state.subject.name + '.docx';
+                (0, _jsFileDownload2.default)(data, fileName);
             }, function (er) {
                 console.log(er);
             });
@@ -35689,10 +35728,10 @@ var AttedenceTable = function (_React$Component) {
     }, {
         key: 'downloadAsJson',
         value: function downloadAsJson() {
-            var _this7 = this;
+            var _this8 = this;
 
             (0, _api.getMagazineAsJson)(this.id, function (data) {
-                _this7.sendMagazineToService(data);
+                _this8.sendMagazineToService(data);
             }, function (er) {
                 console.log(er);
             });
@@ -35814,6 +35853,42 @@ exports.default = AttedenceTable;
 
 /***/ }),
 /* 163 */
+/***/ (function(module, exports) {
+
+module.exports = function(data, filename, mime) {
+    var blob = new Blob([data], {type: mime || 'application/octet-stream'});
+    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+        // IE workaround for "HTML7007: One or more blob URLs were 
+        // revoked by closing the blob for which they were created. 
+        // These URLs will no longer resolve as the data backing 
+        // the URL has been freed."
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else {
+        var blobURL = window.URL.createObjectURL(blob);
+        var tempLink = document.createElement('a');
+        tempLink.style.display = 'none';
+        tempLink.href = blobURL;
+        tempLink.setAttribute('download', filename); 
+        
+        // Safari thinks _blank anchor are pop ups. We only want to set _blank
+        // target if the browser does not support the HTML5 download attribute.
+        // This allows you to download files in desktop safari if pop up blocking 
+        // is enabled.
+        if (typeof tempLink.download === 'undefined') {
+            tempLink.setAttribute('target', '_blank');
+        }
+        
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+        window.URL.revokeObjectURL(blobURL);
+    }
+}
+
+
+/***/ }),
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35841,13 +35916,13 @@ var _pagination = __webpack_require__(9);
 
 var _pagination2 = _interopRequireDefault(_pagination);
 
-var _attestationForm = __webpack_require__(164);
+var _attestationForm = __webpack_require__(165);
 
 var _attestationForm2 = _interopRequireDefault(_attestationForm);
 
 var _api = __webpack_require__(36);
 
-var _attestationTable = __webpack_require__(165);
+var _attestationTable = __webpack_require__(166);
 
 var _attestationTable2 = _interopRequireDefault(_attestationTable);
 
@@ -36078,7 +36153,7 @@ exports.default = Attestation;
 ;
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36366,7 +36441,7 @@ exports.default = AttestationForm;
 ;
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36393,6 +36468,10 @@ var _reactRedux = __webpack_require__(2);
 var _reactRouterDom = __webpack_require__(3);
 
 var _api = __webpack_require__(36);
+
+var _jsFileDownload = __webpack_require__(163);
+
+var _jsFileDownload2 = _interopRequireDefault(_jsFileDownload);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36788,9 +36867,12 @@ var AttestationTable = function (_React$Component) {
     }, {
         key: 'sendAttestationToService',
         value: function sendAttestationToService(data) {
+            var _this7 = this;
+
             console.log(data);
             (0, _api.sendJsonToService)(data, function () {
-                console.log("success");
+                var fileName = 'AttendanceOfGroup' + _this7.state.group.number + '.docx';
+                (0, _jsFileDownload2.default)(data, fileName);
             }, function (er) {
                 console.log(er);
             });
@@ -36798,10 +36880,10 @@ var AttestationTable = function (_React$Component) {
     }, {
         key: 'downloadAsJson',
         value: function downloadAsJson() {
-            var _this7 = this;
+            var _this8 = this;
 
             (0, _api.getAttestationAsJson)(this.id, function (data) {
-                _this7.sendAttestationToService(data);
+                _this8.sendAttestationToService(data);
             }, function (er) {
                 console.log(er);
             });
@@ -36914,7 +36996,7 @@ exports.default = AttestationTable;
 ;
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37044,7 +37126,7 @@ function PrivateRoute(allowedRoles) {
 };
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37152,7 +37234,7 @@ exports.default = Header;
 ;
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37165,11 +37247,11 @@ exports.default = configureStore;
 
 var _redux = __webpack_require__(27);
 
-var _rootReducer = __webpack_require__(169);
+var _rootReducer = __webpack_require__(170);
 
 var _rootReducer2 = _interopRequireDefault(_rootReducer);
 
-var _reduxThunk = __webpack_require__(171);
+var _reduxThunk = __webpack_require__(172);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -37190,7 +37272,7 @@ function configureStore(initialState) {
 }
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37202,7 +37284,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _redux = __webpack_require__(27);
 
-var _loginReducer = __webpack_require__(170);
+var _loginReducer = __webpack_require__(171);
 
 var _loginReducer2 = _interopRequireDefault(_loginReducer);
 
@@ -37213,7 +37295,7 @@ exports.default = (0, _redux.combineReducers)({
 });
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37278,7 +37360,7 @@ function authReducer() {
 }
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -37305,13 +37387,13 @@ thunk.withExtraArgument = createThunkMiddleware;
 /* harmony default export */ __webpack_exports__["default"] = (thunk);
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(173);
+var content = __webpack_require__(174);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -37319,7 +37401,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(175)(content, options);
+var update = __webpack_require__(176)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -37336,10 +37418,10 @@ if(false) {
 }
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(174)(false);
+exports = module.exports = __webpack_require__(175)(false);
 // imports
 
 
@@ -37350,7 +37432,7 @@ exports.push([module.i, "/*!\n * Bootstrap v4.1.1 (https://getbootstrap.com/)\n 
 
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports) {
 
 /*
@@ -37432,7 +37514,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -37488,7 +37570,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(176);
+var	fixUrls = __webpack_require__(177);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -37804,7 +37886,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports) {
 
 
@@ -37899,7 +37981,7 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -37908,7 +37990,7 @@ module.exports = function (css) {
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 (function (global, factory) {
-   true ? factory(exports, __webpack_require__(178), __webpack_require__(179)) :
+   true ? factory(exports, __webpack_require__(179), __webpack_require__(180)) :
   typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'popper.js'], factory) :
   (factory((global.bootstrap = {}),global.jQuery,global.Popper));
 }(this, (function (exports,$,Popper) { 'use strict';
@@ -41832,7 +41914,7 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -52203,7 +52285,7 @@ return jQuery;
 
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

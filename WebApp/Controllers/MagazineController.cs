@@ -87,7 +87,8 @@ namespace WebApp.Controllersуу
                         StudentId = r.StudentId,
                     }).ToList();
                 }
-  
+
+                group.Student = group.Student.OrderBy(x => x.Name).ToList();
 
                 return magazine;
             }
@@ -348,6 +349,7 @@ namespace WebApp.Controllersуу
         private List<StudentExport> GetStudentsToExport(List<Student> students, int magazineId)
         {
             List<StudentExport> studentExports = new List<StudentExport>();
+            students = students.OrderBy(x => x.Name).ToList();
 
             foreach(var student in students)
             {

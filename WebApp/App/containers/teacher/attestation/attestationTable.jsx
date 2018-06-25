@@ -7,6 +7,8 @@ import {
     createAttestationRecords, getAllAttestationRecordsApi,
     getAttestationAsJson, sendJsonToService
 } from './api.jsx'
+import fileDownload from 'js-file-download';
+
 
 
 export default class AttestationTable extends React.Component {
@@ -300,7 +302,10 @@ export default class AttestationTable extends React.Component {
     sendAttestationToService(data) {
         console.log(data);
         sendJsonToService(data,
-            () => { console.log("success") },
+            () => {
+                let fileName = `AttendanceOfGroup${this.state.group.number}.docx`;
+                fileDownload(data, fileName);
+            },
             (er) => { console.log(er) });
     }
 

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getMagazine, magazineCreateRecords, getMagazineAsJson, sendJsonToService, magazineCreateComments } from './api.jsx'
-
+import fileDownload from 'js-file-download';
 
 export default class AttedenceTable extends React.Component {
     constructor(props) {
@@ -468,7 +468,10 @@ export default class AttedenceTable extends React.Component {
     sendMagazineToService(data) {
         console.log(data);
         sendJsonToService(data,
-            () => { console.log("success") },
+            (data) => {
+                let fileName = `AttendanceOfGroup${this.state.subject.name}.docx`;
+                fileDownload(data, fileName);
+            },
             (er) => { console.log(er) });
     }
 
